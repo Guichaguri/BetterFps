@@ -14,8 +14,8 @@ import java.util.Map;
 public class BetterFps implements IFMLLoadingPlugin, IFMLCallHook {
 
     public static final String MODID = "betterfps";
-    public static final String VERSION = "1.0.0";
-    public static File LOC;
+    public static final String VERSION = "1.0.1";
+    public static File LOC = null;
 
     @Override
     public String[] getASMTransformerClass() {

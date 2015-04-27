@@ -23,7 +23,7 @@ public class BetterFpsTransformer implements IClassTransformer {
         if(bytes == null) return null;
 
         try {
-            if((name.equals("net.minecraft.util.MathHelper")) || (name.equals("qh"))) {
+            if((name.equals("net.minecraft.util.MathHelper")) || (name.equals("uv"))) {
                 return patchMath(bytes);
             }
         } catch(Exception ex) {

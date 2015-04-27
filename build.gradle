@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.0.0"
+version = "1.0.1"
 group= "me.guichaguri.betterfps" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "BetterFps"
 
