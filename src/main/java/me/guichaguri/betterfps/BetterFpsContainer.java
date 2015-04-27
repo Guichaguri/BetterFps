@@ -2,17 +2,17 @@ package me.guichaguri.betterfps;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import net.minecraft.util.MathHelper;
 
 /**
  * @author Guilherme Chaguri
@@ -41,7 +41,7 @@ public class BetterFpsContainer extends DummyModContainer {
     }
 
     @Subscribe
-    public void preInit(FMLPreInitializationEvent event) {
+    public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(this);
 
         if(!BetterMathHelper.ALGORITHM_NAME.equals("vanilla")) {
