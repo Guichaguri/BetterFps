@@ -1,8 +1,8 @@
 package me.guichaguri.betterfps.client;
 
-import cpw.mods.fml.client.IModGuiFactory;
-import cpw.mods.fml.client.config.GuiConfig;
-import cpw.mods.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.client.IModGuiFactory;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.IConfigElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -48,7 +48,7 @@ public class ConfigFactory implements IModGuiFactory {
         }
     }
 
-    public static class ConfigElementCycle extends ConfigElement<String> {
+    public static class ConfigElementCycle extends ConfigElement {
         String[] validValues;
         public ConfigElementCycle(Property prop) {
             super(prop);
@@ -77,7 +77,7 @@ public class ConfigFactory implements IModGuiFactory {
             return "Algorithm";
         }
         @Override
-        public void set(String value) {
+        public void set(Object value) {
             String v = "rivens";
             for(Entry<String, String> e : BetterMathHelper.displayHelpers.entrySet()) {
                 if(e.getValue().equals(value)) {

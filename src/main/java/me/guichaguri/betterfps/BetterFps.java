@@ -1,8 +1,8 @@
 package me.guichaguri.betterfps;
 
-import cpw.mods.fml.relauncher.IFMLCallHook;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
+import net.minecraftforge.fml.relauncher.IFMLCallHook;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 import java.io.File;
 import java.util.Map;
 
