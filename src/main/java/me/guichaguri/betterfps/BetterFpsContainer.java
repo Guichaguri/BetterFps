@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 
 /**
  * @author Guilherme Chaguri
@@ -80,6 +81,15 @@ public class BetterFpsContainer extends DummyModContainer {
     @Override
     public String getGuiClassName() {
         return "me.guichaguri.betterfps.client.ConfigFactory";
+    }
+
+    @Override
+    public VersionRange acceptableMinecraftVersionRange() {
+        try {
+            return VersionRange.createFromVersionSpec("*");
+        } catch(Exception ex) {
+            return super.acceptableMinecraftVersionRange();
+        }
     }
 
 }
