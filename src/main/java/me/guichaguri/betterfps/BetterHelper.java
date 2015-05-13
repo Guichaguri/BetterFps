@@ -8,7 +8,16 @@ import net.minecraftforge.common.config.Property;
 /**
  * @author Guilherme Chaguri
  */
-public abstract class BetterMathHelper {
+public abstract class BetterHelper {
+
+    public static final String MODID = "betterfps";
+    public static final String VERSION = "1.1.0";
+
+    public static final String[] TRANSFORMERS = new String[]{
+            "me.guichaguri.betterfps.BetterFpsTransformer"
+    };
+
+    public static File LOC = null;
 
     // Config Name, Class Name
     public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>();
@@ -49,9 +58,9 @@ public abstract class BetterMathHelper {
         String v = "";
         for(String s : helpers.keySet()) v += ", " + s;
         CONFIG_ALGORITHM.comment = "The algorithm to be used.\nValues: " + v.substring(2);
-        String[] validValues = new String[BetterMathHelper.displayHelpers.size()];
+        String[] validValues = new String[BetterHelper.displayHelpers.size()];
         int i = 0;
-        for(String s : BetterMathHelper.displayHelpers.values()) {
+        for(String s : BetterHelper.displayHelpers.values()) {
             validValues[i] = s; i++;
         }
         CONFIG_ALGORITHM.setValidValues(validValues);

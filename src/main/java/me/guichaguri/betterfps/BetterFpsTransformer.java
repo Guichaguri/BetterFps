@@ -39,20 +39,20 @@ public class BetterFpsTransformer implements IClassTransformer {
         String cosOb = "b"; //func_76134_b
         String cosDeob = "cos";
 
-        BetterMathHelper.loadConfig();
-        if(BetterMathHelper.ALGORITHM_NAME.equals("vanilla")) {
-            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterMathHelper.displayHelpers.get(BetterMathHelper.ALGORITHM_NAME));
+        BetterHelper.loadConfig();
+        if(BetterHelper.ALGORITHM_NAME.equals("vanilla")) {
+            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterHelper.displayHelpers.get(BetterHelper.ALGORITHM_NAME));
             return bytes;
         } else {
-            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterMathHelper.displayHelpers.get(BetterMathHelper.ALGORITHM_NAME));
+            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterHelper.displayHelpers.get(BetterHelper.ALGORITHM_NAME));
         }
 
         ClassReader reader;
-        if(BetterFps.LOC == null) {
-            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterMathHelper.ALGORITHM_CLASS);
+        if(BetterHelper.LOC == null) {
+            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterHelper.ALGORITHM_CLASS);
         } else {
-            JarFile jar = new JarFile(BetterFps.LOC);
-            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterMathHelper.ALGORITHM_CLASS + ".class");
+            JarFile jar = new JarFile(BetterHelper.LOC);
+            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterHelper.ALGORITHM_CLASS + ".class");
             reader = new ClassReader(jar.getInputStream(e));
             jar.close();
         }
@@ -135,10 +135,6 @@ public class BetterFpsTransformer implements IClassTransformer {
                 }
             }
         }
-
-        //method.instructions.add(new VarInsnNode(Opcodes.FLOAD, 0));
-        //method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "me/guichaguri/betterfps/BetterMathHelper", "sin", "(F)F", false));
-        //method.instructions.add(new InsnNode(Opcodes.FRETURN));
     }
 
     private void patchCos(MethodNode method, ClassNode math, String name, String oldName) {
@@ -155,9 +151,5 @@ public class BetterFpsTransformer implements IClassTransformer {
                 }
             }
         }
-
-        //method.instructions.add(new VarInsnNode(Opcodes.FLOAD, 0));
-        //method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "me/guichaguri/betterfps/BetterMathHelper", "cos", "(F)F", false));
-        //method.instructions.add(new InsnNode(Opcodes.FRETURN));
     }
 }

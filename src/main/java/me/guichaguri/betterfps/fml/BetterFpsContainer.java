@@ -1,10 +1,11 @@
-package me.guichaguri.betterfps;
+package me.guichaguri.betterfps.fml;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import me.guichaguri.betterfps.BetterHelper;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
@@ -22,9 +23,9 @@ public class BetterFpsContainer extends DummyModContainer {
 
     private static ModMetadata createMetadata() {
         ModMetadata meta = new ModMetadata();
-        meta.modId = BetterFps.MODID;
+        meta.modId = BetterHelper.MODID;
         meta.name = "BetterFps";
-        meta.version = BetterFps.VERSION;
+        meta.version = BetterHelper.VERSION;
         meta.authorList = Arrays.asList("Guichaguri");
         meta.description = "Performance Improvements";
         meta.url = "http://minecraft.curseforge.com/mc-mods/229876-betterfps";
@@ -45,7 +46,7 @@ public class BetterFpsContainer extends DummyModContainer {
     public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(this);
 
-        if(!BetterMathHelper.ALGORITHM_NAME.equals("vanilla")) {
+        if(!BetterHelper.ALGORITHM_NAME.equals("vanilla")) {
 
             try {
                 Method m = MathHelper.class.getMethod("bfInit");
@@ -73,8 +74,8 @@ public class BetterFpsContainer extends DummyModContainer {
 
     @SubscribeEvent
     public void OnConfigChangedEvent(OnConfigChangedEvent event) {
-        if(event.modID.equals(BetterFps.MODID)) {
-            BetterMathHelper.CONFIG.save();
+        if(event.modID.equals(BetterHelper.MODID)) {
+            BetterHelper.CONFIG.save();
         }
     }
 

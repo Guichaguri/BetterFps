@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import me.guichaguri.betterfps.BetterFps;
-import me.guichaguri.betterfps.BetterMathHelper;
+import me.guichaguri.betterfps.fml.BetterFpsForge;
+import me.guichaguri.betterfps.BetterHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
@@ -38,13 +38,13 @@ public class ConfigFactory implements IModGuiFactory {
 
     public static List<IConfigElement> getElements() {
         List<IConfigElement> elements = new ArrayList<IConfigElement>();
-        elements.add(new ConfigElementCycle(BetterMathHelper.CONFIG_ALGORITHM));
+        elements.add(new ConfigElementCycle(BetterHelper.CONFIG_ALGORITHM));
         return elements;
     }
 
     public static class ConfigScreen extends GuiConfig {
         public ConfigScreen(GuiScreen parent) {//new ConfigElement(BetterMathHelper.CONFIG.getCategory("betterfps")).getChildElements()
-            super(parent, getElements(), BetterFps.MODID, BetterFps.MODID, false, false, "BetterFps Algorithm");
+            super(parent, getElements(), BetterFpsForge.MODID, BetterFpsForge.MODID, false, false, "BetterFps Algorithm");
         }
     }
 
@@ -53,7 +53,7 @@ public class ConfigFactory implements IModGuiFactory {
         public ConfigElementCycle(Property prop) {
             super(prop);
             List<String> l = new ArrayList<String>();
-            for(Entry<String, String> s : BetterMathHelper.displayHelpers.entrySet()) {
+            for(Entry<String, String> s : BetterHelper.displayHelpers.entrySet()) {
                 if(s.getKey().equals("random")) continue;
                 l.add(s.getValue());
             }
@@ -66,11 +66,11 @@ public class ConfigFactory implements IModGuiFactory {
         }
         @Override
         public Object getDefault() {
-            return BetterMathHelper.displayHelpers.get(super.getDefault());
+            return BetterHelper.displayHelpers.get(super.getDefault());
         }
         @Override
         public Object get() {
-            return BetterMathHelper.displayHelpers.get(super.get());
+            return BetterHelper.displayHelpers.get(super.get());
         }
         @Override
         public String getName() {
@@ -79,7 +79,7 @@ public class ConfigFactory implements IModGuiFactory {
         @Override
         public void set(Object value) {
             String v = "rivens";
-            for(Entry<String, String> e : BetterMathHelper.displayHelpers.entrySet()) {
+            for(Entry<String, String> e : BetterHelper.displayHelpers.entrySet()) {
                 if(e.getValue().equals(value)) {
                     v = e.getKey();
                     break;
