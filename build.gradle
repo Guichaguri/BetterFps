@@ -35,8 +35,8 @@ minecraft {
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'me.guichaguri.betterfps.BetterFps',
-                'FMLCorePluginContainsFMLMod': 'true'
+        attributes  'FMLCorePlugin': 'me.guichaguri.betterfps.fml.BetterFpsForge',
+                    'FMLCorePluginContainsFMLMod': 'true'
     }
 }
 

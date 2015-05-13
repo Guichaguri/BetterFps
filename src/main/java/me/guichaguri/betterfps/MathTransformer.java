@@ -17,7 +17,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author Guilherme Chaguri
  */
-public class BetterFpsTransformer implements IClassTransformer {
+public class MathTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String name2, byte[] bytes) {
         if(bytes == null) return null;
@@ -39,20 +39,23 @@ public class BetterFpsTransformer implements IClassTransformer {
         String cosOb = "b"; //func_76134_b
         String cosDeob = "cos";
 
-        BetterHelper.loadConfig();
-        if(BetterHelper.ALGORITHM_NAME.equals("vanilla")) {
-            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterHelper.displayHelpers.get(BetterHelper.ALGORITHM_NAME));
+        if(BetterFpsHelper.CONFIG == null) {
+            BetterFpsHelper.loadConfig();
+        }
+
+        if(BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
+            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
             return bytes;
         } else {
-            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterHelper.displayHelpers.get(BetterHelper.ALGORITHM_NAME));
+            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
         }
 
         ClassReader reader;
-        if(BetterHelper.LOC == null) {
-            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterHelper.ALGORITHM_CLASS);
+        if(BetterFpsHelper.LOC == null) {
+            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
         } else {
-            JarFile jar = new JarFile(BetterHelper.LOC);
-            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterHelper.ALGORITHM_CLASS + ".class");
+            JarFile jar = new JarFile(BetterFpsHelper.LOC);
+            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterFpsHelper.ALGORITHM_CLASS + ".class");
             reader = new ClassReader(jar.getInputStream(e));
             jar.close();
         }
