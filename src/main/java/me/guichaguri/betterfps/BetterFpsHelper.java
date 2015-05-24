@@ -3,25 +3,22 @@ package me.guichaguri.betterfps;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Properties;
-import net.minecraft.util.MathHelper;
+import net.minecraft.client.settings.KeyBinding;
 
 /**
  * @author Guilherme Chaguri
  */
-public abstract class BetterFpsHelper {
+public class BetterFpsHelper {
 
     public static final String MODID = "betterfps";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.1.1";
+    public static boolean FORGE = false;
 
     public static final String[] TRANSFORMERS = new String[]{
             "me.guichaguri.betterfps.MathTransformer"
     };
-
-    public static File LOC = null;
 
     // Config Name, Class Name
     public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>();
@@ -49,6 +46,8 @@ public abstract class BetterFpsHelper {
         displayHelpers.put("random", "Random Math");
     }
 
+    public static KeyBinding MENU_KEY;
+    public static File LOC;
     public static File MCDIR = null;
     public static Properties CONFIG = null;
     private static File CONFIG_FILE = null;
@@ -56,27 +55,7 @@ public abstract class BetterFpsHelper {
     public static String ALGORITHM_CLASS;
 
     public static void init() {
-        if(!BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
-            try {
-                Method m = MathHelper.class.getMethod("bfInit");
-                m.setAccessible(true);
-                m.invoke(null);
-            } catch(Exception ex) {
-                // Maybe bfInit does not exist? Can be possible if the algorithm does not have a static block
-            }
-            try {
-                // UNLOAD CACHED UNNECESSARY VALUES
-                for(Field f : MathHelper.class.getDeclaredFields()) {
-                    String name = f.getName();
-                    if((name.equals("SIN_TABLE")) || (name.equals("a"))) { // field_76144_a
-                        f.setAccessible(true);
-                        f.set(null, null);
-                    }
-                }
-            } catch(Exception ex) {
-                // An error ocurred while unloading vanilla sin table? Its not a big problem.
-            }
-        }
+        MathTransformer.unloadUselessValues();
     }
 
     public static void loadConfig() {
@@ -96,6 +75,7 @@ public abstract class BetterFpsHelper {
         }
 
         ALGORITHM_NAME = CONFIG.getProperty("algorithm", "rivens-full");
+        ALGORITHM_CLASS = helpers.get(ALGORITHM_NAME);
         CONFIG.setProperty("algorithm", ALGORITHM_NAME);
 
         saveConfig();

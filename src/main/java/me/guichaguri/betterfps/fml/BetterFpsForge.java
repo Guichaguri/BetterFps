@@ -34,6 +34,7 @@ public class BetterFpsForge implements IFMLLoadingPlugin, IFMLCallHook {
     @Override
     public void injectData(Map<String, Object> data) {
         BetterFpsHelper.LOC = (File)data.get("coremodLocation");
+        BetterFpsHelper.FORGE = true;
     }
     @Override
     public String getAccessTransformerClass() {

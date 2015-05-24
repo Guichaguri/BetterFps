@@ -5,16 +5,21 @@ import com.google.common.eventbus.Subscribe;
 import java.io.File;
 import java.util.Arrays;
 import me.guichaguri.betterfps.BetterFpsHelper;
+import me.guichaguri.betterfps.gui.GuiBetterFpsConfig;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.versioning.VersionRange;
+import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author Guilherme Chaguri
@@ -32,7 +37,6 @@ public class BetterFpsContainer extends DummyModContainer {
         return meta;
     }
 
-    public static Configuration CONFIG;
     public static Property CONFIG_ALGORITHM;
 
     public BetterFpsContainer() {
@@ -47,18 +51,25 @@ public class BetterFpsContainer extends DummyModContainer {
 
     @Subscribe
     public void init(FMLInitializationEvent event) {
+        BetterFpsHelper.FORGE = true;
+
         FMLCommonHandler.instance().bus().register(this);
 
         BetterFpsHelper.init();
+
+        if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            BetterFpsHelper.MENU_KEY = new KeyBinding("Settings", Keyboard.KEY_F12, "BetterFps");
+            ClientRegistry.registerKeyBinding(BetterFpsHelper.MENU_KEY);
+        }
 
         // IMPORTING OLD CONFIG - WILL BE REMOVED IN THE FUTURE
         File oldConfig = new File("config", "betterfps.cfg");
         boolean b = oldConfig.exists();
 
-        CONFIG = b ? new Configuration(oldConfig) : new Configuration();
-        CONFIG_ALGORITHM = CONFIG.get("betterfps", "algorithm", "rivens-full");
+        Configuration config = b ? new Configuration(oldConfig) : new Configuration();
+        CONFIG_ALGORITHM = config.get("betterfps", "algorithm", "rivens-full");
         if(b) {
-            BetterFpsHelper.ALGORITHM_NAME = CONFIG_ALGORITHM.getString();
+            BetterFpsHelper.CONFIG.setProperty("algorithm", CONFIG_ALGORITHM.getString());
             BetterFpsHelper.saveConfig();
             oldConfig.deleteOnExit();
         }
@@ -73,19 +84,19 @@ public class BetterFpsContainer extends DummyModContainer {
             validValues[i] = s; i++;
         }
         CONFIG_ALGORITHM.setValidValues(validValues);
+        // ---------------------------------------------------
     }
 
     @SubscribeEvent
-    public void OnConfigChangedEvent(OnConfigChangedEvent event) {
-        if(event.modID.equals(BetterFpsHelper.MODID)) {
-            BetterFpsHelper.CONFIG.setProperty("algorithm", CONFIG_ALGORITHM.getString());
-            BetterFpsHelper.saveConfig();
+    public void KeyInputEvent(KeyInputEvent event) {
+        if(BetterFpsHelper.MENU_KEY.isPressed()) {
+            GuiBetterFpsConfig.openGui();
         }
     }
 
     @Override
     public String getGuiClassName() {
-        return "me.guichaguri.betterfps.client.ConfigFactory";
+        return "me.guichaguri.betterfps.fml.ConfigFactory";
     }
 
     @Override

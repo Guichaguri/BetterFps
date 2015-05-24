@@ -1,9 +1,12 @@
 package me.guichaguri.betterfps;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.util.MathHelper;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -18,6 +21,31 @@ import org.objectweb.asm.tree.MethodNode;
  * @author Guilherme Chaguri
  */
 public class MathTransformer implements IClassTransformer {
+
+    public static void unloadUselessValues() {
+        if(!BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
+            try {
+                Method m = MathHelper.class.getMethod("bfInit");
+                m.setAccessible(true);
+                m.invoke(null);
+            } catch(Exception ex) {
+                // Maybe bfInit does not exist? Can be possible if the algorithm does not have a static block
+            }
+            try {
+                // UNLOAD CACHED UNNECESSARY VALUES
+                for(Field f : MathHelper.class.getDeclaredFields()) {
+                    String name = f.getName();
+                    if((name.equals("SIN_TABLE")) || (name.equals("a"))) { // field_76144_a
+                        f.setAccessible(true);
+                        f.set(null, null);
+                    }
+                }
+            } catch(Exception ex) {
+                // An error ocurred while unloading vanilla sin table? Its not a big problem.
+            }
+        }
+    }
+
     @Override
     public byte[] transform(String name, String name2, byte[] bytes) {
         if(bytes == null) return null;
@@ -51,9 +79,13 @@ public class MathTransformer implements IClassTransformer {
         }
 
         ClassReader reader;
-        if(BetterFpsHelper.LOC == null) {
+        System.out.println(BetterFpsHelper.LOC);
+        System.out.println(BetterFpsHelper.ALGORITHM_CLASS);
+        if(BetterFpsHelper.LOC == null) { // Development environment?
+            System.out.println("NO FILE");
             reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
         } else {
+            System.out.println("FILE!!!!!!!!");
             JarFile jar = new JarFile(BetterFpsHelper.LOC);
             ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterFpsHelper.ALGORITHM_CLASS + ".class");
             reader = new ClassReader(jar.getInputStream(e));

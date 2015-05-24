@@ -1,6 +1,7 @@
 package me.guichaguri.betterfps.vanilla;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.launchwrapper.ITweaker;
@@ -18,45 +19,66 @@ public class BetterFpsTweaker implements ITweaker {
     };
 
     private List<String> args;
-    private boolean forge = false;
 
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
-        this.args = args;
+        this.args = new ArrayList<String>(args);
+        this.args.add("--version");
+        this.args.add(profile);
+        this.args.add("--assetsDir");
+        this.args.add(assetsDir.getAbsolutePath());
+        this.args.add("--gameDir");
+        this.args.add(gameDir.getAbsolutePath());
+        BetterFpsHelper.MCDIR = gameDir;
         try {
             Class.forName("net.minecraftforge.fml.common.launcher.FMLTweaker");
             System.out.println("FORGE FOUND, ignoring vanilla tweaker");
-            forge = true;
-            /*List<String> tweakers = (List<String>)Launch.blackboard.get("TweakClasses");
-            for(String tweaker : tweakers) {
-                System.out.println(tweaker);
-                if(tweaker.startsWith("net.minecraftforge")) {
-                    forge = true;
-                }
-            }*/
+            BetterFpsHelper.FORGE = true;
         } catch(Exception ex) {
-            forge = false;
+            BetterFpsHelper.FORGE = false;
         }
+
+        // HACKY WAY TO GET THE LIBRARY FILE, I THINK THIS IS TEMPORARY (or maybe not?)
+        /*String cp = System.getProperty("java.class.path");
+        String[] cpArray = cp.split(";");
+        if(cpArray.length < 2) {
+            cpArray = cp.split(":");
+        }
+        for(String lib : cpArray) {
+            String libLower = lib.toLowerCase();
+            if(libLower.contains("betterfps")) {
+                if(libLower.contains("libraries") || libLower.contains("library") || libLower.contains("betterfps/betterfps")) {
+                    System.out.println(lib);
+                    BetterFpsHelper.LOC = new File(lib);
+                    break;
+                }
+            }
+        }*/
+        // ----------------------------------------------------------------------------
     }
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
-        if(forge) return;
+        if(BetterFpsHelper.FORGE) return;
         for(String transformer : BetterFpsHelper.TRANSFORMERS) {
             cl.registerTransformer(transformer);
         }
+        cl.registerTransformer("me.guichaguri.betterfps.vanilla.EventTransformer");
+
         for(String excluded : EXCLUDED) {
-            cl.addClassLoaderExclusion(excluded);
+            cl.addTransformerExclusion(excluded);
         }
+
+        cl.addClassLoaderExclusion("me.guichaguri.betterfps.fml.");
     }
 
     @Override
     public String getLaunchTarget() {
-        return forge ? "net.minecraft.client.main.Main" : "me.guichaguri.betterfps.vanilla.BetterFpsLauncher";
+        return "net.minecraft.client.main.Main";
     }
 
     @Override
     public String[] getLaunchArguments() {
-        return forge ? new String[0] : args.toArray(new String[args.size()]);
+        return BetterFpsHelper.FORGE ? new String[0] : args.toArray(new String[args.size()]);
     }
 }
