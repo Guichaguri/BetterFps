@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.versioning.VersionRange;
@@ -37,7 +38,7 @@ public class BetterFpsContainer extends DummyModContainer {
         return meta;
     }
 
-    public static Property CONFIG_ALGORITHM;
+    private static KeyBinding MENU_KEY;
 
     public BetterFpsContainer() {
         super(createMetadata());
@@ -50,6 +51,26 @@ public class BetterFpsContainer extends DummyModContainer {
     }
 
     @Subscribe
+    public void preInit(FMLPreInitializationEvent event) {
+
+        if(BetterFpsHelper.CONFIG == null) {
+            BetterFpsHelper.loadConfig();
+        }
+
+        // IMPORTING OLD CONFIG - WILL BE REMOVED IN THE FUTURE
+        File oldConfig = event.getSuggestedConfigurationFile();
+        if(oldConfig.exists()) {
+            Configuration config = new Configuration(oldConfig);
+            Property configAlgorithm = config.get("betterfps", "algorithm", "rivens-full");
+            BetterFpsHelper.CONFIG.setProperty("algorithm", configAlgorithm.getString());
+            BetterFpsHelper.saveConfig(); // Save the new algorithm
+            BetterFpsHelper.loadConfig(); // Load the new algorithm
+            oldConfig.deleteOnExit();
+        }
+
+    }
+
+    @Subscribe
     public void init(FMLInitializationEvent event) {
         BetterFpsHelper.FORGE = true;
 
@@ -58,38 +79,15 @@ public class BetterFpsContainer extends DummyModContainer {
         BetterFpsHelper.init();
 
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-            BetterFpsHelper.MENU_KEY = new KeyBinding("Settings", Keyboard.KEY_F12, "BetterFps");
-            ClientRegistry.registerKeyBinding(BetterFpsHelper.MENU_KEY);
+            MENU_KEY = new KeyBinding("Settings", Keyboard.KEY_F12, "BetterFps");
+            ClientRegistry.registerKeyBinding(MENU_KEY);
         }
-
-        // IMPORTING OLD CONFIG - WILL BE REMOVED IN THE FUTURE
-        File oldConfig = new File("config", "betterfps.cfg");
-        boolean b = oldConfig.exists();
-
-        Configuration config = b ? new Configuration(oldConfig) : new Configuration();
-        CONFIG_ALGORITHM = config.get("betterfps", "algorithm", "rivens-full");
-        if(b) {
-            BetterFpsHelper.CONFIG.setProperty("algorithm", CONFIG_ALGORITHM.getString());
-            BetterFpsHelper.saveConfig();
-            oldConfig.deleteOnExit();
-        }
-        CONFIG_ALGORITHM.set(BetterFpsHelper.ALGORITHM_NAME);
-        CONFIG_ALGORITHM.setRequiresMcRestart(true);
-        String v = "";
-        for(String s : BetterFpsHelper.helpers.keySet()) v += ", " + s;
-        CONFIG_ALGORITHM.comment = "The algorithm to be used.\nValues: " + v.substring(2);
-        String[] validValues = new String[BetterFpsHelper.displayHelpers.size()];
-        int i = 0;
-        for(String s : BetterFpsHelper.displayHelpers.values()) {
-            validValues[i] = s; i++;
-        }
-        CONFIG_ALGORITHM.setValidValues(validValues);
-        // ---------------------------------------------------
     }
+
 
     @SubscribeEvent
     public void KeyInputEvent(KeyInputEvent event) {
-        if(BetterFpsHelper.MENU_KEY.isPressed()) {
+        if(MENU_KEY.isPressed()) {
             GuiBetterFpsConfig.openGui();
         }
     }

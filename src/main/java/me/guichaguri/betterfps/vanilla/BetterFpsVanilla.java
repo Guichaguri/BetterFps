@@ -4,12 +4,16 @@ import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.gui.GuiBetterFpsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 
 /**
  * @author Guilherme Chaguri
  */
 public class BetterFpsVanilla {
+
+    private static Minecraft MC;
+    private static KeyBinding MENU_KEY;
 
     public static void start() {
         System.out.println("STAAAAAART");
@@ -19,26 +23,24 @@ public class BetterFpsVanilla {
 
         BetterFpsHelper.init();
 
-        BetterFpsHelper.MENU_KEY = new KeyBinding("Settings", Keyboard.KEY_F12, "BetterFps");
-        registerKeyBinding(BetterFpsHelper.MENU_KEY);
+        MENU_KEY = new KeyBinding("BetterFps", Keyboard.KEY_F12, "key.categories.misc");
+        registerKeyBinding(MENU_KEY);
     }
 
     public static void keyEvent() {
         System.out.println("KEY EVENTTTTTTTTT");
-        if(BetterFpsHelper.MENU_KEY.isPressed()) {
+        if(MENU_KEY.isPressed()) {
             GuiBetterFpsConfig.openGui();
         }
     }
 
     private static void registerKeyBinding(KeyBinding key) {
-        KeyBinding[] bindings = Minecraft.getMinecraft().gameSettings.keyBindings;
-        KeyBinding[] newBindings = new KeyBinding[bindings.length + 1];
-        int i;
-        for(i = 0; i < bindings.length; i++) {
-            newBindings[i] = bindings[i];
-        }
-        newBindings[i + 1] = key;
-        Minecraft.getMinecraft().gameSettings.keyBindings = newBindings;
+        MC.gameSettings.keyBindings = ArrayUtils.add(MC.gameSettings.keyBindings, key);
+    }
+
+    public static void setMc(Minecraft minecraft) {
+        System.out.println("SET MCCCCCCCCCCCC");
+        MC = minecraft;
     }
 
 }

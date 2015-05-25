@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Properties;
-import net.minecraft.client.settings.KeyBinding;
 
 /**
  * @author Guilherme Chaguri
@@ -46,11 +45,11 @@ public class BetterFpsHelper {
         displayHelpers.put("random", "Random Math");
     }
 
-    public static KeyBinding MENU_KEY;
     public static File LOC;
     public static File MCDIR = null;
     public static Properties CONFIG = null;
     private static File CONFIG_FILE = null;
+
     public static String ALGORITHM_NAME;
     public static String ALGORITHM_CLASS;
 

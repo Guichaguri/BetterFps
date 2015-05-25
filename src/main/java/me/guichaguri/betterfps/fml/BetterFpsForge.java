@@ -23,19 +23,23 @@ public class BetterFpsForge implements IFMLLoadingPlugin, IFMLCallHook {
     public String[] getASMTransformerClass() {
         return BetterFpsHelper.TRANSFORMERS;
     }
+
     @Override
     public String getModContainerClass() {
         return "me.guichaguri.betterfps.fml.BetterFpsContainer";
     }
+
     @Override
     public String getSetupClass() {
         return "me.guichaguri.betterfps.fml.BetterFpsForge";
     }
+
     @Override
     public void injectData(Map<String, Object> data) {
         BetterFpsHelper.LOC = (File)data.get("coremodLocation");
         BetterFpsHelper.FORGE = true;
     }
+
     @Override
     public String getAccessTransformerClass() {
         return null;

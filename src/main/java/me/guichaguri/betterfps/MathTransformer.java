@@ -79,13 +79,9 @@ public class MathTransformer implements IClassTransformer {
         }
 
         ClassReader reader;
-        System.out.println(BetterFpsHelper.LOC);
-        System.out.println(BetterFpsHelper.ALGORITHM_CLASS);
-        if(BetterFpsHelper.LOC == null) { // Development environment?
-            System.out.println("NO FILE");
+        if(BetterFpsHelper.LOC == null) { // Development or vanilla environment?
             reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
-        } else {
-            System.out.println("FILE!!!!!!!!");
+        } else { // Forge environment
             JarFile jar = new JarFile(BetterFpsHelper.LOC);
             ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterFpsHelper.ALGORITHM_CLASS + ".class");
             reader = new ClassReader(jar.getInputStream(e));

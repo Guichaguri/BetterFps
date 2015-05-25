@@ -37,24 +37,6 @@ public class BetterFpsTweaker implements ITweaker {
         } catch(Exception ex) {
             BetterFpsHelper.FORGE = false;
         }
-
-        // HACKY WAY TO GET THE LIBRARY FILE, I THINK THIS IS TEMPORARY (or maybe not?)
-        /*String cp = System.getProperty("java.class.path");
-        String[] cpArray = cp.split(";");
-        if(cpArray.length < 2) {
-            cpArray = cp.split(":");
-        }
-        for(String lib : cpArray) {
-            String libLower = lib.toLowerCase();
-            if(libLower.contains("betterfps")) {
-                if(libLower.contains("libraries") || libLower.contains("library") || libLower.contains("betterfps/betterfps")) {
-                    System.out.println(lib);
-                    BetterFpsHelper.LOC = new File(lib);
-                    break;
-                }
-            }
-        }*/
-        // ----------------------------------------------------------------------------
     }
 
     @Override
