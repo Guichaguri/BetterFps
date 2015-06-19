@@ -1,22 +1,11 @@
-JSON in Java [package org.json]
+All the code of this package was made by Douglas Crockford (douglas@crockford.com)
 
-This package needs a new owner. I have not used it in over a decade, and I do 
-not have time to maintain programs that I do not use.
-
-If you think you can give this package a good home, please contact me.
-
-Douglas Crockford
-douglas@crockford.com
-
-2015-02-06
-
+Original Source: https://github.com/douglascrockford/JSON-java
 
 JSON is a light-weight, language independent, data interchange format.
 See http://www.JSON.org/
 
 The files in this package implement JSON encoders/decoders in Java.
-It also includes the capability to convert between JSON and XML, HTTP
-headers, Cookies, and CDL.
 
 This is a reference implementation. There is a large number of JSON packages
 in Java. Perhaps someday the Java community will standardize on one. Until
@@ -27,5 +16,5 @@ not evil." If your conscience cannot live with that, then choose a different
 package.
 
 This package was changed by Guilherme Chaguri in order to minify it, removing
-useless files in this project. All of the code for this library was made by
+useless files for this project. All of the code for this library was made by
 Douglas Crockford.
