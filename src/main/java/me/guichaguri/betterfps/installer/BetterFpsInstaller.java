@@ -1,12 +1,14 @@
 package me.guichaguri.betterfps.installer;
 
-import java.awt.*;
+import java.awt.Desktop;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.List;
 import javax.swing.*;
 
 /**
@@ -43,6 +45,10 @@ public class BetterFpsInstaller extends JFrame implements ActionListener {
     // Frame components
     private JTextField installLocation;
     private JFileChooser fc;
+
+    private JDialog versionDialog = null;
+
+    private JComboBox versionComboBox = null;
 
     public BetterFpsInstaller() {
         setTitle("BetterFps Installer");
@@ -118,7 +124,8 @@ public class BetterFpsInstaller extends JFrame implements ActionListener {
                                                 "Oops!", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            InstanceInstaller.install(file);
+            List<String> versions = InstanceInstaller.getVersions(file);
+            VersionSelector.open(this, file, versions);
         } else if(cmd.equals(PAGE)) {
             try {
                 Desktop.getDesktop().browse(new URI(modUrl));
@@ -131,49 +138,8 @@ public class BetterFpsInstaller extends JFrame implements ActionListener {
                 installLocation.setText(fc.getSelectedFile().getAbsolutePath());
             }
         } else if(cmd.equals(CALC_ALGORITHM)) {
-            HashMap<String, Float> results = InstanceInstaller.testAlgorithms();
-            createAlgorithmTestWindow(results);
-        }
-    }
-
-    private void createAlgorithmTestWindow(HashMap<String, Float> results) {
-        JDialog dialog = new JDialog();
-        dialog.setTitle("Test Results");
-        dialog.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(5, 5, 5, 5);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        JPanel resultsPanel = new JPanel();
-        resultsPanel.setLayout(new GridLayout(0, 2, 5, 0));
-        for(Entry<String, Float> e : results.entrySet()) {
-            resultsPanel.add(new JLabel(e.getKey(), JLabel.RIGHT));
-            resultsPanel.add(new JLabel((float)Math.round(e.getValue() * 100) / 100 + "ms", JLabel.LEFT));
-        }
-        dialog.add(resultsPanel, c);
-        JButton changeAlgorithm = new JButton("Change Algorithm");
-        changeAlgorithm.setToolTipText("This will change the config file setting the best algorithm for you.");
-        dialog.add(changeAlgorithm, c);
-        JButton close = new JButton("Close");
-        dialog.add(close, c);
-        Dimension d = dialog.getPreferredSize();
-        dialog.setSize(new Dimension(d.width + 50, d.height + 50));
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-    }
-
-    public static class InstallerVersionSelector extends JDialog {
-        JComboBox versions;
-        public InstallerVersionSelector() {
-            setTitle("Select a Version");
-            setLayout(new FlowLayout());
-
-            versions = new JComboBox();
-            versions.addItem("1.8-Optifine");
-
-            add(versions);
-
-            pack();
+            File file = new File(installLocation.getText());
+            AlgorithmTester.open(this, file, CALC_ALGORITHM, this);
         }
     }
 
