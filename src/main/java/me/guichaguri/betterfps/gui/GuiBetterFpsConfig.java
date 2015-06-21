@@ -1,8 +1,11 @@
 package me.guichaguri.betterfps.gui;
 
+import java.io.IOException;
+import me.guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 
 /**
  * @author Guilherme Chaguri
@@ -10,39 +13,56 @@ import net.minecraft.client.gui.GuiScreen;
 public class GuiBetterFpsConfig extends GuiScreen {
 
     public static void openGui() {
-        Minecraft.getMinecraft().displayGuiScreen(new GuiBetterFpsConfig());
+        GuiBetterFpsConfig gui = new GuiBetterFpsConfig();
+        System.out.println(gui.getClass().getClassLoader());
+        Minecraft.getMinecraft().displayGuiScreen(gui);
     }
 
-    private GuiButton algorithmType = null;
+    private String screenTitle = "BetterFps Options";
 
 
     public GuiBetterFpsConfig() {
 
     }
     public GuiBetterFpsConfig(GuiScreen parent) {
-
     }
 
 
     @Override
     public void initGui() {
-        algorithmType = new GuiButton(0, 0, 0, "Algorithm");
+        buttonList.clear();
+        buttonList.add(new GuiButton(-1, this.width / 2 - 100, this.height - 27, I18n.format("gui.done")));
+
+        int id = 2;
+        int width1 = width / 2 - 155;
+        int width2 = width / 2 + 5;
+        int height = 25;
+
+        buttonList.add(new GuiCycleButton(id, width1, height, 310, 20,
+                        "Algorithm", BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
+
+        for(String option : new String[]{"Teste", "Teste2", "Teste3", "Teste4"}) {
+            boolean first = id % 2 == 0;
+            //buttonList.add(new GuiCycleButton(id, first ? width1 : width2, height, 150, 20, option));
+            if(!first) height += 25;
+            id++;
+        }
+
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        int wHalf = width / 2;
-        int hHalf = height / 2;
-        drawCenteredString(fontRendererObj, "BetterFps Config", wHalf, hHalf - 50, 0xFFFFFF);
-        algorithmType.xPosition = wHalf;
-        algorithmType.yPosition = hHalf;
-        algorithmType.drawButton(mc, mouseX, mouseY);
+        drawCenteredString(fontRendererObj, screenTitle, this.width / 2, 5, 0xFFFFFF);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    protected void actionPerformed(GuiButton button) throws IOException {
+        super.actionPerformed(button);
+        if(button instanceof GuiCycleButton) {
+            ((GuiCycleButton)button).actionPerformed();
+        }
     }
 
     @Override
