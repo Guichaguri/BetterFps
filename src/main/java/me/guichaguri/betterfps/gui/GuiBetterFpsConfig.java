@@ -1,6 +1,7 @@
 package me.guichaguri.betterfps.gui;
 
 import java.io.IOException;
+import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -13,18 +14,17 @@ import net.minecraft.client.resources.I18n;
 public class GuiBetterFpsConfig extends GuiScreen {
 
     public static void openGui() {
+        // TODO - TOFIX
         GuiBetterFpsConfig gui = new GuiBetterFpsConfig();
-        System.out.println(gui.getClass().getClassLoader());
         Minecraft.getMinecraft().displayGuiScreen(gui);
     }
 
-    private String screenTitle = "BetterFps Options";
-
-
+    private GuiScreen parent = null;
     public GuiBetterFpsConfig() {
 
     }
     public GuiBetterFpsConfig(GuiScreen parent) {
+        this.parent = parent;
     }
 
 
@@ -34,26 +34,27 @@ public class GuiBetterFpsConfig extends GuiScreen {
         buttonList.add(new GuiButton(-1, this.width / 2 - 100, this.height - 27, I18n.format("gui.done")));
 
         int id = 2;
-        int width1 = width / 2 - 155;
-        int width2 = width / 2 + 5;
-        int height = 25;
+        int x1 = width / 2 - 155;
+        int x2 = width / 2 + 5;
+        int y = 25;
 
-        buttonList.add(new GuiCycleButton(id, width1, height, 310, 20,
+        buttonList.add(new GuiCycleButton(id, x1, y, 310, 20,
                         "Algorithm", BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
 
-        for(String option : new String[]{"Teste", "Teste2", "Teste3", "Teste4"}) {
+        /*for(String option : options) {
             boolean first = id % 2 == 0;
-            //buttonList.add(new GuiCycleButton(id, first ? width1 : width2, height, 150, 20, option));
+            buttonList.add(new GuiCycleButton(id, first ? x1 : x2, y, 150, 20, option));
             if(!first) height += 25;
             id++;
-        }
+        }*/
+        // TODO: Finish this
 
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        drawCenteredString(fontRendererObj, screenTitle, this.width / 2, 5, 0xFFFFFF);
+        drawCenteredString(fontRendererObj, "BetterFps Options", this.width / 2, 7, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -62,13 +63,28 @@ public class GuiBetterFpsConfig extends GuiScreen {
         super.actionPerformed(button);
         if(button instanceof GuiCycleButton) {
             ((GuiCycleButton)button).actionPerformed();
+        } else if(button.id == -1) {
+            boolean restart = false;
+
+            GuiCycleButton algorithmButton = getCycleButton(2);
+            String algorithm = algorithmButton.getSelectedValue();
+            if(algorithm.equals(BetterFpsHelper.ALGORITHM_NAME)) restart = true;
+            BetterFpsHelper.CONFIG.setProperty("algorithm", algorithm);
+
+            BetterFpsHelper.saveConfig();
+            BetterFpsHelper.loadConfig();
+
+            mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
         }
     }
 
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        // SAVE
+    private GuiCycleButton getCycleButton(int id) {
+        for(GuiButton button : (List<GuiButton>)buttonList) {
+            if(button.id == id) {
+                return (GuiCycleButton)button;
+            }
+        }
+        return null;
     }
 
     @Override
