@@ -35,7 +35,7 @@ minecraft {
 
 jar {
     manifest {
-        attributes  'TweakClass': 'TODO', // TODO
+        attributes  'TweakClass': 'me.guichaguri.betterfps.tweaker.BetterFpsTweaker',
                     'TweakOrder': '600',
                     'Main-Class': 'me.guichaguri.betterfps.installer.BetterFpsInstaller'
     }

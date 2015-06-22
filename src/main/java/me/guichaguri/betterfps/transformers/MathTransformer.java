@@ -1,10 +1,11 @@
-package me.guichaguri.betterfps;
+package me.guichaguri.betterfps.transformers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import me.guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.util.MathHelper;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +25,7 @@ import org.objectweb.asm.tree.MethodNode;
 public class MathTransformer implements IClassTransformer {
 
     public static void unloadUselessValues() {
-        if(!BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
+        if(!BetterFpsHelper.ALGORITHM_NAME.equals("tweaker")) {
             try {
                 Method m = MathHelper.class.getMethod("bfInit");
                 m.setAccessible(true);
@@ -42,7 +43,7 @@ public class MathTransformer implements IClassTransformer {
                     }
                 }
             } catch(Exception ex) {
-                // An error ocurred while unloading vanilla sin table? Its not a big problem.
+                // An error ocurred while unloading tweaker sin table? Its not a big problem.
             }
         }
     }
@@ -72,7 +73,7 @@ public class MathTransformer implements IClassTransformer {
             BetterFpsHelper.loadConfig();
         }
 
-        if(BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
+        if(BetterFpsHelper.ALGORITHM_NAME.equals("tweaker")) {
             LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
             return bytes;
         } else {
@@ -80,7 +81,7 @@ public class MathTransformer implements IClassTransformer {
         }
 
         ClassReader reader;
-        if(BetterFpsHelper.LOC == null) { // Development or vanilla environment?
+        if(BetterFpsHelper.LOC == null) { // Development or tweaker environment?
             reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
         } else { // Forge environment
             JarFile jar = new JarFile(BetterFpsHelper.LOC);

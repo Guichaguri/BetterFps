@@ -1,4 +1,4 @@
-package me.guichaguri.betterfps.vanilla;
+package me.guichaguri.betterfps.tweaker;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,14 +8,19 @@ import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 /**
- * Only used when is pure vanilla
+ * Only used when is pure tweaker
  * @author Guilherme Chaguri
  */
 public class BetterFpsTweaker implements ITweaker {
 
+    private static final String[] TRANSFORMERS = new String[]{
+            "me.guichaguri.betterfps.transformers.MathTransformer",
+            "me.guichaguri.betterfps.transformers.EventTransformer"
+    };
+
     private final String[] EXCLUDED = new String[]{
-            //"me.guichaguri.betterfps", "me.guichaguri.betterfps.math",
-            "me.guichaguri.betterfps.vanilla", "me.guichaguri.betterfps.fml"
+            "me.guichaguri.betterfps.transformers",
+            "me.guichaguri.betterfps.tweaker"
     };
 
     private List<String> args;
@@ -32,7 +37,7 @@ public class BetterFpsTweaker implements ITweaker {
         BetterFpsHelper.MCDIR = gameDir;
         try {
             Class.forName("net.minecraftforge.fml.common.launcher.FMLTweaker");
-            System.out.println("FORGE FOUND, ignoring vanilla tweaker"); // TODO: better forge workaround
+            System.out.println("FORGE FOUND, ignoring tweaker tweaker"); // TODO: better forge workaround
             BetterFpsHelper.FORGE = true;
         } catch(Exception ex) {
             BetterFpsHelper.FORGE = false;
@@ -43,8 +48,8 @@ public class BetterFpsTweaker implements ITweaker {
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
         if(BetterFpsHelper.FORGE) return;
-        cl.registerTransformer("me.guichaguri.betterfps.vanilla.EventTransformer");
-        for(String transformer : BetterFpsHelper.TRANSFORMERS) {
+
+        for(String transformer : TRANSFORMERS) {
             cl.registerTransformer(transformer);
         }
 

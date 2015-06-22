@@ -1,7 +1,7 @@
-package me.guichaguri.betterfps.vanilla;
+package me.guichaguri.betterfps.transformers;
 
 import java.util.Iterator;
-import me.guichaguri.betterfps.transformers.Naming;
+import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
@@ -13,7 +13,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 /**
- * Used to handle events when its a vanilla client (not Forge)
+ * Used to handle events when its a tweaker client (not Forge)
  *
  * @author Guilherme Chaguri
  */
@@ -82,7 +82,7 @@ public class EventTransformer implements IClassTransformer {
                 state = 2;
                 mv.visitVarInsn(Opcodes.ALOAD, 0);
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC,
-                        "me/guichaguri/betterfps/test/BetterFpsVanilla",
+                        "me/guichaguri/betterfps/BetterFps",
                         "start", "(L" + owner + ";)V", false);
             }
         }
@@ -116,7 +116,7 @@ public class EventTransformer implements IClassTransformer {
                             list.add(new VarInsnNode(Opcodes.ALOAD, 0));
                             list.add(new VarInsnNode(Opcodes.ALOAD, 0));
                             list.add(new FieldInsnNode(Opcodes.GETFIELD, field.owner, field.name, field.desc));
-                            list.add(new FieldInsnNode(Opcodes.GETSTATIC, "me/guichaguri/betterfps/test/BetterFpsVanilla", "MENU_KEY", "Lbsr;"));
+                            list.add(new FieldInsnNode(Opcodes.GETSTATIC, "me/guichaguri/betterfps/BetterFps", "MENU_KEY", "Lbsr;"));
                             list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/apache/commons/lang3/ArrayUtils", "add", "([Ljava/lang/Object;Ljava/lang/Object;)[Ljava/lang/Object;", false));
                             list.add(new TypeInsnNode(Opcodes.CHECKCAST, "[Lbsr;"));
                             list.add(new FieldInsnNode(Opcodes.PUTFIELD, field.owner, field.name, field.desc));
@@ -165,7 +165,7 @@ public class EventTransformer implements IClassTransformer {
                             list.add(new VarInsnNode(Opcodes.ALOAD, 0));
                             // Invoke BetterFpsVanilla.start
                             list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "me/guichaguri/betterfps/test/BetterFpsVanilla",
+                                    "me/guichaguri/betterfps/BetterFps",
                                     "start", "(L" + classNode.name + ";)V", false));
                         }
                         list.add(node);
@@ -206,7 +206,7 @@ public class EventTransformer implements IClassTransformer {
 
                             list.add(new VarInsnNode(Opcodes.ILOAD, 0));
                             list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "me/guichaguri/betterfps/test/BetterFpsVanilla", "keyEvent", "(I)V", false));
+                                    "me/guichaguri/betterfps/BetterFps", "keyEvent", "(I)V", false));
 
                         }
                         list.add(node);
