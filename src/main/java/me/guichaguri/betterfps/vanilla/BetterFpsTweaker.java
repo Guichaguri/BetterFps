@@ -14,7 +14,7 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 public class BetterFpsTweaker implements ITweaker {
 
     private final String[] EXCLUDED = new String[]{
-            "me.guichaguri.betterfps", "me.guichaguri.betterfps.math",
+            //"me.guichaguri.betterfps", "me.guichaguri.betterfps.math",
             "me.guichaguri.betterfps.vanilla", "me.guichaguri.betterfps.fml"
     };
 
@@ -32,26 +32,25 @@ public class BetterFpsTweaker implements ITweaker {
         BetterFpsHelper.MCDIR = gameDir;
         try {
             Class.forName("net.minecraftforge.fml.common.launcher.FMLTweaker");
-            System.out.println("FORGE FOUND, ignoring vanilla tweaker");
+            System.out.println("FORGE FOUND, ignoring vanilla tweaker"); // TODO: better forge workaround
             BetterFpsHelper.FORGE = true;
         } catch(Exception ex) {
             BetterFpsHelper.FORGE = false;
+            //BetterFpsVanilla.preInit();
         }
     }
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
         if(BetterFpsHelper.FORGE) return;
+        cl.registerTransformer("me.guichaguri.betterfps.vanilla.EventTransformer");
         for(String transformer : BetterFpsHelper.TRANSFORMERS) {
             cl.registerTransformer(transformer);
         }
-        cl.registerTransformer("me.guichaguri.betterfps.vanilla.EventTransformer");
 
         for(String excluded : EXCLUDED) {
             cl.addTransformerExclusion(excluded);
         }
-
-        cl.addClassLoaderExclusion("me.guichaguri.betterfps.fml.");
     }
 
     @Override

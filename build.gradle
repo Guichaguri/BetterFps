@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.1.0"
+version = "1.1.1"
 group= "me.guichaguri.betterfps" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "BetterFps"
 
@@ -35,8 +35,9 @@ minecraft {
 
 jar {
     manifest {
-        attributes  'FMLCorePlugin': 'me.guichaguri.betterfps.fml.BetterFpsForge',
-                    'FMLCorePluginContainsFMLMod': 'true'
+        attributes  'TweakClass': 'TODO', // TODO
+                    'TweakOrder': '600',
+                    'Main-Class': 'me.guichaguri.betterfps.installer.BetterFpsInstaller'
     }
 }
 

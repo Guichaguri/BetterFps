@@ -3,15 +3,19 @@ package me.guichaguri.betterfps;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Properties;
+import net.minecraft.util.MathHelper;
 
 /**
  * @author Guilherme Chaguri
  */
 public class BetterFpsHelper {
 
-    public static final String MODID = "betterfps";
+    public static final String MC_VERSION = "1.8";
+
+    public static final String MODID = "betterfps"; // TODO - to remove
     public static final String VERSION = "1.1.1";
     public static boolean FORGE = false;
 
@@ -26,6 +30,7 @@ public class BetterFpsHelper {
     public static final LinkedHashMap<String, String> displayHelpers = new LinkedHashMap<String, String>();
 
     static {
+
         helpers.put("vanilla", "VanillaMath");
         helpers.put("rivens", "RivensMath");
         helpers.put("taylors", "TaylorMath");
@@ -54,7 +59,18 @@ public class BetterFpsHelper {
     public static String ALGORITHM_CLASS;
 
     public static void init() {
-        MathTransformer.unloadUselessValues();
+        try {
+            // UNLOAD CACHED UNNECESSARY VALUES
+            for(Field f : MathHelper.class.getDeclaredFields()) {
+                String name = f.getName();
+                if((name.equals("SIN_TABLE")) || (name.equals("a"))) { // field_76144_a
+                    f.setAccessible(true);
+                    f.set(null, null);
+                }
+            }
+        } catch(Exception ex) {
+            // An error ocurred while unloading vanilla sin table? Its not a big problem.
+        }
     }
 
     public static void loadConfig() {
@@ -80,6 +96,8 @@ public class BetterFpsHelper {
         saveConfig();
     }
 
+
+
     public static void saveConfig() {
         try {
             if(!CONFIG_FILE.exists()) CONFIG_FILE.createNewFile();
@@ -88,4 +106,5 @@ public class BetterFpsHelper {
             ex.printStackTrace();
         }
     }
+
 }

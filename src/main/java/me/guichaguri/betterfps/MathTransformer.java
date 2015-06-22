@@ -15,6 +15,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
@@ -137,18 +138,40 @@ public class MathTransformer implements IClassTransformer {
         }
 
         // COPY STATIC BLOCK
+        MethodNode mathClinit = null;
         for(MethodNode m : math.methods) {
             if(m.name.equals("<clinit>")) {
-                MethodNode method = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "bfInit", "()V", null, null);
-                method.instructions.add(m.instructions);
-                for(AbstractInsnNode node : method.instructions.toArray()) {
-                    if(node instanceof FieldInsnNode) {
-                        FieldInsnNode field = (FieldInsnNode)node;
-                        if(field.owner.equals(oldName)) field.owner = name;
-                    }
-                }
-                classNode.methods.add(method);
+                mathClinit = m;
+                break;
             }
+        }
+        if(mathClinit != null) {
+            MethodNode clinit = null;
+            for(MethodNode m : classNode.methods) {
+                if(m.name.equals("<clinit>")) {
+                    clinit = m;
+                    break;
+                }
+            }
+            if(clinit == null) { // Why MathHelper does not have a static block? Well, we'll create one
+                clinit = new MethodNode(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
+            }
+            InsnList list = new InsnList();
+            for(AbstractInsnNode node : mathClinit.instructions.toArray()) {
+                if(node instanceof FieldInsnNode) {
+                    FieldInsnNode field = (FieldInsnNode)node;
+                    if(field.owner.equals(oldName)) field.owner = name;
+                } else if(node.getOpcode() == Opcodes.RETURN) {
+                    continue;
+                }
+                list.add(node);
+            }
+            list.add(clinit.instructions);
+            clinit.instructions.clear();
+            clinit.instructions.add(list);
+
+            classNode.methods.remove(clinit);
+            classNode.methods.add(clinit);
         }
     }
 

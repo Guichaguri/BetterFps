@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Arrays;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.gui.GuiBetterFpsConfig;
-import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -20,12 +20,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
-import org.lwjgl.input.Keyboard;
 
 /**
  * @author Guilherme Chaguri
  */
 public class BetterFpsContainer extends DummyModContainer {
+
+
 
     private static ModMetadata createMetadata() {
         ModMetadata meta = new ModMetadata();
@@ -37,8 +38,6 @@ public class BetterFpsContainer extends DummyModContainer {
         meta.url = "http://minecraft.curseforge.com/mc-mods/229876-betterfps";
         return meta;
     }
-
-    private static KeyBinding MENU_KEY;
 
     public BetterFpsContainer() {
         super(createMetadata());
@@ -79,16 +78,15 @@ public class BetterFpsContainer extends DummyModContainer {
         BetterFpsHelper.init();
 
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-            MENU_KEY = new KeyBinding("Settings", Keyboard.KEY_F12, "BetterFps");
-            ClientRegistry.registerKeyBinding(MENU_KEY);
+            ClientRegistry.registerKeyBinding(BetterFpsHelper.MENU_KEY);
         }
     }
 
 
     @SubscribeEvent
     public void KeyInputEvent(KeyInputEvent event) {
-        if(MENU_KEY.isPressed()) {
-            GuiBetterFpsConfig.openGui();
+        if(BetterFpsHelper.MENU_KEY.isPressed()) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiBetterFpsConfig());
         }
     }
 

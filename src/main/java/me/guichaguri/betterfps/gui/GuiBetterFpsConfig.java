@@ -39,7 +39,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
         int y = 25;
 
         buttonList.add(new GuiCycleButton(id, x1, y, 310, 20,
-                        "Algorithm", BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
+                        "Algorithm", BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME)); // TODO: remove random math
 
         /*for(String option : options) {
             boolean first = id % 2 == 0;
@@ -64,11 +64,12 @@ public class GuiBetterFpsConfig extends GuiScreen {
         if(button instanceof GuiCycleButton) {
             ((GuiCycleButton)button).actionPerformed();
         } else if(button.id == -1) {
+            // Save
             boolean restart = false;
 
             GuiCycleButton algorithmButton = getCycleButton(2);
             String algorithm = algorithmButton.getSelectedValue();
-            if(algorithm.equals(BetterFpsHelper.ALGORITHM_NAME)) restart = true;
+            if(!algorithm.equals(BetterFpsHelper.ALGORITHM_NAME)) restart = true;
             BetterFpsHelper.CONFIG.setProperty("algorithm", algorithm);
 
             BetterFpsHelper.saveConfig();
