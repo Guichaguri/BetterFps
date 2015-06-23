@@ -2,9 +2,7 @@ package me.guichaguri.betterfps.installer;
 
 import java.io.*;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.installer.json.JSONArray;
@@ -83,8 +81,6 @@ public class InstanceInstaller {
     }
 
     public void setupJson() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-        String now = format.format(new Date());
 
         JSONArray libraries = versionJson.getJSONArray("libraries");
         JSONArray newArray = new JSONArray();
@@ -114,8 +110,6 @@ public class InstanceInstaller {
 
         versionJson.put("libraries", newArray);
 
-        versionJson.put("time", now);
-        versionJson.put("releaseTime", now);
         versionJson.put("mainClass", "net.minecraft.launchwrapper.Launch");
         String jar = versionJson.has("jar") ? versionJson.getString("jar") : version;
         versionJson.put("jar", jar);
