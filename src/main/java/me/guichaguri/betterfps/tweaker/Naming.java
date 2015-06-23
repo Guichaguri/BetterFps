@@ -7,7 +7,6 @@ public class Naming {
 
     public static final ObfuscationName C_Minecraft = new ObfuscationName("net.minecraft.client.Minecraft", "bsu");
     public static final ObfuscationName C_KeyBinding = new ObfuscationName("net.minecraft.client.settings.KeyBinding", "bsr");
-    public static final ObfuscationName C_GameSettings = new ObfuscationName("net.minecraft.client.settings.GameSettings", "bto");
     public static final ObfuscationName C_MathHelper = new ObfuscationName("net.minecraft.util.MathHelper", "uv");
 
     public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V");
@@ -15,7 +14,8 @@ public class Naming {
     public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F");
     public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F");
 
-    public static final ObfuscationName F_keyBindings = new ObfuscationName("keyBindings", "at");
+    public static final ObfuscationName C_FMLClientHandler = new ObfuscationName("net.minecraftforge.fml.client.FMLClientHandler", null);
+    public static final ObfuscationName M_addSpecialModEntries = new ObfuscationName("addSpecialModEntries", null, "(Ljava/util/ArrayList;)V");
 
     public static class ObfuscationName {
         private String deob;
@@ -29,6 +29,7 @@ public class Naming {
         public ObfuscationName(String deob, String ob) {
             this.deob = deob;
             this.deobRepl = deob.replaceAll("\\.", "/");
+            if(ob == null) ob = deob;
             this.ob = ob;
             this.obRepl = ob.replaceAll("\\.", "/");
         }

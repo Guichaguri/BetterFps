@@ -31,8 +31,8 @@ public class GuiBetterFpsConfig extends GuiScreen {
         int x2 = width / 2 + 5;
         int y = 25;
 
-        buttonList.add(new GuiCycleButton(id, x1, y, 310, 20,
-                        "Algorithm", BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME)); // TODO: remove random math
+        buttonList.add(new GuiCycleButton(id, x1, y, 310, 20, "Algorithm",
+                BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
 
         /*for(String option : options) {
             boolean first = id % 2 == 0;

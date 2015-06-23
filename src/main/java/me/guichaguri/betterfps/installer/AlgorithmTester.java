@@ -77,7 +77,8 @@ public class AlgorithmTester extends JDialog implements ActionListener {
     private final String CLOSE_TESTER = "close_tester";
 
     private final String DESCRIPTION = "<html><center>We recommend testing a few times<br>" +
-                                        "to confirm which is the best algorithm</center></html>";
+                                        "to confirm which is the best algorithm<br>" +
+                                        "<small>[Notice that this tester is still in development]</small></center></html>";
 
     private File mcDir;
     private String bestAlgorithm = null;
