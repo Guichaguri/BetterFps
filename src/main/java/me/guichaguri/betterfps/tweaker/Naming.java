@@ -5,17 +5,14 @@ package me.guichaguri.betterfps.tweaker;
  */
 public class Naming {
 
-    public static final ObfuscationName C_Minecraft = new ObfuscationName("net.minecraft.client.Minecraft", "bsu");
-    public static final ObfuscationName C_KeyBinding = new ObfuscationName("net.minecraft.client.settings.KeyBinding", "bsr");
-    public static final ObfuscationName C_MathHelper = new ObfuscationName("net.minecraft.util.MathHelper", "uv");
+    public static final ObfuscationName C_Minecraft = new ObfuscationName("net.minecraft.client.Minecraft", "bao");
+    public static final ObfuscationName C_KeyBinding = new ObfuscationName("net.minecraft.client.settings.KeyBinding", "bal");
+    public static final ObfuscationName C_MathHelper = new ObfuscationName("net.minecraft.util.MathHelper", "qh");
 
-    public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V");
+    public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "ag", "()V");
     public static final ObfuscationName M_onTick = new ObfuscationName("onTick", "a", "(I)V");
     public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F");
     public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F");
-
-    public static final ObfuscationName C_FMLClientHandler = new ObfuscationName("net.minecraftforge.fml.client.FMLClientHandler", null);
-    public static final ObfuscationName M_addSpecialModEntries = new ObfuscationName("addSpecialModEntries", null, "(Ljava/util/ArrayList;)V");
 
     public static class ObfuscationName {
         private String deob;
