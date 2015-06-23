@@ -1,0 +1,20 @@
+All the code of this package was made by Douglas Crockford (douglas@crockford.com)
+
+Original Source: https://github.com/douglascrockford/JSON-java
+
+JSON is a light-weight, language independent, data interchange format.
+See http://www.JSON.org/
+
+The files in this package implement JSON encoders/decoders in Java.
+
+This is a reference implementation. There is a large number of JSON packages
+in Java. Perhaps someday the Java community will standardize on one. Until
+then, choose carefully.
+
+The license includes this restriction: "The software shall be used for good,
+not evil." If your conscience cannot live with that, then choose a different
+package.
+
+This package was changed by Guilherme Chaguri in order to minify it, removing
+useless files for this project. All of the code for this library was made by
+Douglas Crockford.

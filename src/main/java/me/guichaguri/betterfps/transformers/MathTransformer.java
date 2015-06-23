@@ -1,8 +1,10 @@
-package me.guichaguri.betterfps;
+package me.guichaguri.betterfps.transformers;
 
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import me.guichaguri.betterfps.BetterFpsHelper;
+import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
@@ -12,18 +14,20 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
  * @author Guilherme Chaguri
  */
-public class BetterFpsTransformer implements IClassTransformer {
+public class MathTransformer implements IClassTransformer {
+
     @Override
     public byte[] transform(String name, String name2, byte[] bytes) {
-        if(bytes == null) return null;
+        if(bytes == null) return new byte[0];
 
         try {
-            if((name.equals("net.minecraft.util.MathHelper")) || (name.equals("qh"))) {
+            if(Naming.C_MathHelper.is(name)) {
                 return patchMath(bytes);
             }
         } catch(Exception ex) {
@@ -34,32 +38,30 @@ public class BetterFpsTransformer implements IClassTransformer {
     }
 
     private byte[] patchMath(byte[] bytes) throws Exception {
-        String sinOb = "a"; //func_76126_a
-        String sinDeob = "sin";
-        String cosOb = "b"; //func_76134_b
-        String cosDeob = "cos";
 
-        BetterMathHelper.loadConfig();
-        if(BetterMathHelper.ALGORITHM_NAME.equals("vanilla")) {
-            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterMathHelper.displayHelpers.get(BetterMathHelper.ALGORITHM_NAME));
+        if(BetterFpsHelper.CONFIG == null) {
+            BetterFpsHelper.loadConfig();
+        }
+
+        if(BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
+            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
             return bytes;
         } else {
-            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterMathHelper.displayHelpers.get(BetterMathHelper.ALGORITHM_NAME));
+            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
         }
 
         ClassReader reader;
-        if(BetterFps.LOC == null) {
-            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterMathHelper.ALGORITHM_CLASS);
-        } else {
-            JarFile jar = new JarFile(BetterFps.LOC);
-            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterMathHelper.ALGORITHM_CLASS + ".class");
+        if(BetterFpsHelper.LOC == null) { // Development or vanilla environment?
+            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
+        } else { // Forge environment
+            JarFile jar = new JarFile(BetterFpsHelper.LOC);
+            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterFpsHelper.ALGORITHM_CLASS + ".class");
             reader = new ClassReader(jar.getInputStream(e));
             jar.close();
         }
 
         ClassNode mathnode = new ClassNode();
         reader.accept(mathnode, 0);
-
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
@@ -76,18 +78,14 @@ public class BetterFpsTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(method.desc.equals("(F)F")) {
-
-                if((method.name.equals(sinOb)) || (method.name.equals(sinDeob))) {
-                    // SIN
-                    patchSin(method, mathnode, className, mathClass);
-                    patched = true;
-                } else if((method.name.equals(cosOb)) || (method.name.equals(cosDeob))) {
-                    // COS
-                    patchCos(method, mathnode, className, mathClass);
-                    patched = true;
-                }
-
+            if(Naming.M_sin.is(method.name, method.desc)) {
+                // SIN
+                patchSin(method, mathnode, className, mathClass);
+                patched = true;
+            } else if(Naming.M_cos.is(method.name, method.desc)) {
+                // COS
+                patchCos(method, mathnode, className, mathClass);
+                patched = true;
             }
 
         }
@@ -106,18 +104,40 @@ public class BetterFpsTransformer implements IClassTransformer {
         }
 
         // COPY STATIC BLOCK
+        MethodNode mathClinit = null;
         for(MethodNode m : math.methods) {
             if(m.name.equals("<clinit>")) {
-                MethodNode method = new MethodNode(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "bfInit", "()V", null, null);
-                method.instructions.add(m.instructions);
-                for(AbstractInsnNode node : method.instructions.toArray()) {
-                    if(node instanceof FieldInsnNode) {
-                        FieldInsnNode field = (FieldInsnNode)node;
-                        if(field.owner.equals(oldName)) field.owner = name;
-                    }
-                }
-                classNode.methods.add(method);
+                mathClinit = m;
+                break;
             }
+        }
+        if(mathClinit != null) {
+            MethodNode clinit = null;
+            for(MethodNode m : classNode.methods) {
+                if(m.name.equals("<clinit>")) {
+                    clinit = m;
+                    break;
+                }
+            }
+            if(clinit == null) { // Why MathHelper does not have a static block? Well, we'll create one
+                clinit = new MethodNode(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
+            }
+            InsnList list = new InsnList();
+            for(AbstractInsnNode node : mathClinit.instructions.toArray()) {
+                if(node instanceof FieldInsnNode) {
+                    FieldInsnNode field = (FieldInsnNode)node;
+                    if(field.owner.equals(oldName)) field.owner = name;
+                } else if(node.getOpcode() == Opcodes.RETURN) {
+                    continue;
+                }
+                list.add(node);
+            }
+            list.add(clinit.instructions);
+            clinit.instructions.clear();
+            clinit.instructions.add(list);
+
+            classNode.methods.remove(clinit);
+            classNode.methods.add(clinit);
         }
     }
 
@@ -135,10 +155,6 @@ public class BetterFpsTransformer implements IClassTransformer {
                 }
             }
         }
-
-        //method.instructions.add(new VarInsnNode(Opcodes.FLOAD, 0));
-        //method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "me/guichaguri/betterfps/BetterMathHelper", "sin", "(F)F", false));
-        //method.instructions.add(new InsnNode(Opcodes.FRETURN));
     }
 
     private void patchCos(MethodNode method, ClassNode math, String name, String oldName) {
@@ -155,9 +171,5 @@ public class BetterFpsTransformer implements IClassTransformer {
                 }
             }
         }
-
-        //method.instructions.add(new VarInsnNode(Opcodes.FLOAD, 0));
-        //method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "me/guichaguri/betterfps/BetterMathHelper", "cos", "(F)F", false));
-        //method.instructions.add(new InsnNode(Opcodes.FRETURN));
     }
 }
