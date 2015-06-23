@@ -15,6 +15,8 @@ public class Naming {
     public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F");
     public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F");
 
+    public static final ObfuscationName F_keyBindings = new ObfuscationName("keyBindings", "at");
+
     public static class ObfuscationName {
         private String deob;
         private String deobRepl;

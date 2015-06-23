@@ -55,8 +55,7 @@ public class EventTransformer implements IClassTransformer {
                         FieldInsnNode field = (FieldInsnNode)node;
                         if((field.getOpcode() == Opcodes.PUTFIELD) &&
                                 (field.owner.equals(classNode.name)) &&
-                                (field.name.equals("at"))) { // keyBindings
-                            // TODO: deob naming
+                                (Naming.F_keyBindings.is(field.name))) {
 
                             Label label = new Label();
                             list.add(new LabelNode(label));

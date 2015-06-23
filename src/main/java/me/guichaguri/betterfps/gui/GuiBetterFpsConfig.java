@@ -3,7 +3,6 @@ package me.guichaguri.betterfps.gui;
 import java.io.IOException;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -12,12 +11,6 @@ import net.minecraft.client.resources.I18n;
  * @author Guilherme Chaguri
  */
 public class GuiBetterFpsConfig extends GuiScreen {
-
-    public static void openGui() {
-        // TODO - TOFIX
-        GuiBetterFpsConfig gui = new GuiBetterFpsConfig();
-        Minecraft.getMinecraft().displayGuiScreen(gui);
-    }
 
     private GuiScreen parent = null;
     public GuiBetterFpsConfig() {
