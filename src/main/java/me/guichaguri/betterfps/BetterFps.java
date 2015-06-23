@@ -16,9 +16,6 @@ public class BetterFps {
     // Called in Minecraft.startGame
     public static void start(Minecraft minecraft) {
         mc = minecraft;
-        System.out.println("START GAME HAPPENING");
-        System.out.println(mc);
-        System.out.println(mc.getVersion());
 
         if(BetterFpsHelper.CONFIG == null) {
             BetterFpsHelper.loadConfig();
@@ -30,7 +27,6 @@ public class BetterFps {
     // Called at the end of KeyBinding.onTick
     public static void keyEvent(int key) {
         if(MENU_KEY.getKeyCode() == key) {
-            System.out.println("PRESSED");
             mc.displayGuiScreen(new GuiBetterFpsConfig(mc.currentScreen));
         }
     }

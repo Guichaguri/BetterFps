@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.launchwrapper.ITweaker;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 /**
- * Only used when is pure tweaker
+ *
  * @author Guilherme Chaguri
  */
 public class BetterFpsTweaker implements ITweaker {
@@ -30,25 +31,20 @@ public class BetterFpsTweaker implements ITweaker {
         this.args = new ArrayList<String>(args);
         this.args.add("--version");
         this.args.add(profile);
-        this.args.add("--assetsDir");
-        this.args.add(assetsDir.getAbsolutePath());
-        this.args.add("--gameDir");
-        this.args.add(gameDir.getAbsolutePath());
-        BetterFpsHelper.MCDIR = gameDir;
-        try {
-            Class.forName("net.minecraftforge.fml.common.launcher.FMLTweaker");
-            System.out.println("FORGE FOUND, ignoring tweaker tweaker"); // TODO: better forge workaround
-            BetterFpsHelper.FORGE = true;
-        } catch(Exception ex) {
-            BetterFpsHelper.FORGE = false;
-            //BetterFpsVanilla.preInit();
+        if(assetsDir != null) {
+            this.args.add("--assetsDir");
+            this.args.add(assetsDir.getAbsolutePath());
         }
+        if(gameDir != null) {
+            this.args.add("--gameDir");
+            this.args.add(gameDir.getAbsolutePath());
+        }
+
+        BetterFpsHelper.MCDIR = gameDir;
     }
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
-        if(BetterFpsHelper.FORGE) return;
-
         for(String transformer : TRANSFORMERS) {
             cl.registerTransformer(transformer);
         }
@@ -65,6 +61,12 @@ public class BetterFpsTweaker implements ITweaker {
 
     @Override
     public String[] getLaunchArguments() {
-        return BetterFpsHelper.FORGE ? new String[0] : args.toArray(new String[args.size()]);
+
+        ArrayList args = (ArrayList)Launch.blackboard.get("ArgumentList");
+        if(args.isEmpty()) args.addAll(this.args);
+
+        this.args = null; // Unload the list from the ram
+
+        return new String[0];
     }
 }

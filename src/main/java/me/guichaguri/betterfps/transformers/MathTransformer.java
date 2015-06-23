@@ -1,13 +1,11 @@
 package me.guichaguri.betterfps.transformers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import me.guichaguri.betterfps.BetterFpsHelper;
+import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.util.MathHelper;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -24,36 +22,12 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class MathTransformer implements IClassTransformer {
 
-    public static void unloadUselessValues() {
-        if(!BetterFpsHelper.ALGORITHM_NAME.equals("tweaker")) {
-            try {
-                Method m = MathHelper.class.getMethod("bfInit");
-                m.setAccessible(true);
-                m.invoke(null);
-            } catch(Exception ex) {
-                // Maybe bfInit does not exist? Can be possible if the algorithm does not have a static block
-            }
-            try {
-                // UNLOAD CACHED UNNECESSARY VALUES
-                for(Field f : MathHelper.class.getDeclaredFields()) {
-                    String name = f.getName();
-                    if((name.equals("SIN_TABLE")) || (name.equals("a"))) { // field_76144_a
-                        f.setAccessible(true);
-                        f.set(null, null);
-                    }
-                }
-            } catch(Exception ex) {
-                // An error ocurred while unloading tweaker sin table? Its not a big problem.
-            }
-        }
-    }
-
     @Override
     public byte[] transform(String name, String name2, byte[] bytes) {
-        if(bytes == null) return null;
+        if(bytes == null) return new byte[0];
 
         try {
-            if((name.equals("net.minecraft.util.MathHelper")) || (name.equals("uv"))) {
+            if(Naming.C_MathHelper.is(name)) {
                 return patchMath(bytes);
             }
         } catch(Exception ex) {
@@ -64,16 +38,12 @@ public class MathTransformer implements IClassTransformer {
     }
 
     private byte[] patchMath(byte[] bytes) throws Exception {
-        String sinOb = "a"; //func_76126_a
-        String sinDeob = "sin";
-        String cosOb = "b"; //func_76134_b
-        String cosDeob = "cos";
 
         if(BetterFpsHelper.CONFIG == null) {
             BetterFpsHelper.loadConfig();
         }
 
-        if(BetterFpsHelper.ALGORITHM_NAME.equals("tweaker")) {
+        if(BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
             LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
             return bytes;
         } else {
@@ -81,7 +51,7 @@ public class MathTransformer implements IClassTransformer {
         }
 
         ClassReader reader;
-        if(BetterFpsHelper.LOC == null) { // Development or tweaker environment?
+        if(BetterFpsHelper.LOC == null) { // Development or vanilla environment?
             reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
         } else { // Forge environment
             JarFile jar = new JarFile(BetterFpsHelper.LOC);
@@ -92,7 +62,6 @@ public class MathTransformer implements IClassTransformer {
 
         ClassNode mathnode = new ClassNode();
         reader.accept(mathnode, 0);
-
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
@@ -109,18 +78,14 @@ public class MathTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(method.desc.equals("(F)F")) {
-
-                if((method.name.equals(sinOb)) || (method.name.equals(sinDeob))) {
-                    // SIN
-                    patchSin(method, mathnode, className, mathClass);
-                    patched = true;
-                } else if((method.name.equals(cosOb)) || (method.name.equals(cosDeob))) {
-                    // COS
-                    patchCos(method, mathnode, className, mathClass);
-                    patched = true;
-                }
-
+            if(Naming.M_sin.is(method.name, method.desc)) {
+                // SIN
+                patchSin(method, mathnode, className, mathClass);
+                patched = true;
+            } else if(Naming.M_cos.is(method.name, method.desc)) {
+                // COS
+                patchCos(method, mathnode, className, mathClass);
+                patched = true;
             }
 
         }

@@ -14,9 +14,7 @@ import net.minecraft.util.MathHelper;
 public class BetterFpsHelper {
 
     public static final String MC_VERSION = "1.8";
-
     public static final String VERSION = "1.1.1";
-    public static boolean FORGE = false;
 
     // Config Name, Class Name
     public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>();
@@ -26,7 +24,7 @@ public class BetterFpsHelper {
 
     static {
 
-        helpers.put("tweaker", "VanillaMath");
+        helpers.put("vanilla", "VanillaMath");
         helpers.put("rivens", "RivensMath");
         helpers.put("taylors", "TaylorMath");
         helpers.put("libgdx", "LibGDXMath");
@@ -35,7 +33,7 @@ public class BetterFpsHelper {
         helpers.put("java", "JavaMath");
         helpers.put("random", "RandomMath");
 
-        displayHelpers.put("tweaker", "Vanilla Algorithm");
+        displayHelpers.put("vanilla", "Vanilla Algorithm");
         displayHelpers.put("rivens", "Riven's Algorithm");
         displayHelpers.put("taylors", "Taylor's Algorithm");
         displayHelpers.put("libgdx", "LibGDX's Algorithm");
@@ -64,7 +62,7 @@ public class BetterFpsHelper {
                 }
             }
         } catch(Exception ex) {
-            // An error ocurred while unloading tweaker sin table? Its not a big problem.
+            // An error ocurred while unloading vanilla sin table? Its not a big problem.
         }
     }
 
@@ -84,14 +82,12 @@ public class BetterFpsHelper {
             ex.printStackTrace();
         }
 
-        ALGORITHM_NAME = CONFIG.getProperty("algorithm", "rivens-full");
+        ALGORITHM_NAME = CONFIG.getProperty("algorithm", "rivens-half");
         ALGORITHM_CLASS = helpers.get(ALGORITHM_NAME);
         CONFIG.setProperty("algorithm", ALGORITHM_NAME);
 
         saveConfig();
     }
-
-
 
     public static void saveConfig() {
         try {
