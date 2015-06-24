@@ -14,9 +14,6 @@ public class Naming {
     public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F");
     public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F");
 
-    public static final ObfuscationName C_FMLClientHandler = new ObfuscationName("net.minecraftforge.fml.client.FMLClientHandler", null);
-    public static final ObfuscationName M_addSpecialModEntries = new ObfuscationName("addSpecialModEntries", null, "(Ljava/util/ArrayList;)V");
-
     public static class ObfuscationName {
         private String deob;
         private String deobRepl;
