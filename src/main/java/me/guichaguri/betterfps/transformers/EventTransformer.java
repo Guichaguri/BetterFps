@@ -29,6 +29,8 @@ public class EventTransformer implements IClassTransformer {
                 return patchStart(bytes);
             } else if(Naming.C_KeyBinding.is(name)) {
                 return patchKeyTick(bytes);
+            } else if(Naming.C_EntityPlayer.is(name)) {
+                return patchPlayerTick(bytes);
             }
         } catch(Exception ex) {
            ex.printStackTrace();
@@ -90,6 +92,45 @@ public class EventTransformer implements IClassTransformer {
 
             if(Naming.M_onTick.is(method.name, method.desc)) {
                 LogManager.getLogger().info("Patching Key Event...");
+                InsnList list = new InsnList();
+                for(AbstractInsnNode node : method.instructions.toArray()) {
+                    if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return
+
+                        list.add(new VarInsnNode(Opcodes.ILOAD, 0));
+                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                "me/guichaguri/betterfps/BetterFps", "keyEvent", "(I)V", false));
+
+                    }
+                    list.add(node);
+                }
+
+                method.instructions.clear();
+                method.instructions.add(list);
+                patch = true;
+            }
+        }
+
+        if(!patch) return bytes;
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
+
+
+    private byte[] patchPlayerTick(byte[] bytes) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(bytes);
+        classReader.accept(classNode, ClassReader.SKIP_FRAMES);
+
+        Iterator<MethodNode> methods = classNode.methods.iterator();
+        boolean patch = false;
+
+        while(methods.hasNext()) {
+            MethodNode method = methods.next();
+
+            if(Naming.M_onUpdate.is(method.name, method.desc)) {
+                LogManager.getLogger().info("Patching Player Event...");
                 InsnList list = new InsnList();
                 for(AbstractInsnNode node : method.instructions.toArray()) {
                     if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return

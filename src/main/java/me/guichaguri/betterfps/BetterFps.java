@@ -11,11 +11,9 @@ import org.lwjgl.input.Keyboard;
  * @author Guilherme Chaguri
  */
 public class BetterFps {
-    private static Minecraft mc;
+    protected static Minecraft mc;
     private static KeyBinding MENU_KEY = new KeyBinding("BetterFps", Keyboard.KEY_F12, "key.categories.misc");
-
-    // Only used when Forge is installed
-    private static Object modContainer = null;
+    private static boolean updateNotification = false;
 
     // Called in Minecraft.startGame
     public static void start(Minecraft minecraft) {
@@ -28,6 +26,7 @@ public class BetterFps {
 
         mc.gameSettings.keyBindings = ArrayUtils.add(mc.gameSettings.keyBindings, MENU_KEY);
         mc.gameSettings.loadOptions();
+
     }
 
 
@@ -35,6 +34,13 @@ public class BetterFps {
     public static void keyEvent(int key) {
         if(MENU_KEY.getKeyCode() == key) {
             mc.displayGuiScreen(new GuiBetterFpsConfig(mc.currentScreen));
+        }
+    }
+
+    // Called at the end of EntityPlayer.onUpdate
+    public static void playerTick() {
+        if(!updateNotification) {
+            updateNotification = UpdateChecker.tick();
         }
     }
 
