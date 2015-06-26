@@ -3,6 +3,7 @@ package me.guichaguri.betterfps;
 import me.guichaguri.betterfps.gui.GuiBetterFpsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.common.DummyModContainer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -29,9 +30,11 @@ public class BetterFps {
 
     }
 
-
     // Called at the end of KeyBinding.onTick
     public static void keyEvent(int key) {
+
+        DummyModContainer
+
         if(MENU_KEY.getKeyCode() == key) {
             mc.displayGuiScreen(new GuiBetterFpsConfig(mc.currentScreen));
         }

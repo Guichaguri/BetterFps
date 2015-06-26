@@ -9,6 +9,7 @@ public class Naming {
     public static final ObfuscationName C_KeyBinding = new ObfuscationName("net.minecraft.client.settings.KeyBinding", "bsr");
     public static final ObfuscationName C_EntityPlayer = new ObfuscationName("net.minecraft.entity.player.EntityPlayer", "ahd");
     public static final ObfuscationName C_MathHelper = new ObfuscationName("net.minecraft.util.MathHelper", "uv");
+    public static final ObfuscationName C_ClientBrandRetriever = new ObfuscationName("net.minecraft.client.ClientBrandRetriever", null);
 
     public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V");
     public static final ObfuscationName M_onTick = new ObfuscationName("onTick", "a", "(I)V");

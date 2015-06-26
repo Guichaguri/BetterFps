@@ -135,9 +135,8 @@ public class EventTransformer implements IClassTransformer {
                 for(AbstractInsnNode node : method.instructions.toArray()) {
                     if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return
 
-                        list.add(new VarInsnNode(Opcodes.ILOAD, 0));
                         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "me/guichaguri/betterfps/BetterFps", "keyEvent", "(I)V", false));
+                                "me/guichaguri/betterfps/BetterFps", "playerTick", "()V", false));
 
                     }
                     list.add(node);

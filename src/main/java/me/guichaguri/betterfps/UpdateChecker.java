@@ -39,18 +39,18 @@ public class UpdateChecker implements Runnable {
         EntityPlayer p = BetterFps.mc.thePlayer;
         ChatComponentText txt;
 
-        txt = new ChatComponentText("* BetterFps " + prop.getProperty("version") + " is available");
+        txt = new ChatComponentText("BetterFps " + prop.getProperty("version") + " is available");
         txt.setChatStyle(txt.getChatStyle().setColor(EnumChatFormatting.GREEN).setBold(true));
         p.addChatComponentMessage(txt);
 
-        txt = new ChatComponentText("* " + prop.getProperty("quick-description"));
-        txt.setChatStyle(txt.getChatStyle().setColor(EnumChatFormatting.BLUE).setItalic(true));
+        txt = new ChatComponentText(prop.getProperty("quick-description"));
+        txt.setChatStyle(txt.getChatStyle().setColor(EnumChatFormatting.GRAY));
         p.addChatComponentMessage(txt);
 
-        txt = new ChatComponentText("* ");
+        txt = new ChatComponentText(" ");
         txt.setChatStyle(txt.getChatStyle().setColor(EnumChatFormatting.YELLOW));
         txt.appendSibling(createButton("Download", prop.getProperty("download-url"), "Click here to download the new version"));
-        txt.appendText(" ");
+        txt.appendText("  ");
         txt.appendSibling(createButton("More Information", prop.getProperty("moreinfo-url"), "Click here for more information about the update"));
         p.addChatComponentMessage(txt);
     }
@@ -77,6 +77,7 @@ public class UpdateChecker implements Runnable {
             prop = p;
             done = true;
         } catch(Exception ex) {
+            ex.printStackTrace();
             done = true;
         }
     }
