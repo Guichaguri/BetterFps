@@ -1,18 +1,14 @@
 package me.guichaguri.betterfps.transformers;
 
 import java.util.Iterator;
+import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 /**
  *
@@ -31,6 +27,8 @@ public class EventTransformer implements IClassTransformer {
                 return patchKeyTick(bytes);
             } else if(Naming.C_EntityPlayer.is(name)) {
                 return patchPlayerTick(bytes);
+            } else if(Naming.C_ClientBrandRetriever.is(name)) {
+                return patchClientBrand(bytes);
             }
         } catch(Exception ex) {
            ex.printStackTrace();
@@ -138,6 +136,44 @@ public class EventTransformer implements IClassTransformer {
                         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                                 "me/guichaguri/betterfps/BetterFps", "playerTick", "()V", false));
 
+                    }
+                    list.add(node);
+                }
+
+                method.instructions.clear();
+                method.instructions.add(list);
+                patch = true;
+            }
+        }
+
+        if(!patch) return bytes;
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
+
+
+    public byte[] patchClientBrand(byte[] bytes) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(bytes);
+        classReader.accept(classNode, ClassReader.SKIP_FRAMES);
+
+        Iterator<MethodNode> methods = classNode.methods.iterator();
+        boolean patch = false;
+
+        while(methods.hasNext()) {
+            MethodNode method = methods.next();
+
+            if(Naming.M_getClientModName.is(method.name, method.desc)) {
+                LogManager.getLogger().info("Patching Client Brand...");
+                InsnList list = new InsnList();
+                for(AbstractInsnNode node : method.instructions.toArray()) {
+                    if(node instanceof LdcInsnNode) {
+                        LdcInsnNode ldc = (LdcInsnNode)node;
+                        if((ldc.cst instanceof String) && (ldc.cst.equals("vanilla"))) {
+                            ldc.cst = "BetterFps-" + BetterFpsHelper.VERSION;
+                        }
                     }
                     list.add(node);
                 }
