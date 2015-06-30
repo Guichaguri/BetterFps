@@ -1,8 +1,10 @@
 package me.guichaguri.betterfps.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
+import me.guichaguri.betterfps.gui.GuiCycleButton.GuiBooleanButton;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -21,26 +23,37 @@ public class GuiBetterFpsConfig extends GuiScreen {
     }
 
 
+    private List<GuiButton> initButtons() {
+        List<GuiButton> buttons = new ArrayList<GuiButton>();
+        buttons.add(new GuiCycleButton(2, "Algorithm",
+                BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
+        buttons.add(new GuiBooleanButton(4, "Update Checker", true));
+        return buttons;
+    }
+
     @Override
     public void initGui() {
         buttonList.clear();
         buttonList.add(new GuiButton(-1, this.width / 2 - 100, this.height - 27, I18n.format("gui.done")));
 
-        int id = 2;
+        List<GuiButton> buttons = initButtons();
+
         int x1 = width / 2 - 155;
         int x2 = width / 2 + 5;
         int y = 25;
+        int lastId = 0;
 
-        buttonList.add(new GuiCycleButton(id, x1, y, 310, 20, "Algorithm",
-                BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
-
-        /*for(String option : options) {
-            boolean first = id % 2 == 0;
-            buttonList.add(new GuiCycleButton(id, first ? x1 : x2, y, 150, 20, option));
-            if(!first) height += 25;
-            id++;
-        }*/
-        // TODO: Finish this
+        for(GuiButton button : buttons) {
+            boolean first = button.id % 2 != 0;
+            boolean large = button.id - 1 != lastId;
+            button.xPosition = (first || large) ? x1 : x2;
+            button.yPosition = y;
+            button.width = large ? 310 : 150;
+            button.height = 20;
+            buttonList.add(button);
+            if((!first) || (large)) y += 25;
+            lastId = button.id;
+        }
 
     }
 
@@ -64,6 +77,9 @@ public class GuiBetterFpsConfig extends GuiScreen {
             String algorithm = algorithmButton.getSelectedValue();
             if(!algorithm.equals(BetterFpsHelper.ALGORITHM_NAME)) restart = true;
             BetterFpsHelper.CONFIG.setProperty("algorithm", algorithm);
+
+            GuiBooleanButton updateButton = (GuiBooleanButton)getCycleButton(4);
+            BetterFpsHelper.CONFIG.setProperty("update-checker", updateButton.getSelectedValue() + "");
 
             BetterFpsHelper.saveConfig();
             BetterFpsHelper.loadConfig();

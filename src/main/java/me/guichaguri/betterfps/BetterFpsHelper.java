@@ -53,6 +53,8 @@ public class BetterFpsHelper {
     public static String ALGORITHM_NAME;
     public static String ALGORITHM_CLASS;
 
+    public static boolean CHECK_UPDATES = true;
+
     public static void init() {
         try {
             // UNLOAD CACHED UNNECESSARY VALUES
@@ -86,9 +88,21 @@ public class BetterFpsHelper {
 
         ALGORITHM_NAME = CONFIG.getProperty("algorithm", "rivens-half");
         ALGORITHM_CLASS = helpers.get(ALGORITHM_NAME);
+
+        CHECK_UPDATES = parseBoolean(CONFIG.getProperty("update-checker"), true);
+
         CONFIG.setProperty("algorithm", ALGORITHM_NAME);
+        CONFIG.setProperty("update-checker", CHECK_UPDATES + "");
 
         saveConfig();
+    }
+
+    private static boolean parseBoolean(String str, boolean def) {
+        try {
+            return Boolean.parseBoolean(str);
+        } catch(Exception ex) {
+            return def;
+        }
     }
 
     public static void saveConfig() {

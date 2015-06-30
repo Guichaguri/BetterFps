@@ -21,6 +21,9 @@ public class UpdateChecker implements Runnable {
 
     // Returns true when everything is done
     public static boolean tick() {
+        if(!BetterFpsHelper.CHECK_UPDATES) {
+            return true;
+        }
         if(done) {
             if((prop != null) && (!BetterFpsHelper.VERSION.equals(prop.getProperty("version")))) {
                 showUpdate();

@@ -11,14 +11,13 @@ import net.minecraft.client.gui.GuiButton;
 public class GuiCycleButton extends GuiButton {
     private String title;
     private int key = 0;
-    private List<String> keys;
-    private HashMap<String, String> values;
+    private List<? extends Object> keys;
+    private HashMap<? extends Object, String> values;
 
-    public GuiCycleButton(int buttonId, int x, int y, int width, int height,
-                          String title, HashMap<String, String> values, String defaultValue) {
-        super(buttonId, x, y, width, height, title);
+    public <T extends Object> GuiCycleButton(int buttonId, String title, HashMap<T, String> values, T defaultValue) {
+        super(buttonId, 0, 0, title);
         this.title = title;
-        this.keys = new ArrayList<String>(values.keySet());
+        this.keys = new ArrayList<T>(values.keySet());
         for(int i = 0; i < keys.size(); i++) {
             if(defaultValue.equals(keys.get(i))) {
                 key = i; break;
@@ -38,8 +37,21 @@ public class GuiCycleButton extends GuiButton {
         displayString = title + ": " + values.get(keys.get(key));
     }
 
-    public String getSelectedValue() {
-        return keys.get(key);
+    public <T extends Object> T getSelectedValue() {
+        return (T)keys.get(key);
+    }
+
+    public static class GuiBooleanButton extends GuiCycleButton {
+        private static final HashMap<Boolean, String> booleanValues = new HashMap<Boolean, String>();
+        static {
+            booleanValues.put(true, "On");
+            booleanValues.put(false, "Off");
+        }
+
+        public GuiBooleanButton(int buttonId, String title, boolean defaultValue) {
+            super(buttonId, title, booleanValues, defaultValue);
+        }
+
     }
 
 }
