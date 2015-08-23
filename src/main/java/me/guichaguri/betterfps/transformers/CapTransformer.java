@@ -1,9 +1,9 @@
 package me.guichaguri.betterfps.transformers;
 
 import java.util.Iterator;
+import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -38,7 +38,7 @@ public class CapTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
             if(Naming.M_onUpdate.is(method.name, method.desc)) {
-                LogManager.getLogger().info("Patching Entity Cap... (" + classNode.name + ")");
+                BetterFps.log.info("Patching Entity Cap... (" + classNode.name + ")");
                 InsnList list = new InsnList();
 
                 boolean b = false;

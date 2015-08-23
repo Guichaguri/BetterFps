@@ -17,6 +17,7 @@ public class BetterFpsClient {
     // Called in Minecraft.startGame
     public static void start(Minecraft minecraft) {
         mc = minecraft;
+        BetterFps.isClient = true;
 
         if(BetterFpsHelper.CONFIG == null) {
             BetterFpsHelper.loadConfig();
@@ -26,7 +27,13 @@ public class BetterFpsClient {
         mc.gameSettings.keyBindings = ArrayUtils.add(mc.gameSettings.keyBindings, MENU_KEY);
         mc.gameSettings.loadOptions();
 
-        BetterFps.isClient = true;
+        UpdateChecker.check();
+    }
+
+    // Called in WorldClient.<init>
+    public static void worldLoad() {
+        System.out.println("WORLD LOAD");
+        UpdateChecker.showChat();
     }
 
     // Called at the end of KeyBinding.onTick

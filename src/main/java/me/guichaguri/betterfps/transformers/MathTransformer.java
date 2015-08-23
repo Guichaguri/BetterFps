@@ -3,10 +3,10 @@ package me.guichaguri.betterfps.transformers;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -44,10 +44,10 @@ public class MathTransformer implements IClassTransformer {
         }
 
         if(BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
-            LogManager.getLogger("BetterFps").info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
+            BetterFps.log.info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
             return bytes;
         } else {
-            LogManager.getLogger("BetterFps").info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
+            BetterFps.log.info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
         }
 
         ClassReader reader;

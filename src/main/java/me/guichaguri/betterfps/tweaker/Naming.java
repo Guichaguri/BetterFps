@@ -16,6 +16,9 @@ public class Naming {
     public static final ObfuscationName C_PrimedTNT = new ObfuscationName("net.minecraft.entity.item.EntityTNTPrimed", null); //TODO obfuscated
     public static final ObfuscationName C_ClientBrandRetriever = new ObfuscationName("net.minecraft.client.ClientBrandRetriever", null);
     public static final ObfuscationName C_GuiOptions = new ObfuscationName("net.minecraft.client.gui.GuiOptions", null); //TODO obfuscated
+    public static final ObfuscationName C_WorldClient = new ObfuscationName("net.minecraft.client.multiplayer.WorldClient", null); // TODO obfuscated
+    public static final ObfuscationName C_IntegratedServer = new ObfuscationName("net.minecraft.server.integrated.IntegratedServer", null); // TODO obfuscated
+    public static final ObfuscationName C_DedicatedServer = new ObfuscationName("net.minecraft.server.dedicated.DedicatedServer", null); // TODO obfuscated
 
     public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V"); // Minecraft
     public static final ObfuscationName M_onTick = new ObfuscationName("onTick", "a", "(I)V"); // KeyBinding
@@ -26,6 +29,7 @@ public class Naming {
     public static final ObfuscationName M_getClientModName = new ObfuscationName("getClientModName", null, "()Ljava/lang/String;"); // ClientBrandRetriever
     public static final ObfuscationName M_freeMemory = new ObfuscationName("freeMemory", null, "()V"); // TODO obfuscated // Minecraft
     public static final ObfuscationName M_initGui = new ObfuscationName("initGui", null, "()V"); // TODO obfuscated // GuiScreen
+    public static final ObfuscationName M_startServer = new ObfuscationName("startServer", null, "()Z"); // TODO obfuscated // MinecraftServer
 
     public static final ObfuscationName F_memoryReserve = new ObfuscationName("memoryReserve", null, "[B"); // TODO obfuscated // Minecraft
 
