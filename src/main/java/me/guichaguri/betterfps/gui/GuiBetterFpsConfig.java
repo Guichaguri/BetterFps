@@ -1,13 +1,22 @@
 package me.guichaguri.betterfps.gui;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.gui.GuiCycleButton.GuiBooleanButton;
+import me.guichaguri.betterfps.tweaker.BetterFpsTweaker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.Util;
+import net.minecraft.util.Util.EnumOS;
+import org.lwjgl.input.Mouse;
 
 /**
  * @author Guilherme Chaguri
@@ -25,21 +34,33 @@ public class GuiBetterFpsConfig extends GuiScreen {
 
     private List<GuiButton> initButtons() {
         List<GuiButton> buttons = new ArrayList<GuiButton>();
-        buttons.add(new GuiCycleButton(2, "Algorithm",
-                BetterFpsHelper.displayHelpers, BetterFpsHelper.ALGORITHM_NAME));
-        buttons.add(new GuiBooleanButton(4, "Update Checker", true));
+        buttons.add(new AlgorithmButton(2, "Algorithm", BetterFpsHelper.displayHelpers,
+                    BetterFpsHelper.ALGORITHM_NAME, new String[] {
+                        "The algorithm of sine & cosine methods",
+                        "§cRequires restarting to take effect",
+                        "", "§eShift-click me to test algorithms §7(This will take a few seconds)",
+                        "", "§aMore information soon"}));
+        buttons.add(new GuiBooleanButton(3, "Update Checker", BetterFpsHelper.CHECK_UPDATES, new String[] {
+                        "Whether will check for updates on startup",
+                        "It's highly recommended enabling this option"}));
+        buttons.add(new GuiBooleanButton(4, "Preallocate Memory", BetterFpsHelper.PREALLOCATE_MEMORY, new String[] {
+                        "Whether will preallocate 10MB on startup.",
+                        "§cRequires restarting to take effect", "",
+                        "Note: This allocation will only be cleaned once the memory is almost full"}));
         return buttons;
     }
 
     @Override
     public void initGui() {
+        int x1 = width / 2 - 155;
+        int x2 = width / 2 + 5;
+
         buttonList.clear();
-        buttonList.add(new GuiButton(-1, this.width / 2 - 100, this.height - 27, I18n.format("gui.done")));
+        buttonList.add(new GuiButton(-1, x1, height - 27, 150, 20, I18n.format("gui.done")));
+        buttonList.add(new GuiButton(-2, x2, height - 27, 150, 20, I18n.format("gui.cancel")));
 
         List<GuiButton> buttons = initButtons();
 
-        int x1 = width / 2 - 155;
-        int x2 = width / 2 + 5;
         int y = 25;
         int lastId = 0;
 
@@ -60,8 +81,32 @@ public class GuiBetterFpsConfig extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        drawCenteredString(fontRendererObj, "BetterFps Options", this.width / 2, 7, 0xFFFFFF);
+        if(mouseY < fontRendererObj.FONT_HEIGHT + 14) {
+            if(Mouse.isButtonDown(1)) {
+                drawCenteredString(fontRendererObj, "This is not a button .-.", this.width / 2, 7, 0xC0C0C0);
+            } else {
+                drawCenteredString(fontRendererObj, "Hold right-click in a button for information", this.width / 2, 7, 0xC0C0C0);
+            }
+        } else {
+            drawCenteredString(fontRendererObj, "BetterFps Options", this.width / 2, 7, 0xFFFFFF);
+        }
         super.drawScreen(mouseX, mouseY, partialTicks);
+        if(Mouse.isButtonDown(1)) { // Right Click
+            for(GuiButton button : (List<GuiButton>)buttonList) {
+                if((button instanceof GuiCycleButton) && (button.isMouseOver())) {
+                    int y = mouseY + 5;
+
+                    String[] help = ((GuiCycleButton)button).getHelpText();
+                    int fontHeight = fontRendererObj.FONT_HEIGHT, i = 0;
+                    drawGradientRect(0, y, mc.displayWidth, y + (fontHeight * help.length) + 10, -1072689136, -804253680);
+                    for(String h : help) {
+                        if(!h.isEmpty()) fontRendererObj.drawString(h, 5, y + (i * fontHeight) + 5, 0xFFFFFF);
+                        i++;
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -78,13 +123,20 @@ public class GuiBetterFpsConfig extends GuiScreen {
             if(!algorithm.equals(BetterFpsHelper.ALGORITHM_NAME)) restart = true;
             BetterFpsHelper.CONFIG.setProperty("algorithm", algorithm);
 
-            GuiBooleanButton updateButton = (GuiBooleanButton)getCycleButton(4);
+            GuiCycleButton updateButton = getCycleButton(3);
             BetterFpsHelper.CONFIG.setProperty("update-checker", updateButton.getSelectedValue() + "");
+
+            GuiCycleButton preallocateButton = getCycleButton(4);
+            boolean preallocate = preallocateButton.getSelectedValue();
+            if(preallocate != BetterFpsHelper.PREALLOCATE_MEMORY) restart = true;
+            BetterFpsHelper.CONFIG.setProperty("preallocate-memory", preallocate + "");
 
             BetterFpsHelper.saveConfig();
             BetterFpsHelper.loadConfig();
 
             mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
+        } else if(button.id == -2) {
+            mc.displayGuiScreen(parent);
         }
     }
 
@@ -100,5 +152,76 @@ public class GuiBetterFpsConfig extends GuiScreen {
     @Override
     public boolean doesGuiPauseGame() {
         return true;
+    }
+
+    private static class AlgorithmButton extends GuiCycleButton {
+        Process process = null;
+        public <T> AlgorithmButton(int buttonId, String title, HashMap<T, String> values, T defaultValue, String[] helpLines) {
+            super(buttonId, title, values, defaultValue, helpLines);
+        }
+
+        private String getJavaDir() {
+            String separator = System.getProperty("file.separator");
+            String path = System.getProperty("java.home") + separator + "bin" + separator;
+            if((Util.getOSType() == EnumOS.WINDOWS) && (new File(path + "javaw.exe").isFile())) {
+                return path + "javaw.exe";
+            }
+            return path + "java";
+        }
+
+        private boolean isRunning() {
+            try {
+                process.exitValue();
+                return false;
+            } catch(Exception ex) {
+                return true;
+            }
+        }
+
+        private void updateAlgorithm() {
+            if((process != null) && (!isRunning())) {
+                try {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line;
+                    while((line = in.readLine()) != null) {
+                        if(BetterFpsHelper.helpers.containsKey(line)) {
+                            for(int i = 0; i < keys.size(); i++) {
+                                if(keys.get(i).equals(line)) {
+                                    key = i;
+                                    updateTitle();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } catch(Exception ex) {}
+                process = null;
+            }
+        }
+
+        @Override
+        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+            updateAlgorithm();
+            super.drawButton(mc, mouseX, mouseY);
+        }
+
+        @Override
+        public boolean shiftClick() {
+            if((process != null) && (isRunning())) {
+                return true;
+            }
+            List<String> args = new ArrayList<String>();
+            args.add(getJavaDir());
+            args.add("-Dtester=" + Minecraft.getMinecraft().mcDataDir.getAbsolutePath());
+            args.add("-cp");
+            args.add(BetterFpsTweaker.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+            args.add("me.guichaguri.betterfps.installer.BetterFpsInstaller");
+            try {
+                process = new ProcessBuilder(args).start();
+            } catch(Exception ex) {
+                ex.printStackTrace();
+            }
+            return true;
+        }
     }
 }

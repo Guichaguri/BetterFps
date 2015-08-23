@@ -5,18 +5,29 @@ package me.guichaguri.betterfps.tweaker;
  */
 public class Naming {
 
+    public static final ObfuscationName M_StaticBlock = new ObfuscationName("<clinit>", null, "()V");
+    public static final ObfuscationName M_Constructor = new ObfuscationName("<init>", null, "()V");
+
     public static final ObfuscationName C_Minecraft = new ObfuscationName("net.minecraft.client.Minecraft", "bsu");
     public static final ObfuscationName C_KeyBinding = new ObfuscationName("net.minecraft.client.settings.KeyBinding", "bsr");
+    public static final ObfuscationName C_World = new ObfuscationName("net.minecraft.world.World", null); //TODO obfuscated
     public static final ObfuscationName C_EntityPlayer = new ObfuscationName("net.minecraft.entity.player.EntityPlayer", "ahd");
     public static final ObfuscationName C_MathHelper = new ObfuscationName("net.minecraft.util.MathHelper", "uv");
+    public static final ObfuscationName C_PrimedTNT = new ObfuscationName("net.minecraft.entity.item.EntityTNTPrimed", null); //TODO obfuscated
     public static final ObfuscationName C_ClientBrandRetriever = new ObfuscationName("net.minecraft.client.ClientBrandRetriever", null);
+    public static final ObfuscationName C_GuiOptions = new ObfuscationName("net.minecraft.client.gui.GuiOptions", null); //TODO obfuscated
 
-    public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V");
-    public static final ObfuscationName M_onTick = new ObfuscationName("onTick", "a", "(I)V");
-    public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F");
-    public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F");
-    public static final ObfuscationName M_onUpdate = new ObfuscationName("onUpdate", "s_", "()V");
-    public static final ObfuscationName M_getClientModName = new ObfuscationName("getClientModName", null, "()Ljava/lang/String;");
+    public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V"); // Minecraft
+    public static final ObfuscationName M_onTick = new ObfuscationName("onTick", "a", "(I)V"); // KeyBinding
+    public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F"); // MathHelper
+    public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F"); // MathHelper
+    public static final ObfuscationName M_tick = new ObfuscationName("tick", null, "()V"); //TODO obfuscated // World
+    public static final ObfuscationName M_onUpdate = new ObfuscationName("onUpdate", "s_", "()V"); // Entity
+    public static final ObfuscationName M_getClientModName = new ObfuscationName("getClientModName", null, "()Ljava/lang/String;"); // ClientBrandRetriever
+    public static final ObfuscationName M_freeMemory = new ObfuscationName("freeMemory", null, "()V"); // TODO obfuscated // Minecraft
+    public static final ObfuscationName M_initGui = new ObfuscationName("initGui", null, "()V"); // TODO obfuscated // GuiScreen
+
+    public static final ObfuscationName F_memoryReserve = new ObfuscationName("memoryReserve", null, "[B"); // TODO obfuscated // Minecraft
 
     public static class ObfuscationName {
         private String deob;

@@ -25,10 +25,12 @@ public class EventTransformer implements IClassTransformer {
                 return patchStart(bytes);
             } else if(Naming.C_KeyBinding.is(name)) {
                 return patchKeyTick(bytes);
-            } else if(Naming.C_EntityPlayer.is(name)) {
-                return patchPlayerTick(bytes);
+            } else if(Naming.C_World.is(name)) {//tick
+                return patchWorldTick(bytes);
             } else if(Naming.C_ClientBrandRetriever.is(name)) {
                 return patchClientBrand(bytes);
+            } else if(Naming.C_GuiOptions.is(name)) {
+                return patchGuiOptions(bytes);
             }
         } catch(Exception ex) {
            ex.printStackTrace();
@@ -58,7 +60,7 @@ public class EventTransformer implements IClassTransformer {
                         list.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         // Invoke BetterFpsVanilla.start
                         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "me/guichaguri/betterfps/BetterFps", "start",
+                                "me/guichaguri/betterfps/BetterFpsClient", "start",
                                 "(L" + classNode.name + ";)V", false));
                     }
                     list.add(node);
@@ -96,7 +98,7 @@ public class EventTransformer implements IClassTransformer {
 
                         list.add(new VarInsnNode(Opcodes.ILOAD, 0));
                         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "me/guichaguri/betterfps/BetterFps", "keyEvent", "(I)V", false));
+                                "me/guichaguri/betterfps/BetterFpsClient", "keyEvent", "(I)V", false));
 
                     }
                     list.add(node);
@@ -116,7 +118,7 @@ public class EventTransformer implements IClassTransformer {
     }
 
 
-    private byte[] patchPlayerTick(byte[] bytes) {
+    private byte[] patchWorldTick(byte[] bytes) {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, ClassReader.SKIP_FRAMES);
@@ -127,14 +129,14 @@ public class EventTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(Naming.M_onUpdate.is(method.name, method.desc)) {
-                LogManager.getLogger().info("Patching Player Event...");
+            if(Naming.M_tick.is(method.name, method.desc)) {
+                LogManager.getLogger().info("Patching World Event...");
                 InsnList list = new InsnList();
                 for(AbstractInsnNode node : method.instructions.toArray()) {
                     if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return
 
                         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "me/guichaguri/betterfps/BetterFps", "playerTick", "()V", false));
+                                "me/guichaguri/betterfps/BetterFps", "worldTick", "()V", false));
 
                     }
                     list.add(node);
@@ -189,6 +191,11 @@ public class EventTransformer implements IClassTransformer {
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         classNode.accept(writer);
         return writer.toByteArray();
+    }
+
+    public byte[] patchGuiOptions(byte[] bytes) {
+
+        return bytes;
     }
 
 }

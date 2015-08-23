@@ -26,12 +26,12 @@ public class MathTransformer implements IClassTransformer {
     public byte[] transform(String name, String name2, byte[] bytes) {
         if(bytes == null) return new byte[0];
 
-        try {
-            if(Naming.C_MathHelper.is(name)) {
+        if(Naming.C_MathHelper.is(name)) {
+            try {
                 return patchMath(bytes);
+            } catch(Exception ex) {
+                ex.printStackTrace();
             }
-        } catch(Exception ex) {
-            ex.printStackTrace();
         }
 
         return bytes;

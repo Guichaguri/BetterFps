@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,7 +28,7 @@ import me.guichaguri.betterfps.math.TaylorMath;
 /**
  * @author Guilherme Chaguri
  */
-public class AlgorithmTester extends JDialog implements ActionListener {
+public class AlgorithmTester extends JFrame implements ActionListener {
 
     private static final Class[] algorithms = new Class[]{
             JavaMath.class, VanillaMath.class, TaylorMath.class, LibGDXMath.class,
@@ -71,6 +71,7 @@ public class AlgorithmTester extends JDialog implements ActionListener {
         INSTANCE = new AlgorithmTester(mcDir, testAlgorithms(), calcAction, listener);
         INSTANCE.setLocationRelativeTo(c);
         INSTANCE.setVisible(true);
+        INSTANCE.requestFocusInWindow();
     }
 
     private final String CHANGE_ALGORITHM = "tester_change_algorithm";
@@ -84,7 +85,7 @@ public class AlgorithmTester extends JDialog implements ActionListener {
     private String bestAlgorithm = null;
     private String bestAlgorithmName = null;
 
-    public AlgorithmTester(File mcDir, HashMap<String, Long> results, String CALC_ALGORITHM, ActionListener calcAction) {
+    public AlgorithmTester(final File mcDir, HashMap<String, Long> results, String CALC_ALGORITHM, ActionListener calcAction) {
         this.mcDir = mcDir;
 
         setTitle("Test Results");
@@ -120,8 +121,18 @@ public class AlgorithmTester extends JDialog implements ActionListener {
         changeAlgorithm.addActionListener(this);
         add(changeAlgorithm, c);
         JButton calcAgain = new JButton("Test Again");
-        calcAgain.setActionCommand(CALC_ALGORITHM);
-        calcAgain.addActionListener(calcAction);
+        if((CALC_ALGORITHM == null) || (calcAction == null)) {
+            calcAgain.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    AlgorithmTester.open(null, mcDir, null, null);
+                }
+            });
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        } else {
+            calcAgain.setActionCommand(CALC_ALGORITHM);
+            calcAgain.addActionListener(calcAction);
+        }
         add(calcAgain, c);
         JButton close = new JButton("Close");
         close.setActionCommand(CLOSE_TESTER);
@@ -136,6 +147,7 @@ public class AlgorithmTester extends JDialog implements ActionListener {
         String cmd = event.getActionCommand();
         if(cmd.equals(CLOSE_TESTER)) {
             setVisible(false);
+            if(getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) System.exit(0);
         } else if(cmd.equals(CHANGE_ALGORITHM)) {
             if((!mcDir.exists()) || (!mcDir.isDirectory())) {
                 JOptionPane.showMessageDialog(this, "The install location is invalid.",
@@ -147,8 +159,12 @@ public class AlgorithmTester extends JDialog implements ActionListener {
             BetterFpsHelper.CONFIG.setProperty("algorithm", bestAlgorithm);
             BetterFpsHelper.saveConfig();
             setVisible(false);
-            JOptionPane.showMessageDialog(this, "The algorithm was set to " + bestAlgorithmName,
+            System.out.println(bestAlgorithm);
+            JOptionPane.showMessageDialog(this, "The algorithm was set to " + bestAlgorithmName + ".\n\n" +
+                                        "Note: If the game is started, you have to restart it to take effect",
                                         "Done!", JOptionPane.INFORMATION_MESSAGE);
+
+            if(getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) System.exit(0);
         }
     }
 

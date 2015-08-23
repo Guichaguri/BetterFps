@@ -17,6 +17,18 @@ import javax.swing.*;
 public class BetterFpsInstaller extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
+        String tester = System.getProperty("tester", null);
+        if(tester != null) {
+            JFrame load = new JFrame();
+            load.add(new JLabel("Testing each algorithm..."));
+            load.setSize(250, 100);
+            load.setLocationRelativeTo(null);
+            load.setVisible(true);
+            load.requestFocusInWindow();
+            AlgorithmTester.open(null, new File(tester), null, null);
+            load.setVisible(false);
+            return;
+        }
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

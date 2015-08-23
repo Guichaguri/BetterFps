@@ -14,7 +14,7 @@ import net.minecraft.util.MathHelper;
 public class BetterFpsHelper {
 
     public static final String MC_VERSION = "1.8";
-    public static final String VERSION = "1.1.1";
+    public static final String VERSION = "1.1.1a";
 
     public static final String UPDATE_URL = "https://raw.githubusercontent.com/Guichaguri/BetterFps/1.8/lastest-version.properties";
 
@@ -55,6 +55,8 @@ public class BetterFpsHelper {
 
     public static boolean CHECK_UPDATES = true;
 
+    public static boolean PREALLOCATE_MEMORY = false;
+
     public static void init() {
         try {
             // UNLOAD CACHED UNNECESSARY VALUES
@@ -90,9 +92,11 @@ public class BetterFpsHelper {
         ALGORITHM_CLASS = helpers.get(ALGORITHM_NAME);
 
         CHECK_UPDATES = parseBoolean(CONFIG.getProperty("update-checker"), true);
+        PREALLOCATE_MEMORY = parseBoolean(CONFIG.getProperty("preallocate-memory"), false);
 
         CONFIG.setProperty("algorithm", ALGORITHM_NAME);
         CONFIG.setProperty("update-checker", CHECK_UPDATES + "");
+        CONFIG.setProperty("preallocate-memory", PREALLOCATE_MEMORY + "");
 
         saveConfig();
     }
