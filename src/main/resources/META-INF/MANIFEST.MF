@@ -2,3 +2,5 @@ Manifest-Version: 1.0
 Main-Class: me.guichaguri.betterfps.installer.BetterFpsInstaller
 TweakClass: me.guichaguri.betterfps.tweaker.BetterFpsTweaker
 TweakOrder: 600
+TweakName: BetterFps
+TweakAuthor: Guichaguri
