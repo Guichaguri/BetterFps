@@ -17,7 +17,8 @@ public class BetterFpsTweaker implements ITweaker {
     private static final String[] TRANSFORMERS = new String[]{
             "me.guichaguri.betterfps.transformers.MathTransformer",
             "me.guichaguri.betterfps.transformers.EventTransformer",
-            "me.guichaguri.betterfps.transformers.MiscTransformer"
+            "me.guichaguri.betterfps.transformers.MiscTransformer",
+            "me.guichaguri.betterfps.transformers.ClonerTransformer"
             //"me.guichaguri.betterfps.transformers.CapTransformer"
     };
 

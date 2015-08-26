@@ -1,82 +1,103 @@
 package me.guichaguri.betterfps.tweaker;
 
 /**
+ *
  * @author Guilherme Chaguri
  */
-public class Naming {
+public enum Naming { // TODO BUKKIT
 
-    public static final ObfuscationName M_StaticBlock = new ObfuscationName("<clinit>", null, "()V");
-    public static final ObfuscationName M_Constructor = new ObfuscationName("<init>", null, "()V");
+    M_StaticBlock("<clinit>", null, null, "()V"),
+    M_Constructor("<init>", null, null, "()V"),
 
-    public static final ObfuscationName C_Minecraft = new ObfuscationName("net.minecraft.client.Minecraft", "bsu");
-    public static final ObfuscationName C_KeyBinding = new ObfuscationName("net.minecraft.client.settings.KeyBinding", "bsr");
-    public static final ObfuscationName C_World = new ObfuscationName("net.minecraft.world.World", null); //TODO obfuscated
-    public static final ObfuscationName C_EntityPlayer = new ObfuscationName("net.minecraft.entity.player.EntityPlayer", "ahd");
-    public static final ObfuscationName C_MathHelper = new ObfuscationName("net.minecraft.util.MathHelper", "uv");
-    public static final ObfuscationName C_PrimedTNT = new ObfuscationName("net.minecraft.entity.item.EntityTNTPrimed", null); //TODO obfuscated
-    public static final ObfuscationName C_ClientBrandRetriever = new ObfuscationName("net.minecraft.client.ClientBrandRetriever", null);
-    public static final ObfuscationName C_GuiOptions = new ObfuscationName("net.minecraft.client.gui.GuiOptions", null); //TODO obfuscated
-    public static final ObfuscationName C_WorldClient = new ObfuscationName("net.minecraft.client.multiplayer.WorldClient", null); // TODO obfuscated
-    public static final ObfuscationName C_IntegratedServer = new ObfuscationName("net.minecraft.server.integrated.IntegratedServer", null); // TODO obfuscated
-    public static final ObfuscationName C_DedicatedServer = new ObfuscationName("net.minecraft.server.dedicated.DedicatedServer", null); // TODO obfuscated
+    C_Minecraft("net.minecraft.client.Minecraft", "bsu"),
+    C_KeyBinding("net.minecraft.client.settings.KeyBinding", "bsr"),
+    C_World("net.minecraft.world.World", null, null), //TODO obfuscated + bukkit
+    C_EntityPlayer("net.minecraft.entity.player.EntityPlayer", "ahd", null), // TODO bukkit
+    C_MathHelper("net.minecraft.util.MathHelper", "uv", null), // TODO bukkit
+    C_PrimedTNT("net.minecraft.entity.item.EntityTNTPrimed", null, null), //TODO obfuscated + bukkit
+    C_ClientBrandRetriever("net.minecraft.client.ClientBrandRetriever", null),
+    C_GuiOptions("net.minecraft.client.gui.GuiOptions", null), //TODO obfuscated
+    C_WorldClient("net.minecraft.client.multiplayer.WorldClient", null), // TODO obfuscated
+    C_IntegratedServer("net.minecraft.server.integrated.IntegratedServer", null), // TODO obfuscated
+    C_DedicatedServer("net.minecraft.server.dedicated.DedicatedServer", null, null), // TODO obfuscated + bukkit
+    C_TileEntityBeacon("net.minecraft.tileentity.TileEntityBeacon", null, null), // TODO obfuscated + bukkit
+    C_BeamSegment("net.minecraft.tileentity.TileEntityBeacon$BeamSegment", null, null), // TODO obfuscated + bukkit
 
-    public static final ObfuscationName M_startGame = new ObfuscationName("startGame", "aj", "()V"); // Minecraft
-    public static final ObfuscationName M_onTick = new ObfuscationName("onTick", "a", "(I)V"); // KeyBinding
-    public static final ObfuscationName M_sin = new ObfuscationName("sin", "a", "(F)F"); // MathHelper
-    public static final ObfuscationName M_cos = new ObfuscationName("cos", "b", "(F)F"); // MathHelper
-    public static final ObfuscationName M_tick = new ObfuscationName("tick", null, "()V"); //TODO obfuscated // World
-    public static final ObfuscationName M_onUpdate = new ObfuscationName("onUpdate", "s_", "()V"); // Entity
-    public static final ObfuscationName M_getClientModName = new ObfuscationName("getClientModName", null, "()Ljava/lang/String;"); // ClientBrandRetriever
-    public static final ObfuscationName M_freeMemory = new ObfuscationName("freeMemory", null, "()V"); // TODO obfuscated // Minecraft
-    public static final ObfuscationName M_initGui = new ObfuscationName("initGui", null, "()V"); // TODO obfuscated // GuiScreen
-    public static final ObfuscationName M_startServer = new ObfuscationName("startServer", null, "()Z"); // TODO obfuscated // MinecraftServer
+    M_startGame("startGame", "aj", null, "()V"), // Minecraft
+    M_onTick("onTick", "a", null, "(I)V"), // KeyBinding
+    M_sin("sin", "a", null, "(F)F"), // MathHelper
+    M_cos("cos", "b", null, "(F)F"), // MathHelper
+    M_tick("tick", null, null, "()V"), //TODO obfuscated // World
+    M_onUpdate("onUpdate", "s_", null, "()V"), // Entity
+    M_getClientModName("getClientModName", null, null, "()Ljava/lang/String;"), // ClientBrandRetriever
+    M_freeMemory("freeMemory", null, null, "()V"), // TODO obfuscated // Minecraft
+    M_initGui("initGui", null, null, "()V"), // TODO obfuscated // GuiScreen
+    M_startServer("startServer", null, null, "()Z"), // TODO obfuscated // MinecraftServer
 
-    public static final ObfuscationName F_memoryReserve = new ObfuscationName("memoryReserve", null, "[B"); // TODO obfuscated // Minecraft
+    F_memoryReserve("memoryReserve", null, null, "[B"); // TODO obfuscated // Minecraft
 
-    public static class ObfuscationName {
-        private String deob;
-        private String deobRepl;
-        private String ob;
-        private String obRepl;
 
-        // Only used for methods and fields
-        private String desc;
+    private String deob;
+    private String deobRepl;
+    private String ob;
+    private String obRepl;
+    private String bukkit;
+    private String bukkitRepl;
 
-        public ObfuscationName(String deob, String ob) {
-            this.deob = deob;
-            this.deobRepl = deob.replaceAll("\\.", "/");
-            if(ob == null) ob = deob;
+    private boolean useOb = false;
+    private boolean useBukkit = false;
+
+    // Only used for methods and fields
+    private String desc;
+
+    // For client classes only
+    Naming(String deob, String ob) {
+        this(deob, ob, null);
+    }
+
+    Naming(String deob, String ob, String bukkit) {
+        this.deob = deob;
+        this.deobRepl = deob.replaceAll("\\.", "/");
+        if(ob != null) {
+            this.useOb = true;
             this.ob = ob;
             this.obRepl = ob.replaceAll("\\.", "/");
         }
-
-        public ObfuscationName(String deob, String ob, String desc) {
-            this(deob, ob);
-            this.desc = desc;
+        if(bukkit != null) {
+            this.useBukkit = true;
+            this.bukkit = bukkit;
+            this.bukkitRepl = bukkit.replaceAll("\\.", "/");
         }
+    }
 
-        // Used to check names
-        public boolean is(String name) {
-            if(name.equals(deob)) return true;
-            if(name.equals(ob)) return true;
-            return false;
+    // For methods/fields
+    Naming(String deob, String ob, String bukkit, String desc) {
+        this(deob, ob, bukkit);
+        this.desc = desc;
+    }
+
+    // Used to check names
+    public boolean is(String name) {
+        if(name.equals(deob)) return true;
+        if(useOb && name.equals(ob)) return true;
+        if(useBukkit && name.equals(bukkit)) return true;
+        return false;
+    }
+
+    // Used to check class names inside ASM
+    public boolean isASM(String name) {
+        if(name.equals(deobRepl)) return true;
+        if(useOb && name.equals(obRepl)) return true;
+        if(useBukkit && name.equals(bukkitRepl)) return true;
+        return false;
+    }
+
+    // Used to check names and desc
+    public boolean is(String name, String desc) {
+        if((this.desc.equals(desc)) && (is(name))) {
+            return true;
         }
-
-        // Used to check class names inside ASM
-        public boolean isASM(String name) {
-            if(name.equals(deobRepl)) return true;
-            if(name.equals(obRepl)) return true;
-            return false;
-        }
-
-        // Used to check names and desc
-        public boolean is(String name, String desc) {
-            if((this.desc.equals(desc)) && (is(name))) {
-                return true;
-            }
-            return false;
-        }
-
+        return false;
     }
 
 }
