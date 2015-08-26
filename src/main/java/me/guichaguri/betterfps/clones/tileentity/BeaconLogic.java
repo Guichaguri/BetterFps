@@ -23,7 +23,7 @@ import net.minecraft.util.BlockPos;
  */
 public class BeaconLogic extends TileEntityBeacon {
 
-    @CopyMode(Mode.IGNORE)
+    @CopyMode(Mode.IGNORE) // Ignore the constructor prevent an infinite loop
     public BeaconLogic() {
 
     }
@@ -80,7 +80,7 @@ public class BeaconLogic extends TileEntityBeacon {
 
     private void updateGlassLayers(int x, int y, int z) {
         // Checks if the beacon should be active and searches for stained glass to color the beam.
-        // Should be called only client-side
+        // Should be only called client-side
         isComplete = true;
         field_174909_f.clear();
         BeamSegment beam = new BeamSegment(EntitySheep.func_175513_a(EnumDyeColor.WHITE));
@@ -128,11 +128,7 @@ public class BeaconLogic extends TileEntityBeacon {
             BlockPos pos = new BlockPos(x, blockY, z);
             IBlockState state = this.worldObj.getBlockState(pos);
             Block b = state.getBlock();
-            if((b == Blocks.stained_glass) && (b == Blocks.stained_glass_pane)) {
-                continue;
-            }
             if(b.getLightOpacity() >= 15) {
-                System.out.println("ACTIVATION FALSE");
                 isComplete = false;
                 break;
             }
@@ -166,7 +162,7 @@ public class BeaconLogic extends TileEntityBeacon {
         }
 
         if((!isClient) && (levels == 4) && (levelsOld < levels)) {
-            AxisAlignedBB box = new AxisAlignedBB(x, y, z, x, y - 4, z).expand(10.0D, 5.0D, 10.0D);
+            AxisAlignedBB box = new AxisAlignedBB(x, y, z, x, y - 4, z).expand(10.0, 5.0, 10.0);
             Iterator iterator = worldObj.getEntitiesWithinAABB(EntityPlayer.class, box).iterator();
             while(iterator.hasNext()) {
                 EntityPlayer entityplayer = (EntityPlayer)iterator.next();
