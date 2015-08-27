@@ -202,6 +202,11 @@ public class ClonerTransformer implements IClassTransformer {
                 if(m.owner.equals(original.name)) {
                     m.owner = classNode.name;
                 }
+            } else if(node instanceof TypeInsnNode) {
+                TypeInsnNode t = (TypeInsnNode)node;
+                if(t.desc.equals(original.name)) {
+                    t.desc = classNode.name;
+                }
             }
         }
     }
