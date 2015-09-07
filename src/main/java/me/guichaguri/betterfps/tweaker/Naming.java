@@ -12,6 +12,8 @@ public enum Naming { // TODO BUKKIT
     C_Minecraft("net.minecraft.client.Minecraft", "bsu"),
     C_KeyBinding("net.minecraft.client.settings.KeyBinding", "bsr"),
     C_World("net.minecraft.world.World", null, null), //TODO obfuscated + bukkit
+    C_Chunk("net.minecraft.world.chunk.Chunk", null, null), // TODO obfuscated + bukkit
+    C_ChunkCoordIntPair("net.minecraft.world.ChunkCoordIntPair", null, null), // TODO obfuscated + bukkit
     C_EntityPlayer("net.minecraft.entity.player.EntityPlayer", "ahd", null), // TODO bukkit
     C_MathHelper("net.minecraft.util.MathHelper", "uv", null), // TODO bukkit
     C_PrimedTNT("net.minecraft.entity.item.EntityTNTPrimed", null, null), //TODO obfuscated + bukkit
@@ -33,6 +35,7 @@ public enum Naming { // TODO BUKKIT
     M_freeMemory("freeMemory", null, null, "()V"), // TODO obfuscated // Minecraft
     M_initGui("initGui", null, null, "()V"), // TODO obfuscated // GuiScreen
     M_startServer("startServer", null, null, "()Z"), // TODO obfuscated // MinecraftServer
+    M_setActivePlayerChunksAndCheckLight("setActivePlayerChunksAndCheckLight", null, null, "()V"), // TODO obfuscated // World
 
     F_memoryReserve("memoryReserve", null, null, "[B"); // TODO obfuscated // Minecraft
 
