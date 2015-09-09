@@ -1,6 +1,8 @@
 package me.guichaguri.betterfps.transformers;
 
 import java.util.ArrayList;
+import java.util.List;
+import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
@@ -13,24 +15,35 @@ import org.objectweb.asm.tree.*;
  */
 public class VisualChunkTransformer implements IClassTransformer {
 
-    public boolean isTickable = false;
-
-    public VisualChunkTransformer(int i1, int i2, boolean i3) {
-        this(i1, i2);
-        isTickable = i3;
-    }
-
-    public VisualChunkTransformer(int i1, int i2) {
-
-    }
-
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if(bytes == null) return bytes;
 
-        if(Naming.C_World.is(name)) {
+        if(Naming.C_WorldServer.is(name)) {
             ClassNode node = readClass(bytes);
-            patchChunk(node);
+            for(MethodNode m : node.methods) {
+                if(Naming.M_updateBlocks.is(m.name, m.desc)) {
+                    BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
+                    patchTick(m);
+                }
+            }
+            return toBytes(node);
+        } else if(Naming.C_WorldClient.is(name)) {
+            ClassNode node = readClass(bytes);
+            for(MethodNode m : node.methods) {
+                if(Naming.M_updateBlocks.is(m.name, m.desc)) {
+                    BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
+                    patchTick(m);
+                }
+            }
+            return toBytes(node);
+        } else if(Naming.C_World.is(name)) {
+            ClassNode node = readClass(bytes);
+            for(MethodNode m : node.methods) {
+                if(Naming.M_setActivePlayerChunksAndCheckLight.is(m.name, m.desc)) {
+                    patchTickableCheck(m);
+                }
+            }
             return toBytes(node);
         } else if(Naming.C_ChunkCoordIntPair.is(name)) {
             ClassNode node = readClass(bytes);
@@ -59,7 +72,6 @@ public class VisualChunkTransformer implements IClassTransformer {
 
         MethodNode m = new MethodNode(Opcodes.ACC_PUBLIC, "<init>", "(IIZ)V", null, null);
         m.instructions = new InsnList();
-        m.localVariables = new ArrayList<LocalVariableNode>();
 
         LabelNode l1 = new LabelNode();
         m.instructions.add(l1);
@@ -68,6 +80,7 @@ public class VisualChunkTransformer implements IClassTransformer {
         m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
         m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
         m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, node.name, "<init>", "(II)V", false));
+
         // isTickable = f3;
         m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
         m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
@@ -75,7 +88,10 @@ public class VisualChunkTransformer implements IClassTransformer {
 
         LabelNode l2 = new LabelNode();
         m.instructions.add(l2);
+        m.instructions.add(new InsnNode(Opcodes.RETURN));
+
         // Define local variables
+        m.localVariables.clear();
         m.localVariables.add(new LocalVariableNode("this", "L" + node.name + ";", null, l1, l2, 0));
         m.localVariables.add(new LocalVariableNode("f1", "I", null, l1, l2, 1));
         m.localVariables.add(new LocalVariableNode("f2", "I", null, l1, l2, 2));
@@ -85,7 +101,61 @@ public class VisualChunkTransformer implements IClassTransformer {
     }
 
     private void patchTickableCheck(MethodNode method) {
+        InsnList list = new InsnList();
+        for(AbstractInsnNode node : method.instructions.toArray()) {
+            if(node instanceof MethodInsnNode) {
+                MethodInsnNode m = (MethodInsnNode)node;
+                if((Naming.C_ChunkCoordIntPair.isASM(m.owner)) && (Naming.M_Constructor.is(m.name))) {
+                    BetterFps.log.info("Patching tickable chunks check...");
+                    list.add(new VarInsnNode(Opcodes.ILOAD, 6)); // i1
+                    list.add(new VarInsnNode(Opcodes.ILOAD, 7)); // j1
+                    list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "me/guichaguri/betterfps/BetterFps", "isTickable", "(II)Z", false));
+                    m.desc = "(IIZ)V";
+                }
+            }
+            list.add(node);
+        }
 
+        method.instructions.clear();
+        method.instructions.add(list);
     }
 
+    private void patchTick(MethodNode method) {
+        String coordName = null;
+        List<Integer> lvs = new ArrayList<Integer>();
+        for(LocalVariableNode node : method.localVariables) {
+            int s = node.desc.length();
+            if(s <= 2) continue;
+            String c = node.desc.substring(1, s - 1);
+            if(Naming.C_ChunkCoordIntPair.isASM(c)) {
+                coordName = c;
+                lvs.add(node.index);
+                BetterFps.log.info("PATCH TICK ----------------------- " + node.index + "  - " + method.name);
+            }
+        }
+        if(lvs.isEmpty()) return;
+
+        InsnList list = new InsnList();
+
+        for(AbstractInsnNode node : method.instructions.toArray()) {
+            list.add(node);
+            if((node.getOpcode() == Opcodes.ASTORE) && (node instanceof VarInsnNode)) {
+                VarInsnNode var = (VarInsnNode)node;
+                if(lvs.contains(var.var)) {
+                    list.add(new VarInsnNode(Opcodes.ALOAD, var.var));
+                    list.add(new FieldInsnNode(Opcodes.GETFIELD, coordName, "isTickable", "Z"));
+                    LabelNode l1 = new LabelNode();
+                    list.add(new JumpInsnNode(Opcodes.IFEQ, l1));
+                    LabelNode l2 = new LabelNode();
+                    list.add(l2);
+                    list.add(new InsnNode(Opcodes.RETURN));
+                    list.add(l1);
+                    list.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[]{coordName}, 0, null));
+                }
+            }
+        }
+
+        method.instructions.clear();
+        method.instructions.add(list);
+    }
 }

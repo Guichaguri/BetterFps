@@ -20,6 +20,7 @@ public enum Naming { // TODO BUKKIT
     C_ClientBrandRetriever("net.minecraft.client.ClientBrandRetriever", null),
     C_GuiOptions("net.minecraft.client.gui.GuiOptions", null), //TODO obfuscated
     C_WorldClient("net.minecraft.client.multiplayer.WorldClient", null), // TODO obfuscated
+    C_WorldServer("net.minecraft.world.WorldServer", null, null), // TODO obfuscated + bukkit
     C_IntegratedServer("net.minecraft.server.integrated.IntegratedServer", null), // TODO obfuscated
     C_DedicatedServer("net.minecraft.server.dedicated.DedicatedServer", null, null), // TODO obfuscated + bukkit
     C_TileEntityBeacon("net.minecraft.tileentity.TileEntityBeacon", null, null), // TODO obfuscated + bukkit
@@ -31,6 +32,7 @@ public enum Naming { // TODO BUKKIT
     M_cos("cos", "b", null, "(F)F"), // MathHelper
     M_tick("tick", null, null, "()V"), //TODO obfuscated // World
     M_onUpdate("onUpdate", "s_", null, "()V"), // Entity
+    M_updateBlocks("updateBlocks", null, null, "()V"), // TODO obfuscated // World
     M_getClientModName("getClientModName", null, null, "()Ljava/lang/String;"), // ClientBrandRetriever
     M_freeMemory("freeMemory", null, null, "()V"), // TODO obfuscated // Minecraft
     M_initGui("initGui", null, null, "()V"), // TODO obfuscated // GuiScreen

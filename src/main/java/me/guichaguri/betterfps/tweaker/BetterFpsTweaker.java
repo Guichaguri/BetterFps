@@ -18,7 +18,8 @@ public class BetterFpsTweaker implements ITweaker {
             "me.guichaguri.betterfps.transformers.MathTransformer",
             "me.guichaguri.betterfps.transformers.EventTransformer",
             "me.guichaguri.betterfps.transformers.MiscTransformer",
-            "me.guichaguri.betterfps.transformers.ClonerTransformer"
+            "me.guichaguri.betterfps.transformers.ClonerTransformer",
+            "me.guichaguri.betterfps.transformers.VisualChunkTransformer"
             //"me.guichaguri.betterfps.transformers.CapTransformer"
     };
 

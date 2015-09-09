@@ -1,5 +1,7 @@
 package me.guichaguri.betterfps;
 
+import net.minecraft.block.BlockRedstoneDiode;
+import net.minecraft.block.BlockRedstoneWire;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,6 +18,9 @@ public class BetterFps {
     public static int TNT_TICKS = 0;
     public static int MAX_TNT_TICKS = 100;
 
+    public static int TICKABLE_RADIUS_POS = 1;
+    public static int TICKABLE_RADIUS_NEG = -1;
+
     public static void serverStart() {
         System.out.println("SERVER START");
         UpdateChecker.check();
@@ -24,4 +29,12 @@ public class BetterFps {
     public static void worldTick() {
         TNT_TICKS = 0;
     }
+
+    public static boolean isTickable(int dX, int dY) {
+        // Checks if a chunk should tick
+        return dX == 0 && dY == 0;
+        BlockRedstoneWire
+        //return dX < TICKABLE_RADIUS_POS && dX > TICKABLE_RADIUS_NEG && dY < TICKABLE_RADIUS_POS && dY > TICKABLE_RADIUS_NEG;
+    }
+
 }
