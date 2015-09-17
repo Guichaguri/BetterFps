@@ -19,7 +19,7 @@ public class BetterFpsClient {
         mc = minecraft;
         BetterFps.isClient = true;
 
-        if(BetterFpsHelper.CONFIG == null) {
+        if(BetterFpsConfig.instance == null) {
             BetterFpsHelper.loadConfig();
         }
         BetterFpsHelper.init();

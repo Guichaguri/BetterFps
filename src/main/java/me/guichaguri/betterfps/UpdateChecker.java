@@ -22,7 +22,7 @@ public class UpdateChecker implements Runnable {
     private static Properties prop = null;
 
     public static void check() {
-        if(!BetterFpsHelper.CHECK_UPDATES) {
+        if(!BetterFpsConfig.instance.updateChecker) {
             done = true;
             return;
         }

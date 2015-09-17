@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import me.guichaguri.betterfps.BetterFpsConfig;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.gui.GuiCycleButton.GuiBooleanButton;
 import me.guichaguri.betterfps.tweaker.BetterFpsTweaker;
@@ -34,16 +35,17 @@ public class GuiBetterFpsConfig extends GuiScreen {
 
     private List<GuiButton> initButtons() {
         List<GuiButton> buttons = new ArrayList<GuiButton>();
+        BetterFpsConfig config = BetterFpsConfig.getConfig();
         buttons.add(new AlgorithmButton(2, "Algorithm", BetterFpsHelper.displayHelpers,
-                    BetterFpsHelper.ALGORITHM_NAME, new String[] {
+                config.algorithm, new String[] {
                         "The algorithm of sine & cosine methods",
                         "§cRequires restarting to take effect",
                         "", "§eShift-click me to test algorithms §7(This will take a few seconds)",
                         "", "§aMore information soon"}));
-        buttons.add(new GuiBooleanButton(3, "Update Checker", BetterFpsHelper.CHECK_UPDATES, new String[] {
+        buttons.add(new GuiBooleanButton(3, "Update Checker", config.updateChecker, new String[] {
                         "Whether will check for updates on startup",
                         "It's highly recommended enabling this option"}));
-        buttons.add(new GuiBooleanButton(4, "Preallocate Memory", BetterFpsHelper.PREALLOCATE_MEMORY, new String[] {
+        buttons.add(new GuiBooleanButton(4, "Preallocate Memory", config.preallocateMemory, new String[] {
                         "Whether will preallocate 10MB on startup.",
                         "§cRequires restarting to take effect", "",
                         "Note: This allocation will only be cleaned once the memory is almost full"}));
@@ -117,22 +119,23 @@ public class GuiBetterFpsConfig extends GuiScreen {
         } else if(button.id == -1) {
             // Save
             boolean restart = false;
+            BetterFpsConfig config = BetterFpsConfig.getConfig();
 
             GuiCycleButton algorithmButton = getCycleButton(2);
             String algorithm = algorithmButton.getSelectedValue();
-            if(!algorithm.equals(BetterFpsHelper.ALGORITHM_NAME)) restart = true;
-            BetterFpsHelper.CONFIG.setProperty("algorithm", algorithm);
+            if(!algorithm.equals(config.algorithm)) restart = true;
+
+            config.algorithm = algorithm;
 
             GuiCycleButton updateButton = getCycleButton(3);
-            BetterFpsHelper.CONFIG.setProperty("update-checker", updateButton.getSelectedValue() + "");
+            config.updateChecker = updateButton.getSelectedValue();
 
             GuiCycleButton preallocateButton = getCycleButton(4);
             boolean preallocate = preallocateButton.getSelectedValue();
-            if(preallocate != BetterFpsHelper.PREALLOCATE_MEMORY) restart = true;
-            BetterFpsHelper.CONFIG.setProperty("preallocate-memory", preallocate + "");
+            if(preallocate != config.preallocateMemory) restart = true;
+            config.preallocateMemory = preallocate;
 
             BetterFpsHelper.saveConfig();
-            BetterFpsHelper.loadConfig();
 
             mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
         } else if(button.id == -2) {

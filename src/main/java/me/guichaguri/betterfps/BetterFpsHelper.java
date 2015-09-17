@@ -1,12 +1,14 @@
 package me.guichaguri.betterfps;
 
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 import net.minecraft.util.MathHelper;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @author Guilherme Chaguri
@@ -25,7 +27,6 @@ public class BetterFpsHelper {
     public static final LinkedHashMap<String, String> displayHelpers = new LinkedHashMap<String, String>();
 
     static {
-
         helpers.put("vanilla", "VanillaMath");
         helpers.put("rivens", "RivensMath");
         helpers.put("taylors", "TaylorMath");
@@ -47,15 +48,7 @@ public class BetterFpsHelper {
 
     public static File LOC;
     public static File MCDIR = null;
-    public static Properties CONFIG = null;
     private static File CONFIG_FILE = null;
-
-    public static String ALGORITHM_NAME;
-    public static String ALGORITHM_CLASS;
-
-    public static boolean CHECK_UPDATES = true;
-
-    public static boolean PREALLOCATE_MEMORY = false;
 
     public static void init() {
         try {
@@ -72,47 +65,53 @@ public class BetterFpsHelper {
         }
     }
 
-    public static void loadConfig() {
+    public static BetterFpsConfig loadConfig() {
+
         if(MCDIR == null) {
-            CONFIG_FILE = new File("betterfps.txt");
+            CONFIG_FILE = new File("config" + File.pathSeparator + "betterfps.json");
         } else {
-            CONFIG_FILE = new File(MCDIR, "betterfps.txt");
+            CONFIG_FILE = new File(MCDIR, "config" + File.pathSeparator + "betterfps.json");
         }
 
-        CONFIG = new Properties();
         try {
             if(CONFIG_FILE.exists()) {
-                CONFIG.load(new FileInputStream(CONFIG_FILE));
+                Gson gson = new Gson();
+                BetterFpsConfig.instance = gson.fromJson(new FileReader(CONFIG_FILE), BetterFpsConfig.class);
+            } else {
+                BetterFpsConfig.instance = new BetterFpsConfig();
             }
         } catch(Exception ex) {
             ex.printStackTrace();
         }
 
-        ALGORITHM_NAME = CONFIG.getProperty("algorithm", "rivens-half");
-        ALGORITHM_CLASS = helpers.get(ALGORITHM_NAME);
-
-        CHECK_UPDATES = parseBoolean(CONFIG.getProperty("update-checker"), true);
-        PREALLOCATE_MEMORY = parseBoolean(CONFIG.getProperty("preallocate-memory"), false);
-
-        CONFIG.setProperty("algorithm", ALGORITHM_NAME);
-        CONFIG.setProperty("update-checker", CHECK_UPDATES + "");
-        CONFIG.setProperty("preallocate-memory", PREALLOCATE_MEMORY + "");
+        // Temporary code - Import config from the old format to the new one
+        try {
+            Properties prop = new Properties();
+            File oldConfigFile;
+            if(MCDIR == null) {
+                oldConfigFile = new File("betterfps.txt");
+            } else {
+                oldConfigFile = new File(MCDIR, "betterfps.txt");
+            }
+            if((oldConfigFile.exists()) && (!CONFIG_FILE.exists())) {
+                prop.load(new FileInputStream(oldConfigFile));
+                BetterFpsConfig.instance.algorithm = prop.getProperty("algorithm", "rivens-half");
+            }
+        } catch(Exception ex) {
+            System.err.println("Could not import the old config format");
+        }
+        // ---
 
         saveConfig();
-    }
 
-    private static boolean parseBoolean(String str, boolean def) {
-        try {
-            return Boolean.parseBoolean(str);
-        } catch(Exception ex) {
-            return def;
-        }
+        return BetterFpsConfig.instance;
     }
 
     public static void saveConfig() {
         try {
             if(!CONFIG_FILE.exists()) CONFIG_FILE.createNewFile();
-            CONFIG.store(new FileOutputStream(CONFIG_FILE), "BetterFps Config");
+            Gson gson = new Gson();
+            FileUtils.writeStringToFile(CONFIG_FILE, gson.toJson(BetterFpsConfig.instance));
         } catch(Exception ex) {
             ex.printStackTrace();
         }

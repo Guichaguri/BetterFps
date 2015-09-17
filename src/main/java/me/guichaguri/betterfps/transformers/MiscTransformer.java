@@ -1,6 +1,7 @@
 package me.guichaguri.betterfps.transformers;
 
 import java.util.Iterator;
+import me.guichaguri.betterfps.BetterFpsConfig;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -30,7 +31,8 @@ public class MiscTransformer implements IClassTransformer {
 
 
     public byte[] patchMinecraft(byte[] bytes) {
-        if(BetterFpsHelper.CONFIG == null) BetterFpsHelper.loadConfig();
+        BetterFpsConfig config = BetterFpsConfig.getConfig();
+        if(config == null) config = BetterFpsHelper.loadConfig();
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
@@ -40,14 +42,14 @@ public class MiscTransformer implements IClassTransformer {
         Iterator<FieldNode> i = classNode.fields.iterator();
         while(i.hasNext()) {
             FieldNode field = i.next();
-            if((!BetterFpsHelper.PREALLOCATE_MEMORY) && (Naming.F_memoryReserve.is(field.name, field.desc))) {
+            if((!config.preallocateMemory) && (Naming.F_memoryReserve.is(field.name, field.desc))) {
                 i.remove();
                 patch = true;
             }
         }
 
         for(MethodNode method : classNode.methods) {
-            if(!BetterFpsHelper.PREALLOCATE_MEMORY) {
+            if(!config.preallocateMemory) {
                 if((Naming.M_freeMemory.is(method.name, method.desc)) ||
                    (Naming.M_StaticBlock.is(method.name, method.desc))) {
                     int loc = -1;

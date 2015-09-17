@@ -155,9 +155,10 @@ public class AlgorithmTester extends JFrame implements ActionListener {
                 return;
             }
             BetterFpsHelper.MCDIR = mcDir;
-            BetterFpsHelper.loadConfig();
-            BetterFpsHelper.CONFIG.setProperty("algorithm", bestAlgorithm);
-            BetterFpsHelper.saveConfig();
+            // TODO FIX!
+            //BetterFpsHelper.loadConfig();
+            //BetterFpsHelper.CONFIG.setProperty("algorithm", bestAlgorithm);
+            //BetterFpsHelper.saveConfig();
             setVisible(false);
             System.out.println(bestAlgorithm);
             JOptionPane.showMessageDialog(this, "The algorithm was set to " + bestAlgorithmName + ".\n\n" +

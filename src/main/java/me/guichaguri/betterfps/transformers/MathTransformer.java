@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import me.guichaguri.betterfps.BetterFps;
+import me.guichaguri.betterfps.BetterFpsConfig;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -39,23 +40,31 @@ public class MathTransformer implements IClassTransformer {
 
     private byte[] patchMath(byte[] bytes) throws Exception {
 
-        if(BetterFpsHelper.CONFIG == null) {
+        BetterFpsConfig config = BetterFpsConfig.getConfig();
+        if(config == null) {
             BetterFpsHelper.loadConfig();
+            config = BetterFpsConfig.getConfig();
         }
 
-        if(BetterFpsHelper.ALGORITHM_NAME.equals("vanilla")) {
-            BetterFps.log.info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
+        String algorithmClass = BetterFpsHelper.helpers.get(config.algorithm);
+        if(algorithmClass == null) {
+            BetterFps.log.error("The algorithm is invalid. We're going to use Vanilla Algorithm instead.");
+            config.algorithm = "vanilla";
+        }
+
+        if(config.algorithm.equals("vanilla")) {
+            BetterFps.log.info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(config.algorithm));
             return bytes;
         } else {
-            BetterFps.log.info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(BetterFpsHelper.ALGORITHM_NAME));
+            BetterFps.log.info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(config.algorithm));
         }
 
         ClassReader reader;
         if(BetterFpsHelper.LOC == null) { // Development or vanilla environment?
-            reader = new ClassReader("me.guichaguri.betterfps.math." + BetterFpsHelper.ALGORITHM_CLASS);
+            reader = new ClassReader("me.guichaguri.betterfps.math." + algorithmClass);
         } else { // Forge environment
             JarFile jar = new JarFile(BetterFpsHelper.LOC);
-            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + BetterFpsHelper.ALGORITHM_CLASS + ".class");
+            ZipEntry e = jar.getEntry("me/guichaguri/betterfps/math/" + algorithmClass + ".class");
             reader = new ClassReader(jar.getInputStream(e));
             jar.close();
         }
