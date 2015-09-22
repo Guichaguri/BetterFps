@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Properties;
-import net.minecraft.util.MathHelper;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -51,18 +49,7 @@ public class BetterFpsHelper {
     private static File CONFIG_FILE = null;
 
     public static void init() {
-        try {
-            // UNLOAD CACHED UNNECESSARY VALUES
-            for(Field f : MathHelper.class.getDeclaredFields()) {
-                String name = f.getName();
-                if((name.equals("SIN_TABLE")) || (name.equals("a"))) { // field_76144_a
-                    f.setAccessible(true);
-                    f.set(null, null);
-                }
-            }
-        } catch(Exception ex) {
-            // An error ocurred while unloading vanilla sin table? Its not a big problem.
-        }
+
     }
 
     public static BetterFpsConfig loadConfig() {

@@ -39,7 +39,8 @@ public enum Naming { // TODO BUKKIT
     M_startServer("startServer", null, null, "()Z"), // TODO obfuscated // MinecraftServer
     M_setActivePlayerChunksAndCheckLight("setActivePlayerChunksAndCheckLight", null, null, "()V"), // TODO obfuscated // World
 
-    F_memoryReserve("memoryReserve", null, null, "[B"); // TODO obfuscated // Minecraft
+    F_memoryReserve("memoryReserve", null, null, "[B"), // TODO obfuscated // Minecraft
+    F_SIN_TABLE("SIN_TABLE", "a", null, "[F"); // MathHelper
 
 
     private String deob;

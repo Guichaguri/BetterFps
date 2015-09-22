@@ -48,6 +48,9 @@ public class GuiBetterFpsConfig extends GuiScreen {
         buttons.add(new GuiBooleanButton(4, "Preallocate Memory", config.preallocateMemory, new String[] {
                         "Whether will preallocate 10MB on startup.",
                         "§cRequires restarting to take effect", "",
+                        "Default in Vanilla: On",
+                        "Default in BetterFps: Off",
+                        "",
                         "Note: This allocation will only be cleaned once the memory is almost full"}));
         return buttons;
     }
@@ -85,9 +88,9 @@ public class GuiBetterFpsConfig extends GuiScreen {
         drawDefaultBackground();
         if(mouseY < fontRendererObj.FONT_HEIGHT + 14) {
             if(Mouse.isButtonDown(1)) {
-                drawCenteredString(fontRendererObj, "This is not a button .-.", this.width / 2, 7, 0xC0C0C0);
+                drawCenteredString(fontRendererObj, "This is not a button", this.width / 2, 7, 0xC0C0C0);
             } else {
-                drawCenteredString(fontRendererObj, "Hold right-click in a button for information", this.width / 2, 7, 0xC0C0C0);
+                drawCenteredString(fontRendererObj, "Hold right-click on a button for information", this.width / 2, 7, 0xC0C0C0);
             }
         } else {
             drawCenteredString(fontRendererObj, "BetterFps Options", this.width / 2, 7, 0xFFFFFF);

@@ -99,11 +99,24 @@ public class MathTransformer implements IClassTransformer {
 
         }
 
-        if(!patched) return bytes;
+        if(patched) {
 
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        classNode.accept(writer);
-        return writer.toByteArray();
+            Iterator<FieldNode> fields = classNode.fields.iterator();
+            while(fields.hasNext()) {
+                FieldNode field = fields.next();
+                if(Naming.F_SIN_TABLE.is(field.name, field.desc)) { // Remove this unused array to get less ram usage
+                    fields.remove();
+                    break;
+                }
+            }
+
+            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+            classNode.accept(writer);
+            return writer.toByteArray();
+
+        }
+
+        return bytes;
     }
 
     private void patchInit(ClassNode classNode, ClassNode math, String name, String oldName) {
