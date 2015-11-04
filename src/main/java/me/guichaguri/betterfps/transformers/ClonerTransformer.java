@@ -32,6 +32,8 @@ public class ClonerTransformer implements IClassTransformer {
 
     static {
         addClone("me.guichaguri.betterfps.clones.tileentity.BeaconLogic", Naming.C_TileEntityBeacon);
+        addClone("me.guichaguri.betterfps.clones.tileentity.HopperLogic", Naming.C_TileEntityHopper);
+        addClone("me.guichaguri.betterfps.clones.block.HopperBlock", Naming.C_BlockHopper);
     }
 
     @Override
@@ -168,12 +170,12 @@ public class ClonerTransformer implements IClassTransformer {
         node.fields.add(e);
     }
 
-    private void cloneMethod(MethodNode e, ClassNode node, ClassNode original, Mode mode, Naming name) {
-        if(mode == Mode.IGNORE) return;
+    private boolean cloneMethod(MethodNode e, ClassNode node, ClassNode original, Mode mode, Naming name) {
+        if(mode == Mode.IGNORE) return false;
         for(int i = 0; i < node.methods.size(); i++) {
             MethodNode method = node.methods.get(i);
             boolean b = false;
-            if((name != null) && (name.is(method.name, method.desc))) {
+            if((name != null) && (name.is(method.name)) && (method.desc.equals(e.desc))) {
                 b = true;
                 e.name = method.name;
                 e.desc = method.desc;
@@ -181,16 +183,19 @@ public class ClonerTransformer implements IClassTransformer {
                 b = true;
             }
             if(b) {
-                if(mode == Mode.ADD_IF_NOT_EXISTS) return;
+                if(mode == Mode.ADD_IF_NOT_EXISTS) return false;
                 node.methods.remove(method);
                 break;
             }
         }
         replaceOcurrences(e, node, original);
         node.methods.add(e);
+        return true;
     }
 
     private void replaceOcurrences(MethodNode method, ClassNode classNode, ClassNode original) {
+        String originalDesc = "L" + original.name + ";";
+        String classDesc = "L" + classNode.name + ";";
         for(AbstractInsnNode node : method.instructions.toArray()) {
             if(node instanceof FieldInsnNode) {
                 FieldInsnNode f = (FieldInsnNode)node;
@@ -207,6 +212,11 @@ public class ClonerTransformer implements IClassTransformer {
                 if(t.desc.equals(original.name)) {
                     t.desc = classNode.name;
                 }
+            }
+        }
+        for(LocalVariableNode var : method.localVariables) {
+            if(var.desc == originalDesc) {
+                var.desc = classDesc;
             }
         }
     }

@@ -23,7 +23,7 @@ import net.minecraft.util.BlockPos;
  */
 public class BeaconLogic extends TileEntityBeacon {
 
-    @CopyMode(Mode.IGNORE) // Ignore the constructor prevent an infinite loop
+    @CopyMode(Mode.IGNORE) // Ignore the constructor to prevent an infinite loop
     public BeaconLogic() {
 
     }

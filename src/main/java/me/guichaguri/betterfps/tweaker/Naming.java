@@ -25,6 +25,8 @@ public enum Naming { // TODO BUKKIT
     C_DedicatedServer("net.minecraft.server.dedicated.DedicatedServer", null, null), // TODO obfuscated + bukkit
     C_TileEntityBeacon("net.minecraft.tileentity.TileEntityBeacon", null, null), // TODO obfuscated + bukkit
     C_BeamSegment("net.minecraft.tileentity.TileEntityBeacon$BeamSegment", null, null), // TODO obfuscated + bukkit
+    C_TileEntityHopper("net.minecraft.tileentity.TileEntityHopper", null, null), // TODO obfuscated + bukkit
+    C_BlockHopper("net.minecraft.block.BlockHopper", null, null), // TODO obfuscated + bukkit
 
     M_startGame("startGame", "aj", null, "()V"), // Minecraft
     M_onTick("onTick", "a", null, "(I)V"), // KeyBinding
@@ -38,6 +40,7 @@ public enum Naming { // TODO BUKKIT
     M_initGui("initGui", null, null, "()V"), // TODO obfuscated // GuiScreen
     M_startServer("startServer", null, null, "()Z"), // TODO obfuscated // MinecraftServer
     M_setActivePlayerChunksAndCheckLight("setActivePlayerChunksAndCheckLight", null, null, "()V"), // TODO obfuscated // World
+    M_updateHopper("func_145891_a", null, null, null), // TODO obfuscated // TileEntityHopper
 
     F_memoryReserve("memoryReserve", null, null, "[B"), // TODO obfuscated // Minecraft
     F_SIN_TABLE("SIN_TABLE", "a", null, "[F"); // MathHelper
