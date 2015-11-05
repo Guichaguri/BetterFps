@@ -5,9 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import me.guichaguri.betterfps.ASMUtils;
 import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode.Mode;
@@ -184,6 +186,16 @@ public class ClonerTransformer implements IClassTransformer {
             }
             if(b) {
                 if(mode == Mode.ADD_IF_NOT_EXISTS) return false;
+                if(mode == Mode.PREPEND) {
+                    replaceOcurrences(e, node, original);
+                    method.instructions = ASMUtils.prependNodeList(method.instructions, e.instructions);
+                    return true;
+                }
+                if(mode == Mode.APPEND) {
+                    replaceOcurrences(e, node, original);
+                    method.instructions = ASMUtils.appendNodeList(method.instructions, e.instructions);
+                    return true;
+                }
                 node.methods.remove(method);
                 break;
             }
@@ -196,21 +208,47 @@ public class ClonerTransformer implements IClassTransformer {
     private void replaceOcurrences(MethodNode method, ClassNode classNode, ClassNode original) {
         String originalDesc = "L" + original.name + ";";
         String classDesc = "L" + classNode.name + ";";
-        for(AbstractInsnNode node : method.instructions.toArray()) {
+        Iterator<AbstractInsnNode> nodes = method.instructions.iterator();
+        TypeInsnNode lastType = null;
+        nodeLoop: while(nodes.hasNext()) {
+            AbstractInsnNode node = nodes.next();
+
             if(node instanceof FieldInsnNode) {
                 FieldInsnNode f = (FieldInsnNode)node;
                 if(f.owner.equals(original.name)) {
                     f.owner = classNode.name;
+                } else {
+                    for(Clone c : clones) {
+                        if(f.owner.equals(c.clonePath)) {
+                            f.owner = lastType.desc;
+                            continue nodeLoop;
+                        }
+                    }
                 }
             } else if(node instanceof MethodInsnNode) {
                 MethodInsnNode m = (MethodInsnNode)node;
                 if(m.owner.equals(original.name)) {
                     m.owner = classNode.name;
+                } else {
+                    for(Clone c : clones) {
+                        if(m.owner.equals(c.clonePath)) {
+                            m.owner = lastType.desc;
+                            continue nodeLoop;
+                        }
+                    }
                 }
             } else if(node instanceof TypeInsnNode) {
                 TypeInsnNode t = (TypeInsnNode)node;
                 if(t.desc.equals(original.name)) {
                     t.desc = classNode.name;
+                } else {
+                    for(Clone c : clones) {
+                        if(t.desc.equals(c.clonePath)) {
+                            nodes.remove();
+                            continue nodeLoop;
+                        }
+                    }
+                    lastType = t;
                 }
             }
         }
@@ -238,7 +276,8 @@ public class ClonerTransformer implements IClassTransformer {
         public Mode value(); // Mode that the object will be copied, not needed if you'll use REPLACE
 
         public enum Mode {
-            REPLACE, ADD_IF_NOT_EXISTS, IGNORE
+            REPLACE, ADD_IF_NOT_EXISTS, IGNORE,
+            PREPEND, APPEND // APPEND & PREPEND can only be used in methods
         }
     }
 

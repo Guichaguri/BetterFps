@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -21,17 +22,13 @@ public class HopperBlock extends BlockHopper {
     }
 
     @Override
+    @CopyMode(Mode.APPEND)
     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-        updateState(worldIn, pos, state);
         TileEntity te = worldIn.getTileEntity(pos);
-        if(te != null) ((HopperLogic)te).checkBlockOnTop();
-    }
-
-    public void updateState(World worldIn, BlockPos pos, IBlockState state) {
-        boolean flag = !worldIn.isBlockPowered(pos);
-
-        if(flag != ((Boolean)state.getValue(ENABLED)).booleanValue()) {
-            worldIn.setBlockState(pos, state.withProperty(ENABLED, Boolean.valueOf(flag)), 4);
+        if(te != null) {
+            TileEntityHopper hopper = (TileEntityHopper)te;
+            ((HopperLogic)hopper).checkBlockOnTop();
+            // This is casted to HopperLogic just to make this class compilable. It will be removed by the ASM
         }
     }
 
