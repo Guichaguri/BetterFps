@@ -109,16 +109,18 @@ public class MiscTransformer implements IClassTransformer {
         l.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, ModMetadata, "<init>", "()V", false));
         l.add(new VarInsnNode(Opcodes.ASTORE, index));
         //m.modId = "BetterFps";
-        //setField(l, index, "BetterFps", ModMetadata, "modId", StringType);
+        setField(l, index, "BetterFps", ModMetadata, "modId", StringType);
         //m.name = "BetterFps";
-        //setField(l, index, "BetterFps", ModMetadata, "name", StringType);
+        setField(l, index, "BetterFps", ModMetadata, "name", StringType);
         //m.version = BetterFpsHelper.VERSION;
-        //setField(l, index, BetterFpsHelper.VERSION, ModMetadata, "version", StringType);
+        setField(l, index, BetterFpsHelper.VERSION, ModMetadata, "version", StringType);
         //m.url = BetterFpsHelper.URL;
-        //setField(l, index, BetterFpsHelper.URL, ModMetadata, "url", StringType);
+        setField(l, index, BetterFpsHelper.URL, ModMetadata, "url", StringType);
+        //m.description = "Performance Improvements";
+        setField(l, index, "Performance Improvements", ModMetadata, "description", StringType);
 
         //m.authorList = Arrays.asList(new String[]{"Guichaguri"});
-        /*l.add(new VarInsnNode(Opcodes.ALOAD, index));
+        l.add(new VarInsnNode(Opcodes.ALOAD, index));
         l.add(new InsnNode(Opcodes.ICONST_1));
         l.add(new TypeInsnNode(Opcodes.ANEWARRAY, "java/lang/String"));
         l.add(new InsnNode(Opcodes.DUP));
@@ -127,15 +129,15 @@ public class MiscTransformer implements IClassTransformer {
         l.add(new InsnNode(Opcodes.AASTORE));
         l.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/util/Arrays", "asList",
                                 "([Ljava/lang/Object;)Ljava/util/List;", false));
-        l.add(new FieldInsnNode(Opcodes.PUTFIELD, ModMetadata, "authorList", "Ljava/util/List;"));*/
+        l.add(new FieldInsnNode(Opcodes.PUTFIELD, ModMetadata, "authorList", "Ljava/util/List;"));
 
         //DummyModContainer d = new DummyModContainer(m);
+        l.add(new VarInsnNode(Opcodes.ALOAD, 0));
         l.add(new TypeInsnNode(Opcodes.NEW, DummyModContainer));
         l.add(new InsnNode(Opcodes.DUP));
         l.add(new VarInsnNode(Opcodes.ALOAD, index));
         l.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, DummyModContainer, "<init>", "(L" + ModMetadata + ";)V", false));
         l.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, mod.name, mod.desc));
-        System.out.println(mod.name + " - " + mod.desc);
 
         InsnList oldList = new InsnList();
         ASMUtils.addToInsnList(oldList, mcLoad.instructions.toArray());

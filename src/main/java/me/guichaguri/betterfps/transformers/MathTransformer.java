@@ -95,7 +95,20 @@ public class MathTransformer implements IClassTransformer {
                 // COS
                 patchCos(method, mathnode, className, mathClass);
                 patched = true;
-            }
+            } /*else if(Naming.M_StaticBlock.is(method.name, method.desc)) {
+
+                InsnList list = new InsnList();
+                for(int i = 0; i < method.instructions.size(); i++) {
+                    AbstractInsnNode node = list.get(i);
+                    if(node instanceof FieldInsnNode) {
+                        FieldInsnNode field = (FieldInsnNode)node;
+                        if(field.owner.equals(className) && Naming.F_SIN_TABLE.is(field.name, field.desc)) {
+
+                        }
+                    }
+                }
+
+            }*/ //TODO finish
 
         }
 
@@ -105,7 +118,8 @@ public class MathTransformer implements IClassTransformer {
             while(fields.hasNext()) {
                 FieldNode field = fields.next();
                 if(Naming.F_SIN_TABLE.is(field.name, field.desc)) { // Remove this unused array to get less ram usage
-                    fields.remove();
+                    //fields.remove();
+                    // TODO finish
                     break;
                 }
             }

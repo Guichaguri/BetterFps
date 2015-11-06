@@ -1,6 +1,7 @@
 package me.guichaguri.betterfps.transformers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.tweaker.Naming;
@@ -24,7 +25,7 @@ public class VisualChunkTransformer implements IClassTransformer {
             for(MethodNode m : node.methods) {
                 if(Naming.M_updateBlocks.is(m.name, m.desc)) {
                     BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
-                    patchTick(m);
+                    patchTick(m, "thunder");
                 }
             }
             return toBytes(node);
@@ -33,7 +34,7 @@ public class VisualChunkTransformer implements IClassTransformer {
             for(MethodNode m : node.methods) {
                 if(Naming.M_updateBlocks.is(m.name, m.desc)) {
                     BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
-                    patchTick(m);
+                    //patchTick(m, null);
                 }
             }
             return toBytes(node);
@@ -120,7 +121,32 @@ public class VisualChunkTransformer implements IClassTransformer {
         method.instructions.add(list);
     }
 
-    private void patchTick(MethodNode method) {
+    private HashMap<FrameNode, LabelNode> getFrames(HashMap<FrameNode, LabelNode> hm, AbstractInsnNode[] list, FrameNode after) {
+        FrameNode frame = null;
+        LabelNode lastLabel = null;
+        for(AbstractInsnNode node : list) {
+            if(node instanceof FrameNode) {
+                MethodNode mn;
+                if(node.getOpcode() != Opcodes.F_SAME) {
+                    if(after != null && after != node) continue;
+                    after = null;
+                    if(frame == null) {
+                        frame = (FrameNode) node;
+                    } else {
+                        getFrames(hm, list, (FrameNode) node);
+                    }
+                } else {
+                    hm.put(frame, lastLabel);
+                    frame = null;
+                }
+            } else if(node instanceof LabelNode) {
+                lastLabel = (LabelNode)node;
+            }
+        }
+        return hm;
+    }
+
+    private void patchTick(MethodNode method, String afterLdcStr) {
         String coordName = null;
         List<Integer> lvs = new ArrayList<Integer>();
         for(LocalVariableNode node : method.localVariables) {
@@ -137,25 +163,57 @@ public class VisualChunkTransformer implements IClassTransformer {
 
         InsnList list = new InsnList();
 
-        for(AbstractInsnNode node : method.instructions.toArray()) {
+        boolean afterLdc = afterLdcStr != null;
+        AbstractInsnNode[] instList = method.instructions.toArray();
+        HashMap<FrameNode, LabelNode> frames = getFrames(new HashMap<FrameNode, LabelNode>(), instList, null);
+        VarInsnNode lastVar = null;
+        FrameNode frame = null;
+
+        for(AbstractInsnNode node : instList) {
             list.add(node);
-            if((node.getOpcode() == Opcodes.ASTORE) && (node instanceof VarInsnNode)) {
+            if((afterLdc) && (node instanceof LdcInsnNode)) {
+                if(afterLdcStr.equals(((LdcInsnNode)node).cst) && lastVar != null) {
+                    BetterFps.log.info(frames.size());
+                    addTickCheck(list, lastVar, coordName, frames.get(frame));
+                }
+            } else if((node.getOpcode() == Opcodes.ASTORE) && (node instanceof VarInsnNode)) {
                 VarInsnNode var = (VarInsnNode)node;
                 if(lvs.contains(var.var)) {
-                    list.add(new VarInsnNode(Opcodes.ALOAD, var.var));
-                    list.add(new FieldInsnNode(Opcodes.GETFIELD, coordName, "isTickable", "Z"));
-                    LabelNode l1 = new LabelNode();
-                    list.add(new JumpInsnNode(Opcodes.IFEQ, l1));
-                    LabelNode l2 = new LabelNode();
-                    list.add(l2);
-                    list.add(new InsnNode(Opcodes.RETURN));
-                    list.add(l1);
-                    list.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[]{coordName}, 0, null));
+                    if(afterLdc) {
+                        lastVar = var;
+                    } else {
+                        BetterFps.log.info(frames.size());
+                        addTickCheck(list, var, coordName, frames.get(frame));
+                    }
+                }
+            } else if(node instanceof FrameNode) {
+                if(node.getOpcode() == Opcodes.F_SAME) {
+                    frame = null;
+                } else {
+                    frame = (FrameNode)node;
                 }
             }
         }
 
         method.instructions.clear();
         method.instructions.add(list);
+    }
+
+    private void addTickCheck(InsnList list, VarInsnNode var, String coordName, LabelNode loop) {
+        list.add(new VarInsnNode(Opcodes.ALOAD, var.var));
+        list.add(new FieldInsnNode(Opcodes.GETFIELD, coordName, "isTickable", "Z"));
+        LabelNode l1 = new LabelNode();
+        list.add(new JumpInsnNode(Opcodes.IFEQ, l1));
+        LabelNode l2 = new LabelNode();
+        list.add(l2);
+        if(loop != null) {
+            BetterFps.log.info("----------- LOOP: " + loop.getOpcode());
+            list.add(new JumpInsnNode(Opcodes.GOTO, loop));
+        } else {
+            BetterFps.log.info("----------- RETURN ");
+            list.add(new InsnNode(Opcodes.RETURN)); //TODO continue
+        }
+        list.add(l1);
+        list.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[]{coordName}, 0, null));
     }
 }
