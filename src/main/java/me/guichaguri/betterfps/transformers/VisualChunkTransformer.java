@@ -1,15 +1,16 @@
 package me.guichaguri.betterfps.transformers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import me.guichaguri.betterfps.ASMUtils;
 import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Guilherme Chaguri
@@ -21,51 +22,38 @@ public class VisualChunkTransformer implements IClassTransformer {
         if(bytes == null) return bytes;
 
         if(Naming.C_WorldServer.is(name)) {
-            ClassNode node = readClass(bytes);
+            ClassNode node = ASMUtils.readClass(bytes, 0);
             for(MethodNode m : node.methods) {
                 if(Naming.M_updateBlocks.is(m.name, m.desc)) {
                     BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
                     patchTick(m, "thunder");
                 }
             }
-            return toBytes(node);
+            return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         } else if(Naming.C_WorldClient.is(name)) {
-            ClassNode node = readClass(bytes);
+            ClassNode node = ASMUtils.readClass(bytes, 0);
             for(MethodNode m : node.methods) {
                 if(Naming.M_updateBlocks.is(m.name, m.desc)) {
                     BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
                     //patchTick(m, null);
                 }
             }
-            return toBytes(node);
+            return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         } else if(Naming.C_World.is(name)) {
-            ClassNode node = readClass(bytes);
+            ClassNode node = ASMUtils.readClass(bytes, 0);
             for(MethodNode m : node.methods) {
                 if(Naming.M_setActivePlayerChunksAndCheckLight.is(m.name, m.desc)) {
                     patchTickableCheck(m);
                 }
             }
-            return toBytes(node);
+            return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         } else if(Naming.C_ChunkCoordIntPair.is(name)) {
-            ClassNode node = readClass(bytes);
+            ClassNode node = ASMUtils.readClass(bytes, 0);
             patchChunk(node);
-            return toBytes(node);
+            return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         }
 
         return bytes;
-    }
-
-    private ClassNode readClass(byte[] bytes) {
-        ClassReader reader = new ClassReader(bytes);
-        ClassNode node = new ClassNode();
-        reader.accept(node, 0);
-        return node;
-    }
-
-    private byte[] toBytes(ClassNode node) {
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        node.accept(writer);
-        return writer.toByteArray();
     }
 
     private void patchChunk(ClassNode node) {
