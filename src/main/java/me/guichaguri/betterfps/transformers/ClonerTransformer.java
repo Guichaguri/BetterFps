@@ -1,14 +1,5 @@
 package me.guichaguri.betterfps.transformers;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 import me.guichaguri.betterfps.ASMUtils;
 import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.BetterFpsHelper;
@@ -19,6 +10,12 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * This class will clone .class methods/fields to the real class
@@ -269,23 +266,23 @@ public class ClonerTransformer implements IClassTransformer {
         }
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
-    public static @interface CopyMode {
+//    @Retention(RetentionPolicy.RUNTIME)
+//    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
+    public @interface CopyMode {
 
-        public Mode value(); // Mode that the object will be copied, not needed if you'll use REPLACE
+        Mode value(); // Mode that the object will be copied, not needed if you'll use REPLACE
 
-        public enum Mode {
+        enum Mode {
             REPLACE, ADD_IF_NOT_EXISTS, IGNORE,
             PREPEND, APPEND // APPEND & PREPEND can only be used in methods
         }
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-    public static @interface Named {
+//    @Retention(RetentionPolicy.RUNTIME)
+//    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+    public @interface Named {
 
-        public Naming value(); // Original name of the class/method/field
+        Naming value(); // Original name of the class/method/field
 
     }
 

@@ -1,12 +1,13 @@
 package me.guichaguri.betterfps.tweaker;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import me.guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -18,7 +19,7 @@ public class BetterFpsTweaker implements ITweaker {
             "me.guichaguri.betterfps.transformers.MathTransformer",
             "me.guichaguri.betterfps.transformers.EventTransformer",
             "me.guichaguri.betterfps.transformers.MiscTransformer",
-            "me.guichaguri.betterfps.transformers.ClonerTransformer",
+            //"me.guichaguri.betterfps.transformers.ClonerTransformer",
             //"me.guichaguri.betterfps.transformers.VisualChunkTransformer"
             //"me.guichaguri.betterfps.transformers.CapTransformer"
     };
@@ -49,6 +50,8 @@ public class BetterFpsTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
+        //cl.registerTransformer("");
+
         for(String transformer : TRANSFORMERS) {
             cl.registerTransformer(transformer);
         }
@@ -56,6 +59,8 @@ public class BetterFpsTweaker implements ITweaker {
         for(String excluded : EXCLUDED) {
             cl.addTransformerExclusion(excluded);
         }
+
+
     }
 
     @Override

@@ -1,16 +1,17 @@
 package me.guichaguri.betterfps.transformers;
 
-import java.util.Iterator;
-import me.guichaguri.betterfps.ASMUtils;
 import me.guichaguri.betterfps.BetterFps;
 import me.guichaguri.betterfps.BetterFpsConfig;
 import me.guichaguri.betterfps.BetterFpsHelper;
+import me.guichaguri.betterfps.ASMUtils;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+
+import java.util.Iterator;
 
 /**
  * @author Guilherme Chaguri

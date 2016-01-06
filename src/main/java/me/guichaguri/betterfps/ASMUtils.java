@@ -1,11 +1,12 @@
 package me.guichaguri.betterfps;
 
-import java.util.List;
 import me.guichaguri.betterfps.tweaker.Naming;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+
+import java.util.List;
 
 /**
  * @author Guilherme Chaguri
