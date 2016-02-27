@@ -1,8 +1,8 @@
 package me.guichaguri.betterfps.clones.tileentity;
 
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode.Mode;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.Named;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
+import me.guichaguri.betterfps.transformers.cloner.Named;
 import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -22,38 +22,40 @@ public class HopperLogic extends TileEntityHopper {
     public boolean canPickupDrops = true;
     public boolean isOnTransferCooldown = false;
 
-    @Named(Naming.M_updateHopper)
-    public static boolean updateHopper(IHopper hopper) {
+    @Named(Naming.M_captureDroppedItems)
+    public static boolean captureDroppedItems(IHopper hopper) {
         // This is to keep the same functionality in the Minecart with Hopper
         HopperLogic hopperTE = hopper.getClass() == TileEntityHopper.class ? (HopperLogic)hopper : null;
 
-        IInventory iinventory = hopperTE == null ? func_145884_b(hopper) : hopperTE.topInventory;
+        IInventory iinventory = hopperTE == null ? getHopperInventory(hopper) : hopperTE.topInventory;
 
         if(iinventory != null) {
             EnumFacing enumfacing = EnumFacing.DOWN;
 
-            if(func_174917_b(iinventory, enumfacing)) return false;
+            if(isInventoryEmpty(iinventory, enumfacing)) return false;
 
             if(iinventory instanceof ISidedInventory) {
                 ISidedInventory isidedinventory = (ISidedInventory)iinventory;
                 int[] aint = isidedinventory.getSlotsForFace(enumfacing);
 
                 for(int i = 0; i < aint.length; ++i) {
-                    if(func_174915_a(hopper, iinventory, aint[i], enumfacing)) return true;
+                    if(pullItemFromSlot(hopper, iinventory, aint[i], enumfacing)) return true;
                 }
             } else {
                 int j = iinventory.getSizeInventory();
 
                 for(int k = 0; k < j; ++k) {
-                    if(func_174915_a(hopper, iinventory, k, enumfacing)) return true;
+                    if(pullItemFromSlot(hopper, iinventory, k, enumfacing)) return true;
                 }
             }
         } else if(hopperTE == null || hopperTE.canPickupDrops) {
-            EntityItem entityitem = func_145897_a(hopper.getWorld(), hopper.getXPos(), hopper.getYPos() + 1.0D, hopper.getZPos());
 
-            if(entityitem != null) {
-                return func_145898_a(hopper, entityitem);
+            for(EntityItem entityitem : func_181556_a(hopper.getWorld(), hopper.getXPos(), hopper.getYPos() + 1.0D, hopper.getZPos())) {
+                if(putDropInInventoryAllSlots(hopper, entityitem)) {
+                    return true;
+                }
             }
+
         }
 
         return false;
@@ -72,7 +74,7 @@ public class HopperLogic extends TileEntityHopper {
 
             if(!this.isOnTransferCooldown()) {
                 this.setTransferCooldown(2); // Let the server breathe
-                this.func_145887_i();
+                this.updateHopper();
 
                 if(topBlockUpdate-- <= 0) {
                     checkBlockOnTop();
@@ -103,9 +105,8 @@ public class HopperLogic extends TileEntityHopper {
     }
 
     public void checkBlockOnTop() { // TODO Should be called with neighbour update
-        System.out.println("UPDATE BLOCK ON TOP");
         BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-        canPickupDrops = !worldObj.getBlockState(topPos).getBlock().isSolidFullCube();
-        topInventory = func_145884_b(this);
+        canPickupDrops = !worldObj.getBlockState(topPos).getBlock().isFullCube();
+        topInventory = getHopperInventory(this);
     }
 }

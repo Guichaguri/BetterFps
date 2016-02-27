@@ -52,6 +52,17 @@ public class GuiBetterFpsConfig extends GuiScreen {
                         "Default in BetterFps: Off",
                         "",
                         "Note: This allocation will only be cleaned once the memory is almost full"}));
+        buttons.add(new GuiBooleanButton(5, "Fast Box Render", config.fastBoxRender, new String[] {
+                        "Whether will only render the exterior of boxes.",
+                        "§cRequires restarting to take effect", "",
+                        "Default in Vanilla: Off",
+                        "Default in BetterFps: On"
+        }));
+        buttons.add(new GuiBooleanButton(6, "Fog", config.fog, new String[] {
+                        "Whether will render the fog.",
+                        "§cRequires restarting to take effect", "",
+                        "Default: Off"
+        }));
         return buttons;
     }
 

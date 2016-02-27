@@ -37,7 +37,10 @@ public class UpdateChecker implements Runnable {
     public static void showChat() {
         if(!done) return;
         if(prop == null) return;
-        if(BetterFpsHelper.VERSION.equals(prop.getProperty("version"))) return;
+        if(BetterFpsHelper.VERSION.equals(prop.getProperty("version"))) {
+            prop = null;
+            return;
+        }
         if(!BetterFps.isClient) return;
 
         GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
@@ -65,7 +68,10 @@ public class UpdateChecker implements Runnable {
     public static void showConsole() {
         if(!done) return;
         if(prop == null) return;
-        if(BetterFpsHelper.VERSION.equals(prop.getProperty("version"))) return;
+        if(BetterFpsHelper.VERSION.equals(prop.getProperty("version"))) {
+            prop = null;
+            return;
+        }
 
         BetterFps.log.info("BetterFps " + prop.getProperty("version") + " is available");
         BetterFps.log.info(prop.getProperty("quick-description"));

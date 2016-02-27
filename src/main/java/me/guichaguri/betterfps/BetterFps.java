@@ -20,7 +20,6 @@ public class BetterFps {
     public static int TICKABLE_RADIUS_NEG = -1;
 
     public static void serverStart() {
-        System.out.println("SERVER START");
         UpdateChecker.check();
     }
 

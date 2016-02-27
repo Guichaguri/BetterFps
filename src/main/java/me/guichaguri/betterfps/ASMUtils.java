@@ -1,12 +1,11 @@
 package me.guichaguri.betterfps;
 
+import java.util.List;
 import me.guichaguri.betterfps.tweaker.Naming;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
-
-import java.util.List;
 
 /**
  * @author Guilherme Chaguri
@@ -115,6 +114,32 @@ public class ASMUtils {
         for(AbstractInsnNode node : nodes) {
             list.add(node);
         }
+    }
+
+    public static String getAnnotationValue(AnnotationNode node, String k) {
+        return getAnnotationValue(node, k, String.class);
+    }
+
+    public static <T extends Object> T getAnnotationValue(AnnotationNode node, String k, Class<T> type) {
+        if(node.values == null) return null;
+        boolean isEnum = type.isEnum();
+        for(int x = 0; x < node.values.size() - 1; x += 2) {
+            Object key = node.values.get(x);
+            Object value = node.values.get(x + 1);
+            if(!(key instanceof String) || !key.equals(k)) continue;
+            if(isEnum) {
+                if(value instanceof String[]) {
+                    return (T)Enum.valueOf((Class<? extends Enum>)type, ((String[])value)[1]);
+                }
+            } else {
+                if(value instanceof String[]) {
+                    return (T)(((String[])value)[1]);
+                } else {
+                    return (T)value;
+                }
+            }
+        }
+        return null;
     }
 
 }

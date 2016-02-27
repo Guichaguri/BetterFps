@@ -6,16 +6,21 @@ package me.guichaguri.betterfps.tweaker;
  */
 public enum Naming { // TODO BUKKIT
 
+    // Prefixes
+    // C_ is for classes
+    // M_ is for methods
+    // F_ is for fields
+
     M_StaticBlock("<clinit>", null, null, "()V"),
     M_Constructor("<init>", null, null, "()V"),
 
-    C_Minecraft("net.minecraft.client.Minecraft", "bsu"),
-    C_KeyBinding("net.minecraft.client.settings.KeyBinding", "bsr"),
+    C_Minecraft("net.minecraft.client.Minecraft", null), //TODO obfuscated
+    C_KeyBinding("net.minecraft.client.settings.KeyBinding", null), //TODO obfuscated
     C_World("net.minecraft.world.World", null, null), //TODO obfuscated + bukkit
     C_Chunk("net.minecraft.world.chunk.Chunk", null, null), // TODO obfuscated + bukkit
     C_ChunkCoordIntPair("net.minecraft.world.ChunkCoordIntPair", null, null), // TODO obfuscated + bukkit
-    C_EntityPlayer("net.minecraft.entity.player.EntityPlayer", "ahd", null), // TODO bukkit
-    C_MathHelper("net.minecraft.util.MathHelper", "uv", null), // TODO bukkit
+    C_EntityPlayer("net.minecraft.entity.player.EntityPlayer", null, null), // TODO obfuscated + bukkit
+    C_MathHelper("net.minecraft.util.MathHelper", null, null), // TODO obfuscated + bukkit
     C_PrimedTNT("net.minecraft.entity.item.EntityTNTPrimed", null, null), //TODO obfuscated + bukkit
     C_ClientBrandRetriever("net.minecraft.client.ClientBrandRetriever", null),
     C_GuiOptions("net.minecraft.client.gui.GuiOptions", null), //TODO obfuscated
@@ -27,20 +32,21 @@ public enum Naming { // TODO BUKKIT
     C_BeamSegment("net.minecraft.tileentity.TileEntityBeacon$BeamSegment", null, null), // TODO obfuscated + bukkit
     C_TileEntityHopper("net.minecraft.tileentity.TileEntityHopper", null, null), // TODO obfuscated + bukkit
     C_BlockHopper("net.minecraft.block.BlockHopper", null, null), // TODO obfuscated + bukkit
+    C_ModelBox("net.minecraft.client.model.ModelBox", null, null), // TODO obfuscated + bukkit
 
-    M_startGame("startGame", "aj", null, "()V"), // Minecraft
-    M_onTick("onTick", "a", null, "(I)V"), // KeyBinding
+    M_startGame("startGame", null, null, "()V"), //TODO obfuscated // Minecraft
+    M_onTick("onTick", null, null, "(I)V"), //TODO obfuscated // KeyBinding
     M_sin("sin", "a", null, "(F)F"), // MathHelper
     M_cos("cos", "b", null, "(F)F"), // MathHelper
     M_tick("tick", null, null, "()V"), //TODO obfuscated // World
-    M_onUpdate("onUpdate", "s_", null, "()V"), // Entity
+    M_onUpdate("onUpdate", null, null, "()V"), //TODO obfuscated // Entity
     M_updateBlocks("updateBlocks", null, null, "()V"), // TODO obfuscated // World
     M_getClientModName("getClientModName", null, null, "()Ljava/lang/String;"), // ClientBrandRetriever
     M_freeMemory("freeMemory", null, null, "()V"), // TODO obfuscated // Minecraft
     M_initGui("initGui", null, null, "()V"), // TODO obfuscated // GuiScreen
     M_startServer("startServer", null, null, "()Z"), // TODO obfuscated // MinecraftServer
     M_setActivePlayerChunksAndCheckLight("setActivePlayerChunksAndCheckLight", null, null, "()V"), // TODO obfuscated // World
-    M_updateHopper("func_145891_a", null, null, null), // TODO obfuscated // TileEntityHopper
+    M_captureDroppedItems("captureDroppedItems", null, null, null), // TODO obfuscated // TileEntityHopper
 
     F_memoryReserve("memoryReserve", null, null, "[B"), // TODO obfuscated // Minecraft
     F_SIN_TABLE("SIN_TABLE", "a", null, "[F"); // MathHelper
@@ -64,6 +70,7 @@ public enum Naming { // TODO BUKKIT
         this(deob, ob, null);
     }
 
+    // For common classes
     Naming(String deob, String ob, String bukkit) {
         this.deob = deob;
         this.deobRepl = deob.replaceAll("\\.", "/");

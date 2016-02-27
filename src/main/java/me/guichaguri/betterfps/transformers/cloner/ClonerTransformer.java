@@ -1,21 +1,22 @@
-package me.guichaguri.betterfps.transformers;
-
-import me.guichaguri.betterfps.ASMUtils;
-import me.guichaguri.betterfps.BetterFps;
-import me.guichaguri.betterfps.BetterFpsHelper;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode.Mode;
-import me.guichaguri.betterfps.tweaker.Naming;
-import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+package me.guichaguri.betterfps.transformers.cloner;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import me.guichaguri.betterfps.ASMUtils;
+import me.guichaguri.betterfps.BetterFps;
+import me.guichaguri.betterfps.BetterFpsConfig;
+import me.guichaguri.betterfps.BetterFpsHelper;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
+import me.guichaguri.betterfps.tweaker.Naming;
+import net.minecraft.launchwrapper.IClassTransformer;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.*;
 
 /**
  * This class will clone .class methods/fields to the real class
@@ -33,6 +34,8 @@ public class ClonerTransformer implements IClassTransformer {
         addClone("me.guichaguri.betterfps.clones.tileentity.BeaconLogic", Naming.C_TileEntityBeacon);
         addClone("me.guichaguri.betterfps.clones.tileentity.HopperLogic", Naming.C_TileEntityHopper);
         addClone("me.guichaguri.betterfps.clones.block.HopperBlock", Naming.C_BlockHopper);
+
+        addClone("me.guichaguri.betterfps.clones.client.ModelBoxLogic", Naming.C_ModelBox);
     }
 
     @Override
@@ -78,10 +81,17 @@ public class ClonerTransformer implements IClassTransformer {
                 ClassNode cloneClass = new ClassNode();
                 reader.accept(cloneClass, 0);
 
-                for(FieldNode field : cloneClass.fields) {
+                if(cloneClass.visibleAnnotations != null) {
+                    boolean canCopy = canCopy(cloneClass.visibleAnnotations);
+                    if(!canCopy) continue;
+                }
+
+                fields: for(FieldNode field : cloneClass.fields) {
                     CopyMode.Mode mode = Mode.REPLACE;
                     Naming name = null;
                     if(field.visibleAnnotations != null) {
+                        boolean canCopy = canCopy(field.visibleAnnotations);
+                        if(!canCopy) continue fields;
                         mode = getCopyMode(field.visibleAnnotations);
                         name = getNaming(field.visibleAnnotations);
                     }
@@ -89,10 +99,12 @@ public class ClonerTransformer implements IClassTransformer {
                     patched = true;
                 }
 
-                for(MethodNode method : cloneClass.methods) {
+                methods: for(MethodNode method : cloneClass.methods) {
                     CopyMode.Mode mode = Mode.REPLACE;
                     Naming name = null;
                     if(method.visibleAnnotations != null) {
+                        boolean canCopy = canCopy(method.visibleAnnotations);
+                        if(!canCopy) continue methods;
                         mode = getCopyMode(method.visibleAnnotations);
                         name = getNaming(method.visibleAnnotations);
                     }
@@ -101,7 +113,8 @@ public class ClonerTransformer implements IClassTransformer {
                 }
 
             } catch(Exception ex) {
-                BetterFps.log.error("Could not patch with " + c.clonePath + ": " + ex.getLocalizedMessage());
+                BetterFps.log.error("Could not patch with " + c.clonePath + ": " + ex);
+                ex.printStackTrace();
             }
 
         }
@@ -113,18 +126,11 @@ public class ClonerTransformer implements IClassTransformer {
         return writer.toByteArray();
     }
 
-    private CopyMode.Mode getCopyMode(List<AnnotationNode> annotations) {
+    private Mode getCopyMode(List<AnnotationNode> annotations) {
         for(AnnotationNode node : annotations) {
             if(node.desc.equals(Type.getDescriptor(CopyMode.class))) {
-                if(node.values == null) continue;
-
-                for(int x = 0; x < node.values.size() - 1; x += 2) {
-                    Object key = node.values.get(x);
-                    Object value = node.values.get(x + 1);
-                    if((key instanceof String) && (key.equals("value")) && (value instanceof String[])) {
-                        return CopyMode.Mode.valueOf(((String[])value)[1]);
-                    }
-                }
+                Mode n = ASMUtils.getAnnotationValue(node, "value", Mode.class);
+                if(n != null) return n;
             }
         }
         return Mode.REPLACE;
@@ -133,18 +139,31 @@ public class ClonerTransformer implements IClassTransformer {
     private Naming getNaming(List<AnnotationNode> annotations) {
         for(AnnotationNode node : annotations) {
             if(node.desc.equals(Type.getDescriptor(Named.class))) {
-                if(node.values == null) continue;
-
-                for(int x = 0; x < node.values.size() - 1; x += 2) {
-                    Object key = node.values.get(x);
-                    Object value = node.values.get(x + 1);
-                    if((key instanceof String) && (key.equals("value")) && (value instanceof String[])) {
-                        return Naming.valueOf(((String[])value)[1]);
-                    }
-                }
+                Naming n = ASMUtils.getAnnotationValue(node, "value", Naming.class);
+                if(n != null) return n;
             }
         }
         return null;
+    }
+
+    private boolean canCopy(List<AnnotationNode> annotations) {
+        boolean canCopy = false;
+        int conditions = 0;
+        for(AnnotationNode node : annotations) {
+            if(node.desc.equals(Type.getDescriptor(CopyCondition.class))) {
+                String key = ASMUtils.getAnnotationValue(node, "key");
+                String value = ASMUtils.getAnnotationValue(node, "value");
+                canCopy = canCopy || BetterFpsConfig.getValue(key).equals(value);
+                conditions++;
+            } else if(node.desc.equals(Type.getDescriptor(CopyBoolCondition.class))) {
+                String key = ASMUtils.getAnnotationValue(node, "key");
+                Boolean value = ASMUtils.getAnnotationValue(node, "value", Boolean.class);
+                if(value == null) value = true;
+                canCopy = canCopy || (boolean)(Boolean)BetterFpsConfig.getValue(key) == (boolean)value;
+                conditions++;
+            }
+        }
+        return conditions > 0 ? canCopy : true;
     }
 
 
@@ -171,6 +190,7 @@ public class ClonerTransformer implements IClassTransformer {
 
     private boolean cloneMethod(MethodNode e, ClassNode node, ClassNode original, Mode mode, Naming name) {
         if(mode == Mode.IGNORE) return false;
+        MethodNode originalMethod = null;
         for(int i = 0; i < node.methods.size(); i++) {
             MethodNode method = node.methods.get(i);
             boolean b = false;
@@ -184,29 +204,31 @@ public class ClonerTransformer implements IClassTransformer {
             if(b) {
                 if(mode == Mode.ADD_IF_NOT_EXISTS) return false;
                 if(mode == Mode.PREPEND) {
-                    replaceOcurrences(e, node, original);
+                    replaceOcurrences(e, node, original, null);
                     method.instructions = ASMUtils.prependNodeList(method.instructions, e.instructions);
                     return true;
                 }
                 if(mode == Mode.APPEND) {
-                    replaceOcurrences(e, node, original);
+                    replaceOcurrences(e, node, original, null);
                     method.instructions = ASMUtils.appendNodeList(method.instructions, e.instructions);
                     return true;
                 }
+                originalMethod = method;
                 node.methods.remove(method);
                 break;
             }
         }
-        replaceOcurrences(e, node, original);
+        replaceOcurrences(e, node, original, originalMethod);
         node.methods.add(e);
         return true;
     }
 
-    private void replaceOcurrences(MethodNode method, ClassNode classNode, ClassNode original) {
+    private void replaceOcurrences(MethodNode method, ClassNode classNode, ClassNode original, MethodNode originalMethod) {
         String originalDesc = "L" + original.name + ";";
         String classDesc = "L" + classNode.name + ";";
         Iterator<AbstractInsnNode> nodes = method.instructions.iterator();
         TypeInsnNode lastType = null;
+        boolean hasSuper = false;
         nodeLoop: while(nodes.hasNext()) {
             AbstractInsnNode node = nodes.next();
 
@@ -233,6 +255,17 @@ public class ClonerTransformer implements IClassTransformer {
                             continue nodeLoop;
                         }
                     }
+                }
+
+                if(originalMethod != null && m.getOpcode() == Opcodes.INVOKESPECIAL && m.owner.equals(classNode.name)
+                        && m.name.equals(originalMethod.name) && m.desc.equals(originalMethod.desc)) {
+                    if(!hasSuper) {
+                        originalMethod.name = originalMethod.name + "_BF_repl";
+                        classNode.methods.add(originalMethod);
+                        hasSuper = true;
+                    }
+                    m.setOpcode(Opcodes.INVOKEVIRTUAL);
+                    m.name = originalMethod.name;
                 }
             } else if(node instanceof TypeInsnNode) {
                 TypeInsnNode t = (TypeInsnNode)node;
@@ -264,26 +297,6 @@ public class ClonerTransformer implements IClassTransformer {
             this.clonePath = clonePath;
             this.target = target;
         }
-    }
-
-//    @Retention(RetentionPolicy.RUNTIME)
-//    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
-    public @interface CopyMode {
-
-        Mode value(); // Mode that the object will be copied, not needed if you'll use REPLACE
-
-        enum Mode {
-            REPLACE, ADD_IF_NOT_EXISTS, IGNORE,
-            PREPEND, APPEND // APPEND & PREPEND can only be used in methods
-        }
-    }
-
-//    @Retention(RetentionPolicy.RUNTIME)
-//    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-    public @interface Named {
-
-        Naming value(); // Original name of the class/method/field
-
     }
 
 }

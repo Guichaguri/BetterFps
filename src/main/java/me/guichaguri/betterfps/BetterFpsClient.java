@@ -32,7 +32,6 @@ public class BetterFpsClient {
 
     // Called in WorldClient.<init>
     public static void worldLoad() {
-        System.out.println("WORLD LOAD");
         UpdateChecker.showChat();
     }
 

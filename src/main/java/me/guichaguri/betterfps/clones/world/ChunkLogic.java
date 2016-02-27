@@ -1,7 +1,7 @@
 package me.guichaguri.betterfps.clones.world;
 
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode.Mode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 

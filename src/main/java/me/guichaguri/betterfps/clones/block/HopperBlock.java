@@ -1,8 +1,8 @@
 package me.guichaguri.betterfps.clones.block;
 
 import me.guichaguri.betterfps.clones.tileentity.HopperLogic;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode.Mode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.state.IBlockState;

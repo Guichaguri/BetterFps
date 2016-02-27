@@ -2,8 +2,8 @@ package me.guichaguri.betterfps.clones.tileentity;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode;
-import me.guichaguri.betterfps.transformers.ClonerTransformer.CopyMode.Mode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode;
+import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
@@ -35,12 +35,12 @@ public class BeaconLogic extends TileEntityBeacon {
         if(tickCount == 100) {
             updateEffects(pos.getX(), pos.getY(), pos.getZ());
         } else if(tickCount <= 0) {
-            func_174908_m();
+            updateBeacon();
         }
     }
 
     @Override
-    public void func_174908_m() {
+    public void updateBeacon() {
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
@@ -52,6 +52,24 @@ public class BeaconLogic extends TileEntityBeacon {
         updateLevels(x, y, z);
         updateEffects(x, y, z);
         tickCount = 200;
+    }
+
+    @Override
+    public void updateSegmentColors() {
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        if(worldObj.isRemote) {
+            updateGlassLayers(x, y, z);
+        } else {
+            updateActivation(x, y, z);
+        }
+        updateLevels(x, y, z);
+    }
+
+    @Override
+    public void addEffectsToPlayers() {
+        updateEffects(pos.getX(), pos.getY(), pos.getZ());
     }
 
     private void updateEffects(int x, int y, int z) {
@@ -82,10 +100,10 @@ public class BeaconLogic extends TileEntityBeacon {
         // Checks if the beacon should be active and searches for stained glass to color the beam.
         // Should be only called client-side
         isComplete = true;
-        field_174909_f.clear();
+        beamSegments.clear();
         BeamSegment beam = new BeamSegment(EntitySheep.func_175513_a(EnumDyeColor.WHITE));
         float[] oldColor = null;
-        field_174909_f.add(beam);
+        beamSegments.add(beam);
         int height = worldObj.getActualHeight();
         for(int blockY = y + 1; blockY < height; blockY++) {
             BlockPos pos = new BlockPos(x, blockY, z);
@@ -93,16 +111,16 @@ public class BeaconLogic extends TileEntityBeacon {
             Block b = state.getBlock();
             float[] color;
             if(b == Blocks.stained_glass) {
-                color = EntitySheep.func_175513_a((EnumDyeColor)state.getValue(BlockStainedGlass.COLOR));
+                color = EntitySheep.func_175513_a(state.getValue(BlockStainedGlass.COLOR));
             } else if(b == Blocks.stained_glass_pane) {
-                color = EntitySheep.func_175513_a((EnumDyeColor)state.getValue(BlockStainedGlassPane.COLOR));
+                color = EntitySheep.func_175513_a(state.getValue(BlockStainedGlassPane.COLOR));
             } else {
                 if(b.getLightOpacity() >= 15) {
                     isComplete = false;
-                    field_174909_f.clear();
+                    beamSegments.clear();
                     break;
                 }
-                beam.func_177262_a();
+                beam.incrementHeight();
                 continue;
             }
 
@@ -110,10 +128,10 @@ public class BeaconLogic extends TileEntityBeacon {
                 color = new float[]{(oldColor[0] + color[0]) / 2.0F, (oldColor[1] + color[1]) / 2.0F, (oldColor[2] + color[2]) / 2.0F};
             }
             if(Arrays.equals(color, oldColor)) {
-                beam.func_177262_a();
+                beam.incrementHeight();
             } else {
                 beam = new BeamSegment(color);
-                field_174909_f.add(beam);
+                beamSegments.add(beam);
                 oldColor = color;
             }
         }
