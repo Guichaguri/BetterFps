@@ -41,10 +41,13 @@ public class GuiBetterFpsConfig extends GuiScreen {
                         "The algorithm of sine & cosine methods",
                         "§cRequires restarting to take effect",
                         "", "§eShift-click me to test algorithms §7(This will take a few seconds)",
-                        "", "§aMore information soon"}));
+                        "", "§aMore information soon"
+        }));
         buttons.add(new GuiBooleanButton(3, "Update Checker", config.updateChecker, new String[] {
                         "Whether will check for updates on startup",
-                        "It's highly recommended enabling this option"}));
+                        "It's highly recommended enabling this option", "",
+                        "Default: On"
+        }));
         buttons.add(new GuiBooleanButton(4, "Preallocate Memory", config.preallocateMemory, new String[] {
                         "Whether will preallocate 10MB on startup.",
                         "§cRequires restarting to take effect", "",
@@ -61,7 +64,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
         buttons.add(new GuiBooleanButton(6, "Fog", config.fog, new String[] {
                         "Whether will render the fog.",
                         "§cRequires restarting to take effect", "",
-                        "Default: Off"
+                        "Default: On"
         }));
         return buttons;
     }
@@ -108,7 +111,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
         if(Mouse.isButtonDown(1)) { // Right Click
-            for(GuiButton button : (List<GuiButton>)buttonList) {
+            for(GuiButton button : buttonList) {
                 if((button instanceof GuiCycleButton) && (button.isMouseOver())) {
                     int y = mouseY + 5;
 
@@ -148,6 +151,16 @@ public class GuiBetterFpsConfig extends GuiScreen {
             boolean preallocate = preallocateButton.getSelectedValue();
             if(preallocate != config.preallocateMemory) restart = true;
             config.preallocateMemory = preallocate;
+
+            GuiCycleButton boxRenderButton = getCycleButton(5);
+            boolean boxRender = boxRenderButton.getSelectedValue();
+            if(boxRender != config.fastBoxRender) restart = true;
+            config.fastBoxRender = boxRender;
+
+            GuiCycleButton fogButton = getCycleButton(6);
+            boolean fog = fogButton.getSelectedValue();
+            if(fog != config.fog) restart = true;
+            config.fog = fog;
 
             BetterFpsHelper.saveConfig();
 

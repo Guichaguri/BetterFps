@@ -32,7 +32,8 @@ public enum Naming { // TODO BUKKIT
     C_BeamSegment("net.minecraft.tileentity.TileEntityBeacon$BeamSegment", null, null), // TODO obfuscated + bukkit
     C_TileEntityHopper("net.minecraft.tileentity.TileEntityHopper", null, null), // TODO obfuscated + bukkit
     C_BlockHopper("net.minecraft.block.BlockHopper", null, null), // TODO obfuscated + bukkit
-    C_ModelBox("net.minecraft.client.model.ModelBox", null, null), // TODO obfuscated + bukkit
+    C_ModelBox("net.minecraft.client.model.ModelBox", null), // TODO obfuscated
+    C_EntityRenderer("net.minecraft.client.renderer.EntityRenderer", null),
 
     M_startGame("startGame", null, null, "()V"), //TODO obfuscated // Minecraft
     M_onTick("onTick", null, null, "(I)V"), //TODO obfuscated // KeyBinding

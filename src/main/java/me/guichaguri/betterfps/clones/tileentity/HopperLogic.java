@@ -7,7 +7,6 @@ import me.guichaguri.betterfps.tweaker.Naming;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.BlockPos;
@@ -24,7 +23,7 @@ public class HopperLogic extends TileEntityHopper {
 
     @Named(Naming.M_captureDroppedItems)
     public static boolean captureDroppedItems(IHopper hopper) {
-        // This is to keep the same functionality in the Minecart with Hopper
+        // This is to keep the same functionality in the Minecart with Hopper and other custom modded hoppers
         HopperLogic hopperTE = hopper.getClass() == TileEntityHopper.class ? (HopperLogic)hopper : null;
 
         IInventory iinventory = hopperTE == null ? getHopperInventory(hopper) : hopperTE.topInventory;
@@ -89,24 +88,9 @@ public class HopperLogic extends TileEntityHopper {
         return isOnTransferCooldown;
     }
 
-    @Override
-    @CopyMode(Mode.IGNORE) // TODO
-    public ItemStack decrStackSize(int index, int count) {
-        return super.decrStackSize(index, count);
-    }
-    @Override
-    @CopyMode(Mode.IGNORE) // TODO
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        this.inventory[index] = stack;
-        if(stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-            stack.stackSize = this.getInventoryStackLimit();
-        }
-        checkBlockOnTop();
-    }
-
-    public void checkBlockOnTop() { // TODO Should be called with neighbour update
+    public void checkBlockOnTop() {
         BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-        canPickupDrops = !worldObj.getBlockState(topPos).getBlock().isFullCube();
+        canPickupDrops = !worldObj.getBlockState(topPos).getBlock().isOpaqueCube();
         topInventory = getHopperInventory(this);
     }
 }

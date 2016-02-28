@@ -22,8 +22,13 @@ public class ModelBoxLogic extends ModelBox {
     @CopyMode(Mode.REPLACE)
     @Override
     public void render(WorldRenderer renderer, float scale) {
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        super.render(renderer, scale);
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        boolean b = GL11.glIsEnabled(GL11.GL_CULL_FACE);
+        if(b) {
+            super.render(renderer, scale);
+        } else {
+            GL11.glEnable(GL11.GL_CULL_FACE);
+            super.render(renderer, scale);
+            GL11.glDisable(GL11.GL_CULL_FACE);
+        }
     }
 }

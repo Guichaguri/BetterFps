@@ -36,6 +36,8 @@ public class ClonerTransformer implements IClassTransformer {
         addClone("me.guichaguri.betterfps.clones.block.HopperBlock", Naming.C_BlockHopper);
 
         addClone("me.guichaguri.betterfps.clones.client.ModelBoxLogic", Naming.C_ModelBox);
+        addClone("me.guichaguri.betterfps.clones.client.EntityRenderLogic", Naming.C_EntityRenderer);
+        addClone("me.guichaguri.betterfps.clones.client.GuiOptionsLogic", Naming.C_GuiOptions);
     }
 
     @Override
@@ -229,6 +231,7 @@ public class ClonerTransformer implements IClassTransformer {
         Iterator<AbstractInsnNode> nodes = method.instructions.iterator();
         TypeInsnNode lastType = null;
         boolean hasSuper = false;
+        String superName = originalMethod == null ? null : originalMethod.name;
         nodeLoop: while(nodes.hasNext()) {
             AbstractInsnNode node = nodes.next();
 
@@ -246,6 +249,18 @@ public class ClonerTransformer implements IClassTransformer {
                 }
             } else if(node instanceof MethodInsnNode) {
                 MethodInsnNode m = (MethodInsnNode)node;
+
+                if(originalMethod != null && m.getOpcode() == Opcodes.INVOKESPECIAL && m.owner.equals(classNode.name)
+                        && m.name.equals(superName) && m.desc.equals(originalMethod.desc)) {
+                    if(!hasSuper) {
+                        originalMethod.name = originalMethod.name + "_BF_repl";
+                        classNode.methods.add(originalMethod);
+                        hasSuper = true;
+                    }
+                    m.setOpcode(Opcodes.INVOKEVIRTUAL);
+                    m.name = originalMethod.name;
+                }
+
                 if(m.owner.equals(original.name)) {
                     m.owner = classNode.name;
                 } else {
@@ -255,17 +270,6 @@ public class ClonerTransformer implements IClassTransformer {
                             continue nodeLoop;
                         }
                     }
-                }
-
-                if(originalMethod != null && m.getOpcode() == Opcodes.INVOKESPECIAL && m.owner.equals(classNode.name)
-                        && m.name.equals(originalMethod.name) && m.desc.equals(originalMethod.desc)) {
-                    if(!hasSuper) {
-                        originalMethod.name = originalMethod.name + "_BF_repl";
-                        classNode.methods.add(originalMethod);
-                        hasSuper = true;
-                    }
-                    m.setOpcode(Opcodes.INVOKEVIRTUAL);
-                    m.name = originalMethod.name;
                 }
             } else if(node instanceof TypeInsnNode) {
                 TypeInsnNode t = (TypeInsnNode)node;
