@@ -22,13 +22,13 @@ public class UpdateChecker implements Runnable {
     private static Properties prop = null;
 
     public static void check() {
-        if(!BetterFpsConfig.instance.updateChecker) {
+        if(!BetterFpsConfig.getConfig().updateChecker) {
             done = true;
             return;
         }
         if(!updateCheck) {
             updateCheck = true;
-            Thread thread = new Thread(new UpdateChecker(), "BetterFps UpdateChecker");
+            Thread thread = new Thread(new UpdateChecker(), "BetterFps Update Checker");
             thread.setDaemon(true);
             thread.start();
         }

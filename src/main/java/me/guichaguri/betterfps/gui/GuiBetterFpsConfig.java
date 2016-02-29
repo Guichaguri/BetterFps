@@ -66,6 +66,18 @@ public class GuiBetterFpsConfig extends GuiScreen {
                         "§cRequires restarting to take effect", "",
                         "Default: On"
         }));
+        buttons.add(new GuiBooleanButton(7, "Fast Hopper", config.fastHopper, new String[] {
+                        "Whether will improve the hopper.",
+                        "§cRequires restarting to take effect", "",
+                        "Default in Vanilla: Off",
+                        "Default in BetterFps: On"
+        }));
+        buttons.add(new GuiBooleanButton(8, "Fast Beacon", config.fastBeacon, new String[] {
+                        "Whether will improve the beacon.",
+                        "§cRequires restarting to take effect", "",
+                        "Default in Vanilla: Off",
+                        "Default in BetterFps: On"
+        }));
         return buttons;
     }
 
@@ -162,6 +174,16 @@ public class GuiBetterFpsConfig extends GuiScreen {
             if(fog != config.fog) restart = true;
             config.fog = fog;
 
+            GuiCycleButton hopperButton = getCycleButton(7);
+            boolean fastHopper = hopperButton.getSelectedValue();
+            if(fastHopper != config.fastHopper) restart = true;
+            config.fastHopper = fastHopper;
+
+            GuiCycleButton beaconButton = getCycleButton(8);
+            boolean fastBeacon = beaconButton.getSelectedValue();
+            if(fastBeacon != config.fastBeacon) restart = true;
+            config.fastBeacon = fastBeacon;
+
             BetterFpsHelper.saveConfig();
 
             mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
@@ -171,7 +193,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
     }
 
     private GuiCycleButton getCycleButton(int id) {
-        for(GuiButton button : (List<GuiButton>)buttonList) {
+        for(GuiButton button : buttonList) {
             if(button.id == id) {
                 return (GuiCycleButton)button;
             }

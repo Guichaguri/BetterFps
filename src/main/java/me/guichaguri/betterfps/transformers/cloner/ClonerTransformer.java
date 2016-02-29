@@ -26,18 +26,25 @@ public class ClonerTransformer implements IClassTransformer {
 
     private static final List<Clone> clones = new ArrayList<Clone>();
 
-    public static void addClone(String clazz, Naming target) {
+    public static void add(String clazz, Naming target) {
         clones.add(new Clone(clazz.replaceAll("\\.", "/"), target));
     }
 
     static {
-        addClone("me.guichaguri.betterfps.clones.tileentity.BeaconLogic", Naming.C_TileEntityBeacon);
-        addClone("me.guichaguri.betterfps.clones.tileentity.HopperLogic", Naming.C_TileEntityHopper);
-        addClone("me.guichaguri.betterfps.clones.block.HopperBlock", Naming.C_BlockHopper);
+        BetterFpsConfig config = BetterFpsConfig.getConfig();
 
-        addClone("me.guichaguri.betterfps.clones.client.ModelBoxLogic", Naming.C_ModelBox);
-        addClone("me.guichaguri.betterfps.clones.client.EntityRenderLogic", Naming.C_EntityRenderer);
-        addClone("me.guichaguri.betterfps.clones.client.GuiOptionsLogic", Naming.C_GuiOptions);
+        if(config.fastBeacon) {
+            add("me.guichaguri.betterfps.clones.tileentity.BeaconLogic", Naming.C_TileEntityBeacon);
+        }
+
+        if(config.fastHopper) {
+            add("me.guichaguri.betterfps.clones.tileentity.HopperLogic", Naming.C_TileEntityHopper);
+            add("me.guichaguri.betterfps.clones.block.HopperBlock", Naming.C_BlockHopper);
+        }
+
+        add("me.guichaguri.betterfps.clones.client.ModelBoxLogic", Naming.C_ModelBox);
+        add("me.guichaguri.betterfps.clones.client.EntityRenderLogic", Naming.C_EntityRenderer);
+        add("me.guichaguri.betterfps.clones.client.GuiOptionsLogic", Naming.C_GuiOptions);
     }
 
     @Override

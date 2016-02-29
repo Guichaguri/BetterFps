@@ -50,7 +50,6 @@ public class BetterFpsTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
-        //cl.registerTransformer("");
 
         for(String transformer : TRANSFORMERS) {
             cl.registerTransformer(transformer);
@@ -59,7 +58,6 @@ public class BetterFpsTweaker implements ITweaker {
         for(String excluded : EXCLUDED) {
             cl.addTransformerExclusion(excluded);
         }
-
 
     }
 

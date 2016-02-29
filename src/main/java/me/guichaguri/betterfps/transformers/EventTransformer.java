@@ -24,13 +24,11 @@ public class EventTransformer implements IClassTransformer {
             if(Naming.C_Minecraft.is(name)) {
                 return patchClientStart(bytes);
             } else if(Naming.C_KeyBinding.is(name)) {
-                return patchKeyTick(bytes);
+                //return patchKeyTick(bytes); TODO remove
             } else if(Naming.C_World.is(name)) {//tick
                 return patchWorldTick(bytes);
             } else if(Naming.C_ClientBrandRetriever.is(name)) {
                 return patchClientBrand(bytes);
-            } else if(Naming.C_GuiOptions.is(name)) {
-                return patchGuiOptions(bytes);
             } else if(Naming.C_WorldClient.is(name)) {
                 return patchClientWorldLoad(bytes);
             } else if(Naming.C_DedicatedServer.is(name)) {
@@ -191,21 +189,6 @@ public class EventTransformer implements IClassTransformer {
                 patch = true;
             }
         }
-
-        if(!patch) return bytes;
-
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        classNode.accept(writer);
-        return writer.toByteArray();
-    }
-
-    public byte[] patchGuiOptions(byte[] bytes) {
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(bytes);
-        classReader.accept(classNode, ClassReader.SKIP_FRAMES);
-        boolean patch = false;
-
-        // TODO: finish
 
         if(!patch) return bytes;
 

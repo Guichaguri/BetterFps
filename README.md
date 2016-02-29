@@ -8,7 +8,7 @@ Performance Improvements
 * [Report an issue](https://github.com/Guichaguri/BetterFps/issues/new)
 
 ### Compilation
-* Setup MCP
+* Setup MCP for Minecraft 1.8.9
 * Add ASM and LaunchWrapper to the `./libs/` folder
 * Add BetterFps source to the `./src/minecraft/` folder
 * Recompile and Reobfuscate

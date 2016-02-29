@@ -8,11 +8,12 @@ import java.lang.reflect.Field;
 public class BetterFpsConfig {
     protected static BetterFpsConfig instance = null;
     public static BetterFpsConfig getConfig() {
+        if(instance == null) BetterFpsHelper.loadConfig();
         return instance;
     }
 
     public static Object getValue(String key) {
-        if(instance == null) return null;
+        if(instance == null) BetterFpsHelper.loadConfig();
         try {
             Field f = BetterFpsConfig.class.getDeclaredField(key);
             return f.get(instance);
@@ -30,5 +31,9 @@ public class BetterFpsConfig {
     public boolean fastBoxRender = true;
 
     public boolean fog = true;
+
+    public boolean fastHopper = true;
+
+    public boolean fastBeacon = true;
 
 }

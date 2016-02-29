@@ -3,7 +3,6 @@ package me.guichaguri.betterfps;
 import me.guichaguri.betterfps.gui.GuiBetterFpsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
-import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -24,8 +23,9 @@ public class BetterFpsClient {
         }
         BetterFpsHelper.init();
 
-        mc.gameSettings.keyBindings = ArrayUtils.add(mc.gameSettings.keyBindings, MENU_KEY);
-        mc.gameSettings.loadOptions();
+        // TODO unused. remove it
+        //mc.gameSettings.keyBindings = ArrayUtils.add(mc.gameSettings.keyBindings, MENU_KEY);
+        //mc.gameSettings.loadOptions();
 
         UpdateChecker.check();
     }
@@ -36,7 +36,7 @@ public class BetterFpsClient {
     }
 
     // Called at the end of KeyBinding.onTick
-    public static void keyEvent(int key) {
+    public static void keyEvent(int key) {//TODO unused. remove it
         if(MENU_KEY.getKeyCode() == key) {
             mc.displayGuiScreen(new GuiBetterFpsConfig(mc.currentScreen));
         }
