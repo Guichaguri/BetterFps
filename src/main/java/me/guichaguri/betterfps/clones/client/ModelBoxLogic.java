@@ -5,7 +5,7 @@ import me.guichaguri.betterfps.transformers.cloner.CopyMode;
 import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -21,7 +21,7 @@ public class ModelBoxLogic extends ModelBox {
     @CopyBoolCondition(key = "fastBoxRender", value = true)
     @CopyMode(Mode.REPLACE)
     @Override
-    public void render(WorldRenderer renderer, float scale) {
+    public void render(VertexBuffer renderer, float scale) {
         boolean b = GL11.glIsEnabled(GL11.GL_CULL_FACE);
         if(b) {
             super.render(renderer, scale);

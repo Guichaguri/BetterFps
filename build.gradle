@@ -1,0 +1,38 @@
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+
+version = "1.0"
+group = "me.guichaguri.betterfps"
+archivesBaseName = "betterfps"
+
+minecraft {
+    version = "1.9"
+    runDir = "run"
+    tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
+    mappings = "snapshot_20160507"
+
+    at 'betterfps_at.cfg'
+}
+
+dependencies {
+    //compile 'org.ow2.asm:asm-debug-all:5.0.3' // no need
+    compile 'net.minecraft:launchwrapper:1.12'
+}

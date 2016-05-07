@@ -15,8 +15,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.tileentity.TileEntityBeacon;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * @author Guilherme Chaguri
@@ -41,6 +41,7 @@ public class BeaconLogic extends TileEntityBeacon {
 
     @Override
     public void updateBeacon() {
+        // Updates everything, including player effects
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
@@ -56,6 +57,7 @@ public class BeaconLogic extends TileEntityBeacon {
 
     @Override
     public void updateSegmentColors() {
+        // Only updates the beacon structure
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
@@ -69,6 +71,7 @@ public class BeaconLogic extends TileEntityBeacon {
 
     @Override
     public void addEffectsToPlayers() {
+        // Only updates player effects
         updateEffects(pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -146,7 +149,7 @@ public class BeaconLogic extends TileEntityBeacon {
             BlockPos pos = new BlockPos(x, blockY, z);
             IBlockState state = this.worldObj.getBlockState(pos);
             Block b = state.getBlock();
-            if(b.getLightOpacity() >= 15) {
+            if(b.getLightOpacity(state) >= 15) {
                 isComplete = false;
                 break;
             }
@@ -166,7 +169,7 @@ public class BeaconLogic extends TileEntityBeacon {
                 for(int blockZ = z - lvl; blockZ <= z + lvl; blockZ++) {
                     BlockPos blockPos = new BlockPos(blockX, blockY, blockZ);
                     Block block = worldObj.getBlockState(blockPos).getBlock();
-                    if(!block.isBeaconBase(worldObj, blockPos, pos)) {
+                    if(block != Blocks.emerald_block && block != Blocks.gold_block && block != Blocks.diamond_block && block != Blocks.iron_block) {
                         levels--;
                         break lvlLoop;
                     }

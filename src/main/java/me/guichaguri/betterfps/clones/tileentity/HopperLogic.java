@@ -4,13 +4,14 @@ import me.guichaguri.betterfps.transformers.cloner.CopyMode;
 import me.guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import me.guichaguri.betterfps.transformers.cloner.Named;
 import me.guichaguri.betterfps.tweaker.Naming;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * @author Guilherme Chaguri
@@ -49,7 +50,7 @@ public class HopperLogic extends TileEntityHopper {
             }
         } else if(hopperTE == null || hopperTE.canPickupDrops) {
 
-            for(EntityItem entityitem : func_181556_a(hopper.getWorld(), hopper.getXPos(), hopper.getYPos() + 1.0D, hopper.getZPos())) {
+            for(EntityItem entityitem : getCaptureItems(hopper.getWorld(), hopper.getXPos(), hopper.getYPos() + 1.0D, hopper.getZPos())) {
                 if(putDropInInventoryAllSlots(hopper, entityitem)) {
                     return true;
                 }
@@ -90,7 +91,8 @@ public class HopperLogic extends TileEntityHopper {
 
     public void checkBlockOnTop() {
         BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-        canPickupDrops = !worldObj.getBlockState(topPos).getBlock().isOpaqueCube();
+        IBlockState state = worldObj.getBlockState(topPos);
+        canPickupDrops = !state.getBlock().isOpaqueCube(state);
         topInventory = getHopperInventory(this);
     }
 }

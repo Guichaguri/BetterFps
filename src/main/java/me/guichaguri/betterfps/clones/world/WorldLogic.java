@@ -16,16 +16,4 @@ public class WorldLogic extends WorldServer {
         super(server, saveHandlerIn, info, dimensionId, profilerIn);
     }
 
-    public void test() {
-        TestClass pair = null;
-        if(pair.happyBoolean) {
-            return;
-        }
-        test();
-    }
-
-    public class TestClass {
-        public boolean happyBoolean;
-    }
-
 }

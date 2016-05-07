@@ -6,11 +6,11 @@ import java.net.URL;
 import java.util.Properties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.event.HoverEvent;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 
 /**
  * @author Guilherme Chaguri
@@ -46,14 +46,14 @@ public class UpdateChecker implements Runnable {
         GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
         if(chat == null) return;
 
-        ChatComponentText title = new ChatComponentText("BetterFps " + prop.getProperty("version") + " is available");
-        title.setChatStyle(title.getChatStyle().setColor(EnumChatFormatting.GREEN).setBold(true));
+        TextComponentString title = new TextComponentString("BetterFps " + prop.getProperty("version") + " is available");
+        title.setChatStyle(title.getChatStyle().setColor(TextFormatting.GREEN).setBold(true));
 
-        ChatComponentText desc = new ChatComponentText(prop.getProperty("quick-description"));
-        desc.setChatStyle(desc.getChatStyle().setColor(EnumChatFormatting.GRAY));
+        TextComponentString desc = new TextComponentString(prop.getProperty("quick-description"));
+        desc.setChatStyle(desc.getChatStyle().setColor(TextFormatting.GRAY));
 
-        ChatComponentText buttons = new ChatComponentText(" ");
-        buttons.setChatStyle(buttons.getChatStyle().setColor(EnumChatFormatting.YELLOW));
+        TextComponentString buttons = new TextComponentString(" ");
+        buttons.setChatStyle(buttons.getChatStyle().setColor(TextFormatting.YELLOW));
         buttons.appendSibling(createButton("Download", prop.getProperty("download-url"), "Click here to download the new version"));
         buttons.appendText("  ");
         buttons.appendSibling(createButton("More Information", prop.getProperty("moreinfo-url"), "Click here for more information about the update"));
@@ -80,12 +80,12 @@ public class UpdateChecker implements Runnable {
         prop = null;
     }
 
-    private static ChatComponentText createButton(String label, String link, String hover) {
-        ChatComponentText sib = new ChatComponentText("[" + label + "]");
-        ChatStyle style = sib.getChatStyle();
+    private static TextComponentString createButton(String label, String link, String hover) {
+        TextComponentString sib = new TextComponentString("[" + label + "]");
+        Style style = sib.getChatStyle();
         style.setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
-        ChatComponentText h = new ChatComponentText(hover);
-        h.setChatStyle(h.getChatStyle().setColor(EnumChatFormatting.RED));
+        TextComponentString h = new TextComponentString(hover);
+        h.setChatStyle(h.getChatStyle().setColor(TextFormatting.RED));
         style.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, h));
         sib.setChatStyle(style);
         return sib;
