@@ -1,0 +1,12 @@
+*gradle/
+build/
+lib/
+logs/
+others/
+out/
+run/
+betterfps.txt
+BetterFps.iml
+BetterFps.ipr
+BetterFps.iws
+gradlew*
