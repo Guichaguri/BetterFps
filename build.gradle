@@ -36,6 +36,7 @@ jar {
     manifest {
         attributes  'TweakClass': 'guichaguri.betterfps.tweaker.BetterFpsTweaker',
                     'TweakOrder': '600',
+                    'TweakMetaFile': 'betterfps.json',
                     'TweakName': 'BetterFps',
                     'TweakAuthor': 'Guichaguri',
                     'TweakVersion': project.version,
@@ -47,5 +48,24 @@ dependencies {
     //compile 'org.ow2.asm:asm-debug-all:5.0.3'
     //compile 'net.minecraft:launchwrapper:1.12'
 }
+
+processResources {
+    // this will ensure that this task is redone when the version change.
+    inputs.property "version", project.version
+
+    // replace stuff in the json, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/betterfps.json'
+
+        // replace version
+        expand 'version': project.version
+    }
+
+    // copy everything else, thats not the json
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/betterfps.json'
+    }
+}
+
 
 runClient.args "--username", "BetterFps"
