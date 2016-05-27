@@ -18,7 +18,7 @@ public class BetterFpsHelper {
 
     public static final String URL = "http://guichaguri.github.io/BetterFps/";
 
-    public static final String UPDATE_URL = "https://raw.githubusercontent.com/Guichaguri/BetterFps/1.8/lastest-version.properties";
+    public static final String UPDATE_URL = "http://widget.mcf.li/mc-mods/minecraft/229876-betterfps.json";
 
     // Config Name, Class Name
     public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>();

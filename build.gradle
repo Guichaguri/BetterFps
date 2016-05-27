@@ -21,20 +21,20 @@ apply plugin: 'net.minecraftforge.gradle.tweaker-client'
 
 version = "1.3.0"
 group = "guichaguri.betterfps"
-archivesBaseName = "betterfps"
+archivesBaseName = "BetterFps"
 
 minecraft {
-    version = "1.9"
+    version = "1.9.4"
     runDir = "run"
     tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
-    mappings = "snapshot_20160507"
+    mappings = "snapshot_20160518"
 
     at 'betterfps_at.cfg'
 }
 
 jar {
     manifest {
-        attributes  'TweakClass': 'guichaguri.betterfps.tweaker.BetterFpsTweaker',
+        attributes  'TweakClass': project.minecraft.tweakClass,
                     'TweakOrder': '600',
                     'TweakMetaFile': 'betterfps.json',
                     'TweakName': 'BetterFps',

@@ -23,7 +23,7 @@ public class HopperBlock extends BlockHopper {
 
     @Override
     @CopyMode(Mode.APPEND)
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block neighborBlock) {
         TileEntity te = worldIn.getTileEntity(pos);
         if(te != null) {
             TileEntityHopper hopper = (TileEntityHopper)te;

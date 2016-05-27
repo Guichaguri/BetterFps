@@ -1,9 +1,12 @@
 package guichaguri.betterfps;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Properties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.text.Style;
@@ -19,7 +22,8 @@ public class UpdateChecker implements Runnable {
 
     private static boolean updateCheck = false;
     private static boolean done = false;
-    private static Properties prop = null;
+    private static String updateVersion = null;
+    private static String updateDownload = null;
 
     public static void check() {
         if(!BetterFpsConfig.getConfig().updateChecker) {
@@ -36,48 +40,49 @@ public class UpdateChecker implements Runnable {
 
     public static void showChat() {
         if(!done) return;
-        if(prop == null) return;
-        if(BetterFpsHelper.VERSION.equals(prop.getProperty("version"))) {
-            prop = null;
-            return;
-        }
+        if(updateVersion == null && updateDownload == null) return;
         if(!BetterFps.isClient) return;
 
         GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
         if(chat == null) return;
 
-        TextComponentString title = new TextComponentString("BetterFps " + prop.getProperty("version") + " is available");
+        TextComponentString title = new TextComponentString("BetterFps " + updateVersion + " is available");
         title.setStyle(title.getStyle().setColor(TextFormatting.GREEN).setBold(true));
 
-        TextComponentString desc = new TextComponentString(prop.getProperty("quick-description"));
+        TextComponentString buttons = new TextComponentString("  ");
+        buttons.setStyle(buttons.getStyle().setColor(TextFormatting.YELLOW));
+        buttons.appendSibling(createButton("Download", updateDownload, "Click here to download the new version"));
+        buttons.appendText("  ");
+        buttons.appendSibling(createButton("More", BetterFpsHelper.URL, "Click here for more versions"));
+
+        TextComponentString desc = new TextComponentString(getRandomPhrase());
         desc.setStyle(desc.getStyle().setColor(TextFormatting.GRAY));
 
-        TextComponentString buttons = new TextComponentString(" ");
-        buttons.setStyle(buttons.getStyle().setColor(TextFormatting.YELLOW));
-        buttons.appendSibling(createButton("Download", prop.getProperty("download-url"), "Click here to download the new version"));
-        buttons.appendText("  ");
-        buttons.appendSibling(createButton("More Information", prop.getProperty("moreinfo-url"), "Click here for more information about the update"));
+        if(updateVersion.length() < 8) {
+            title.appendSibling(buttons);
+            chat.printChatMessage(title);
+            chat.printChatMessage(desc);
+        } else {
+            chat.printChatMessage(title);
+            chat.printChatMessage(buttons);
+            chat.printChatMessage(desc);
+        }
 
-        chat.printChatMessage(title);
-        chat.printChatMessage(desc);
-        chat.printChatMessage(buttons);
-
-        prop = null;
+        updateVersion = null;
+        updateDownload = null;
     }
 
     public static void showConsole() {
         if(!done) return;
-        if(prop == null) return;
-        if(BetterFpsHelper.VERSION.equals(prop.getProperty("version"))) {
-            prop = null;
-            return;
-        }
+        if(updateVersion == null && updateDownload == null) return;
 
-        BetterFps.log.info("BetterFps " + prop.getProperty("version") + " is available");
-        BetterFps.log.info(prop.getProperty("quick-description"));
-        BetterFps.log.info("More information at: " + prop.getProperty("moreinfo-url"));
+        BetterFps.log.info("BetterFps " + updateVersion + " is available");
+        BetterFps.log.info(getRandomPhrase());
+        BetterFps.log.info("Download: " + updateDownload);
+        BetterFps.log.info("More: " + BetterFpsHelper.URL);
 
-        prop = null;
+        updateVersion = null;
+        updateDownload = null;
     }
 
     private static TextComponentString createButton(String label, String link, String hover) {
@@ -91,15 +96,48 @@ public class UpdateChecker implements Runnable {
         return sib;
     }
 
+    private static String getRandomPhrase() {
+        String[] phrases = new String[]{
+                "Just another annoying update.",
+                "Babe are you a new update? Because not now.",
+                "Seeing that a new update came out, it fills you with determination.",
+                "When Stanley came into an update reminder, he pressed the \"download\" button.",
+                "Not again D:",
+                "<3",
+                "You will probably update just to get rid of this reminder",
+                "HARD WARE FAILURE! HARD WARE FAILURE! No wait, I derped out.",
+                "Less annoying than Windows Updater... I think",
+                "Rope is cut, loot is mine, 90 second timer, and the entire server is after me now, great...",
+                "It's free. Go get it ;)",
+                "Some bugs are now fixed, but new ones have been introduced",
+                "It will not update automagically, you know...",
+                "Do you want something new? Here, have an update."
+        };
+
+        return phrases[(int)(Math.random() * phrases.length)];
+    }
+
     @Override
     public void run() {
         try {
             URL url = new URL(BetterFpsHelper.UPDATE_URL);
             InputStream in = url.openStream();
-            Properties p = new Properties();
-            p.load(in);
+            JsonParser parser = new JsonParser();
+            JsonObject obj = parser.parse(new InputStreamReader(in)).getAsJsonObject();
+            JsonObject versions = obj.getAsJsonObject("versions");
 
-            prop = p;
+            if(!versions.has(BetterFpsHelper.MC_VERSION)) return;
+            JsonArray array = versions.getAsJsonArray(BetterFpsHelper.MC_VERSION);
+            if(array.size() == 0) return;
+
+            JsonObject latest = array.get(0).getAsJsonObject();
+            String version = latest.get("name").getAsString();
+
+            if(!version.contains(BetterFpsHelper.VERSION)) {
+                updateVersion = version;
+                updateDownload = latest.get("url").getAsString();
+            }
+
             done = true;
 
             if(!BetterFps.isClient) {
@@ -111,9 +149,9 @@ public class UpdateChecker implements Runnable {
             }
         } catch(IOException ex) {
             BetterFps.log.warn("Could not check for updates: " + ex.getLocalizedMessage());
-            done = true;
         } catch(Exception ex) {
             ex.printStackTrace();
+        } finally {
             done = true;
         }
     }
