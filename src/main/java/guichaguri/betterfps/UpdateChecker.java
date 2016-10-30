@@ -3,7 +3,6 @@ package guichaguri.betterfps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -32,10 +31,15 @@ public class UpdateChecker implements Runnable {
         }
         if(!updateCheck) {
             updateCheck = true;
-            Thread thread = new Thread(new UpdateChecker(), "BetterFps Update Checker");
-            thread.setDaemon(true);
-            thread.start();
+            checkForced();
         }
+    }
+
+    public static void checkForced() {
+        done = false;
+        Thread thread = new Thread(new UpdateChecker(), "BetterFps Update Checker");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public static void showChat() {
@@ -76,10 +80,10 @@ public class UpdateChecker implements Runnable {
         if(!done) return;
         if(updateVersion == null && updateDownload == null) return;
 
-        BetterFps.log.info("BetterFps " + updateVersion + " is available");
-        BetterFps.log.info(getRandomPhrase());
-        BetterFps.log.info("Download: " + updateDownload);
-        BetterFps.log.info("More: " + BetterFpsHelper.URL);
+        BetterFpsHelper.LOG.info("BetterFps " + updateVersion + " is available");
+        BetterFpsHelper.LOG.info(getRandomPhrase());
+        BetterFpsHelper.LOG.info("Download: " + updateDownload);
+        BetterFpsHelper.LOG.info("More: " + BetterFpsHelper.URL);
 
         updateVersion = null;
         updateDownload = null;
@@ -97,6 +101,7 @@ public class UpdateChecker implements Runnable {
     }
 
     private static String getRandomPhrase() {
+        // Thanks to Kevin8082 for some of this phrases
         String[] phrases = new String[]{
                 "Just another annoying update.",
                 "Babe are you a new update? Because not now.",
@@ -105,9 +110,9 @@ public class UpdateChecker implements Runnable {
                 "Not again D:",
                 "<3",
                 "You will probably update just to get rid of this reminder",
-                "HARD WARE FAILURE! HARD WARE FAILURE! No wait, I derped out.",
+                "HARDWARE FAILURE! HARDWARE FAILURE! No wait, I derped out.",
                 "Less annoying than Windows Updater... I think",
-                "Rope is cut, loot is mine, 90 second timer, and the entire server is after me now, great...",
+                "Rope is cut, update is out, and the entire server is after me now, great...",
                 "It's free. Go get it ;)",
                 "Some bugs are now fixed, but new ones have been introduced",
                 "It will not update automagically, you know...",
@@ -147,10 +152,8 @@ public class UpdateChecker implements Runnable {
                     showChat();
                 }
             }
-        } catch(IOException ex) {
-            BetterFps.log.warn("Could not check for updates: " + ex.getLocalizedMessage());
         } catch(Exception ex) {
-            ex.printStackTrace();
+            BetterFpsHelper.LOG.warn("Could not check for updates: " + ex.getMessage());
         } finally {
             done = true;
         }

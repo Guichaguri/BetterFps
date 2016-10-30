@@ -2,13 +2,12 @@ package guichaguri.betterfps.transformers.cloner;
 
 import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsConfig;
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-import guichaguri.betterfps.BetterFps;
 import guichaguri.betterfps.BetterFpsHelper;
 import guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -26,7 +25,7 @@ public class ClonerTransformer implements IClassTransformer {
 
     private static final List<Clone> clones = new ArrayList<Clone>();
 
-    public static void add(String clazz, Naming target) {
+    public static void add(String clazz, Mappings target) {
         clones.add(new Clone(clazz.replaceAll("\\.", "/"), target));
     }
 
@@ -34,17 +33,19 @@ public class ClonerTransformer implements IClassTransformer {
         BetterFpsConfig config = BetterFpsConfig.getConfig();
 
         if(config.fastBeacon) {
-            add("guichaguri.betterfps.clones.tileentity.BeaconLogic", Naming.C_TileEntityBeacon);
+            add("guichaguri.betterfps.clones.tileentity.BeaconLogic", Mappings.C_TileEntityBeacon);
         }
+
+        add("guichaguri.betterfps.clones.tileentity.BeaconRenderer", Mappings.C_TileEntityBeaconRenderer);
 
         if(config.fastHopper) {
-            add("guichaguri.betterfps.clones.tileentity.HopperLogic", Naming.C_TileEntityHopper);
-            add("guichaguri.betterfps.clones.block.HopperBlock", Naming.C_BlockHopper);
+            add("guichaguri.betterfps.clones.tileentity.HopperLogic", Mappings.C_TileEntityHopper);
+            add("guichaguri.betterfps.clones.block.HopperBlock", Mappings.C_BlockHopper);
         }
 
-        add("guichaguri.betterfps.clones.client.ModelBoxLogic", Naming.C_ModelBox);
-        add("guichaguri.betterfps.clones.client.EntityRenderLogic", Naming.C_EntityRenderer);
-        add("guichaguri.betterfps.clones.client.GuiOptionsLogic", Naming.C_GuiOptions);
+        add("guichaguri.betterfps.clones.client.ModelBoxLogic", Mappings.C_ModelBox);
+        add("guichaguri.betterfps.clones.client.EntityRenderLogic", Mappings.C_EntityRenderer);
+        add("guichaguri.betterfps.clones.client.GuiOptionsLogic", Mappings.C_GuiOptions);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class ClonerTransformer implements IClassTransformer {
         }
 
         if(foundClones != null) {
-            BetterFps.log.info("Found " + foundClones.size() + " class patches for " + name);
+            BetterFpsHelper.LOG.info("Found " + foundClones.size() + " class patches for " + name);
             return patchClones(foundClones, bytes);
         }
 
@@ -97,7 +98,7 @@ public class ClonerTransformer implements IClassTransformer {
 
                 fields: for(FieldNode field : cloneClass.fields) {
                     CopyMode.Mode mode = Mode.REPLACE;
-                    Naming name = null;
+                    Mappings name = null;
                     if(field.visibleAnnotations != null) {
                         boolean canCopy = canCopy(field.visibleAnnotations);
                         if(!canCopy) continue fields;
@@ -110,7 +111,7 @@ public class ClonerTransformer implements IClassTransformer {
 
                 methods: for(MethodNode method : cloneClass.methods) {
                     CopyMode.Mode mode = Mode.REPLACE;
-                    Naming name = null;
+                    Mappings name = null;
                     if(method.visibleAnnotations != null) {
                         boolean canCopy = canCopy(method.visibleAnnotations);
                         if(!canCopy) continue methods;
@@ -122,7 +123,7 @@ public class ClonerTransformer implements IClassTransformer {
                 }
 
             } catch(Exception ex) {
-                BetterFps.log.error("Could not patch with " + c.clonePath + ": " + ex);
+                BetterFpsHelper.LOG.error("Could not patch with " + c.clonePath + ": " + ex);
                 ex.printStackTrace();
             }
 
@@ -145,10 +146,10 @@ public class ClonerTransformer implements IClassTransformer {
         return Mode.REPLACE;
     }
 
-    private Naming getNaming(List<AnnotationNode> annotations) {
+    private Mappings getNaming(List<AnnotationNode> annotations) {
         for(AnnotationNode node : annotations) {
             if(node.desc.equals(Type.getDescriptor(Named.class))) {
-                Naming n = ASMUtils.getAnnotationValue(node, "value", Naming.class);
+                Mappings n = ASMUtils.getAnnotationValue(node, "value", Mappings.class);
                 if(n != null) return n;
             }
         }
@@ -176,7 +177,7 @@ public class ClonerTransformer implements IClassTransformer {
     }
 
 
-    private void cloneField(FieldNode e, ClassNode node, Mode mode, Naming name) {
+    private void cloneField(FieldNode e, ClassNode node, Mode mode, Mappings name) {
         if(mode == Mode.IGNORE) return;
         for(int i = 0; i < node.fields.size(); i++) {
             FieldNode field = node.fields.get(i);
@@ -197,7 +198,7 @@ public class ClonerTransformer implements IClassTransformer {
         node.fields.add(e);
     }
 
-    private boolean cloneMethod(MethodNode e, ClassNode node, ClassNode original, Mode mode, Naming name) {
+    private boolean cloneMethod(MethodNode e, ClassNode node, ClassNode original, Mode mode, Mappings name) {
         if(mode == Mode.IGNORE) return false;
         MethodNode originalMethod = null;
         for(int i = 0; i < node.methods.size(); i++) {
@@ -302,9 +303,9 @@ public class ClonerTransformer implements IClassTransformer {
 
     public static class Clone {
         public final String clonePath;
-        public final Naming target;
+        public final Mappings target;
 
-        public Clone(String clonePath, Naming target) {
+        public Clone(String clonePath, Mappings target) {
             this.clonePath = clonePath;
             this.target = target;
         }

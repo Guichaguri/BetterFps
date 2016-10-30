@@ -1,10 +1,10 @@
 package guichaguri.betterfps.transformers.cloner;
 
+import guichaguri.betterfps.tweaker.Mappings;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import guichaguri.betterfps.tweaker.Naming;
 
 /**
  * @author Guilherme Chaguri
@@ -13,6 +13,6 @@ import guichaguri.betterfps.tweaker.Naming;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Named {
 
-    Naming value(); // Original name of the method/field
+    Mappings value(); // Original name of the method/field
 
 }

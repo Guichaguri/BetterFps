@@ -50,6 +50,7 @@ public class BetterFpsTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader cl) {
+        loadMappings();
 
         for(String transformer : TRANSFORMERS) {
             cl.registerTransformer(transformer);
@@ -59,6 +60,7 @@ public class BetterFpsTweaker implements ITweaker {
             cl.addTransformerExclusion(excluded);
         }
 
+        cl.addClassLoaderExclusion("guichaguri.betterfps.clones");
     }
 
     @Override
@@ -78,5 +80,20 @@ public class BetterFpsTweaker implements ITweaker {
         Launch.blackboard.put("BetterFpsVersion", BetterFpsHelper.VERSION);
 
         return new String[0];
+    }
+
+    private void loadMappings() {
+        BetterFpsHelper.LOG.debug("Loading Mappings...");
+        try {
+            // Normal environment
+            Mappings.loadMappings(BetterFpsTweaker.class.getResourceAsStream("betterfps.srg"));
+        } catch(Exception ex) {
+            try {
+                // Dev environment
+                Mappings.loadMappings(BetterFpsTweaker.class.getClassLoader().getResourceAsStream("betterfps.srg"));
+            } catch(Exception ex2) {
+                BetterFpsHelper.LOG.error("Could not load mappings. Things will not work!");
+            }
+        }
     }
 }

@@ -7,18 +7,22 @@ import java.io.FileReader;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Guilherme Chaguri
  */
 public class BetterFpsHelper {
 
-    public static final String MC_VERSION = "1.9";
-    public static final String VERSION = "1.2.1";
+    public static final String MC_VERSION = "1.10.2";
+    public static final String VERSION = "1.3.3";
 
     public static final String URL = "http://guichaguri.github.io/BetterFps/";
 
     public static final String UPDATE_URL = "http://widget.mcf.li/mc-mods/minecraft/229876-betterfps.json";
+
+    public static final Logger LOG = LogManager.getLogger("BetterFps");
 
     // Config Name, Class Name
     public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>();

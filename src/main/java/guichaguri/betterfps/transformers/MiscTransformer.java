@@ -3,7 +3,7 @@ package guichaguri.betterfps.transformers;
 import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsConfig;
 import guichaguri.betterfps.BetterFpsHelper;
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import java.util.Iterator;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
@@ -23,7 +23,7 @@ public class MiscTransformer implements IClassTransformer {
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if(bytes == null) return null;
 
-        if(Naming.C_Minecraft.is(name)) {
+        if(Mappings.C_Minecraft.is(name)) {
             return patchMinecraft(bytes);
         }
 
@@ -41,7 +41,7 @@ public class MiscTransformer implements IClassTransformer {
         Iterator<FieldNode> i = classNode.fields.iterator();
         while(i.hasNext()) {
             FieldNode field = i.next();
-            if((!config.preallocateMemory) && (Naming.F_memoryReserve.is(field.name, field.desc))) {
+            if((!config.preallocateMemory) && (Mappings.F_memoryReserve.is(field.name, field.desc))) {
                 i.remove();
                 patch = true;
             }
@@ -49,14 +49,14 @@ public class MiscTransformer implements IClassTransformer {
 
         for(MethodNode method : classNode.methods) {
             if(!config.preallocateMemory) {
-                if((Naming.M_freeMemory.is(method.name, method.desc)) ||
-                   (Naming.M_StaticBlock.is(method.name, method.desc))) {
+                if((Mappings.M_freeMemory.is(method.name, method.desc)) ||
+                   (Mappings.M_StaticBlock.is(method.name, method.desc))) {
                     int loc = -1;
                     for(int o = 0; o < method.instructions.size(); o++) {
                         AbstractInsnNode node = method.instructions.get(o);
                         if((node instanceof FieldInsnNode) && (node.getOpcode() == Opcodes.PUTSTATIC)) {
                             FieldInsnNode field = (FieldInsnNode) node;
-                            if(Naming.F_memoryReserve.is(field.name, field.desc)) {
+                            if(Mappings.F_memoryReserve.is(field.name, field.desc)) {
                                 loc = o;
                                 break;
                             }

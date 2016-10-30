@@ -1,14 +1,10 @@
 package guichaguri.betterfps;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Common event handling
  * @author Guilherme Chaguri
  */
 public class BetterFps {
-    public static final Logger log = LogManager.getLogger("BetterFps");
 
     public static boolean isClient = false;
 

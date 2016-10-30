@@ -1,8 +1,7 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import java.util.Iterator;
-import guichaguri.betterfps.BetterFps;
 import guichaguri.betterfps.BetterFpsHelper;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
@@ -21,19 +20,17 @@ public class EventTransformer implements IClassTransformer {
         if(bytes == null) return new byte[0];
 
         try {
-            if(Naming.C_Minecraft.is(name)) {
+            if(Mappings.C_Minecraft.is(name)) {
                 return patchClientStart(bytes);
-            } else if(Naming.C_KeyBinding.is(name)) {
-                //return patchKeyTick(bytes); TODO remove
-            } else if(Naming.C_World.is(name)) {//tick
+            } else if(Mappings.C_World.is(name)) {//tick
                 return patchWorldTick(bytes);
-            } else if(Naming.C_ClientBrandRetriever.is(name)) {
+            } else if(Mappings.C_ClientBrandRetriever.is(name)) {
                 return patchClientBrand(bytes);
-            } else if(Naming.C_WorldClient.is(name)) {
+            } else if(Mappings.C_WorldClient.is(name)) {
                 return patchClientWorldLoad(bytes);
-            } else if(Naming.C_DedicatedServer.is(name)) {
+            } else if(Mappings.C_DedicatedServer.is(name)) {
                 return patchServerStart(bytes);
-            } else if(Naming.C_IntegratedServer.is(name)) {
+            } else if(Mappings.C_IntegratedServer.is(name)) {
                 return patchServerStart(bytes);
             }
         } catch(Exception ex) {
@@ -54,8 +51,8 @@ public class EventTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(Naming.M_startGame.is(method.name, method.desc)) {
-                BetterFps.log.info("Patching Game Start...");
+            if(Mappings.M_startGame.is(method.name, method.desc)) {
+                BetterFpsHelper.LOG.info("Patching Game Start...");
                 InsnList list = new InsnList();
 
                 for(AbstractInsnNode node : method.instructions.toArray()) {
@@ -83,44 +80,6 @@ public class EventTransformer implements IClassTransformer {
         return writer.toByteArray();
     }
 
-    private byte[] patchKeyTick(byte[] bytes) throws Exception {
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(bytes);
-        classReader.accept(classNode, ClassReader.SKIP_FRAMES);
-
-        Iterator<MethodNode> methods = classNode.methods.iterator();
-        boolean patch = false;
-
-        while(methods.hasNext()) {
-            MethodNode method = methods.next();
-
-            if(Naming.M_onTick.is(method.name, method.desc)) {
-                BetterFps.log.info("Patching Key Event...");
-                InsnList list = new InsnList();
-                for(AbstractInsnNode node : method.instructions.toArray()) {
-                    if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return
-
-                        list.add(new VarInsnNode(Opcodes.ILOAD, 0));
-                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "guichaguri/betterfps/BetterFpsClient", "keyEvent", "(I)V", false));
-
-                    }
-                    list.add(node);
-                }
-
-                method.instructions.clear();
-                method.instructions.add(list);
-                patch = true;
-            }
-        }
-
-        if(!patch) return bytes;
-
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        classNode.accept(writer);
-        return writer.toByteArray();
-    }
-
 
     private byte[] patchWorldTick(byte[] bytes) {
         ClassNode classNode = new ClassNode();
@@ -133,8 +92,8 @@ public class EventTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(Naming.M_tick.is(method.name, method.desc)) {
-                BetterFps.log.info("Patching World Event...");
+            if(Mappings.M_tick.is(method.name, method.desc)) {
+                BetterFpsHelper.LOG.info("Patching World Event...");
                 InsnList list = new InsnList();
                 for(AbstractInsnNode node : method.instructions.toArray()) {
                     if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return
@@ -171,8 +130,8 @@ public class EventTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(Naming.M_getClientModName.is(method.name, method.desc)) {
-                BetterFps.log.info("Patching Client Brand...");
+            if(Mappings.M_getClientModName.is(method.name, method.desc)) {
+                BetterFpsHelper.LOG.info("Patching Client Brand...");
                 InsnList list = new InsnList();
                 for(AbstractInsnNode node : method.instructions.toArray()) {
                     if(node instanceof LdcInsnNode) {
@@ -204,8 +163,8 @@ public class EventTransformer implements IClassTransformer {
         boolean patch = false;
 
         for(MethodNode method : classNode.methods) {
-            if(Naming.M_Constructor.is(method.name)) {
-                BetterFps.log.info("Patching World Client Event...");
+            if(Mappings.M_Constructor.is(method.name)) {
+                BetterFpsHelper.LOG.info("Patching World Client Event...");
                 InsnList list = new InsnList();
                 for(AbstractInsnNode node : method.instructions.toArray()) {
                     if(node.getOpcode() == Opcodes.RETURN) { // Just before adding the return
@@ -237,8 +196,8 @@ public class EventTransformer implements IClassTransformer {
         boolean patch = false;
 
         for(MethodNode method : classNode.methods) {
-            if(Naming.M_startServer.is(method.name, method.desc)) {
-                BetterFps.log.info("Patching Server Start Event...");
+            if(Mappings.M_startServer.is(method.name, method.desc)) {
+                BetterFpsHelper.LOG.info("Patching Server Start Event...");
                 InsnList list = new InsnList();
                 list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                         "guichaguri/betterfps/BetterFps", "serverStart", "()V", false));

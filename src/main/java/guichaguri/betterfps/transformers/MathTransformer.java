@@ -1,9 +1,8 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.BetterFps;
 import guichaguri.betterfps.BetterFpsConfig;
 import guichaguri.betterfps.BetterFpsHelper;
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -27,7 +26,7 @@ public class MathTransformer implements IClassTransformer {
     public byte[] transform(String name, String name2, byte[] bytes) {
         if(bytes == null) return new byte[0];
 
-        if(Naming.C_MathHelper.is(name)) {
+        if(Mappings.C_MathHelper.is(name)) {
             try {
                 return patchMath(bytes);
             } catch(Exception ex) {
@@ -48,15 +47,15 @@ public class MathTransformer implements IClassTransformer {
 
         String algorithmClass = BetterFpsHelper.helpers.get(config.algorithm);
         if(algorithmClass == null) {
-            BetterFps.log.error("The algorithm is invalid. We're going to use Vanilla Algorithm instead.");
+            BetterFpsHelper.LOG.error("The algorithm is invalid. We're going to use Vanilla Algorithm instead.");
             config.algorithm = "vanilla";
         }
 
         if(config.algorithm.equals("vanilla")) {
-            BetterFps.log.info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(config.algorithm));
+            BetterFpsHelper.LOG.info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(config.algorithm));
             return bytes;
         } else {
-            BetterFps.log.info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(config.algorithm));
+            BetterFpsHelper.LOG.info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(config.algorithm));
         }
 
         ClassReader reader;
@@ -87,22 +86,22 @@ public class MathTransformer implements IClassTransformer {
         while(methods.hasNext()) {
             MethodNode method = methods.next();
 
-            if(Naming.M_sin.is(method.name, method.desc)) {
+            if(Mappings.M_sin.is(method.name, method.desc)) {
                 // SIN
                 patchSin(method, mathnode, className, mathClass);
                 patched = true;
-            } else if(Naming.M_cos.is(method.name, method.desc)) {
+            } else if(Mappings.M_cos.is(method.name, method.desc)) {
                 // COS
                 patchCos(method, mathnode, className, mathClass);
                 patched = true;
-            } /*else if(Naming.M_StaticBlock.is(method.name, method.desc)) {
+            } /*else if(Mappings.M_StaticBlock.is(method.name, method.desc)) {
 
                 InsnList list = new InsnList();
                 for(int i = 0; i < method.instructions.size(); i++) {
                     AbstractInsnNode node = list.get(i);
                     if(node instanceof FieldInsnNode) {
                         FieldInsnNode field = (FieldInsnNode)node;
-                        if(field.owner.equals(className) && Naming.F_SIN_TABLE.is(field.name, field.desc)) {
+                        if(field.owner.equals(className) && Mappings.F_SIN_TABLE.is(field.name, field.desc)) {
 
                         }
                     }
@@ -117,7 +116,7 @@ public class MathTransformer implements IClassTransformer {
             Iterator<FieldNode> fields = classNode.fields.iterator();
             while(fields.hasNext()) {
                 FieldNode field = fields.next();
-                if(Naming.F_SIN_TABLE.is(field.name, field.desc)) { // Remove this unused array to get less ram usage
+                if(Mappings.F_SIN_TABLE.is(field.name, field.desc)) { // Remove this unused array to get less ram usage
                     //fields.remove();
                     // TODO finish
                     break;

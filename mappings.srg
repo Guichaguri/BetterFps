@@ -1,0 +1,41 @@
+# The names will be obfuscated and written in resources/betterfps.srg by my gradle task automatically
+# Prefixes: CL for classes, FD for fields and MD for methods
+# Make sure all names are correct for the current version before compiling
+
+# PREFIX: IDENTIFIER NAME [DESC]
+
+CL: Minecraft net/minecraft/client/Minecraft
+CL: World net/minecraft/world/World
+CL: Chunk net/minecraft/world/chunk/Chunk
+CL: EntityPlayer net/minecraft/entity/player/EntityPlayer
+CL: MathHelper net/minecraft/util/math/MathHelper
+CL: EntityTNTPrimed net/minecraft/entity/item/EntityTNTPrimed
+CL: ClientBrandRetriever net/minecraft/client/ClientBrandRetriever
+CL: GuiOptions net/minecraft/client/gui/GuiOptions
+CL: WorldClient net/minecraft/client/multiplayer/WorldClient
+CL: WorldServer net/minecraft/world/WorldServer
+CL: IntegratedServer net/minecraft/server/integrated/IntegratedServer
+CL: DedicatedServer net/minecraft/server/dedicated/DedicatedServer
+CL: TileEntityBeacon net/minecraft/tileentity/TileEntityBeacon
+CL: BeamSegment net/minecraft/tileentity/TileEntityBeacon$BeamSegment
+CL: TileEntityBeaconRenderer net/minecraft/client/renderer/tileentity/TileEntityBeaconRenderer
+CL: TileEntityHopper net/minecraft/tileentity/TileEntityHopper
+CL: BlockHopper net/minecraft/block/BlockHopper
+CL: ModelBox net/minecraft/client/model/ModelBox
+CL: EntityRenderer net/minecraft/client/renderer/EntityRenderer
+
+MD: startGame net/minecraft/client/Minecraft/startGame ()V
+MD: freeMemory net/minecraft/client/Minecraft/freeMemory ()V
+MD: sin net/minecraft/util/math/MathHelper/sin (F)F
+MD: cos net/minecraft/util/math/MathHelper/cos (F)F
+MD: tick net/minecraft/world/World/tick ()V
+MD: updateBlocks net/minecraft/world/World/updateBlocks ()V
+MD: onUpdate net/minecraft/entity/Entity/onUpdate ()V
+MD: getClientModName net/minecraft/client/ClientBrandRetriever/getClientModName ()Ljava/lang/String;
+MD: initGui net/minecraft/client/gui/GuiScreen/initGui ()V
+MD: startServer net/minecraft/server/MinecraftServer/startServer ()Z
+MD: captureDroppedItems net/minecraft/tileentity/TileEntityHopper/captureDroppedItems (Lnet/minecraft/tileentity/IHopper;)Z
+MD: renderBeamSegment net/minecraft/client/renderer/tileentity/TileEntityBeaconRenderer/renderBeamSegment (DDDDDDII[FDD)V
+
+FD: memoryReserve net/minecraft/client/Minecraft/memoryReserve [B
+FD: SIN_TABLE net/minecraft/util/math/MathHelper/SIN_TABLE [F

@@ -1,8 +1,8 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.BetterFpsHelper;
+import guichaguri.betterfps.tweaker.Mappings;
 import guichaguri.betterfps.ASMUtils;
-import guichaguri.betterfps.BetterFps;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -21,37 +21,39 @@ public class VisualChunkTransformer implements IClassTransformer {
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if(bytes == null) return bytes;
 
-        if(Naming.C_WorldServer.is(name)) {
+        if(Mappings.C_WorldServer.is(name)) {
             ClassNode node = ASMUtils.readClass(bytes, 0);
             for(MethodNode m : node.methods) {
-                if(Naming.M_updateBlocks.is(m.name, m.desc)) {
-                    BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
+                if(Mappings.M_updateBlocks.is(m.name, m.desc)) {
+                    BetterFpsHelper.LOG.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
                     patchTick(m, "thunder");
                 }
             }
             return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        } else if(Naming.C_WorldClient.is(name)) {
+        } else if(Mappings.C_WorldClient.is(name)) {
             ClassNode node = ASMUtils.readClass(bytes, 0);
             for(MethodNode m : node.methods) {
-                if(Naming.M_updateBlocks.is(m.name, m.desc)) {
-                    BetterFps.log.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
+                if(Mappings.M_updateBlocks.is(m.name, m.desc)) {
+                    BetterFpsHelper.LOG.info("PATCH TICK +++++++++++++++++++++++++ " + node.name);
                     //patchTick(m, null);
                 }
             }
             return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        } else if(Naming.C_World.is(name)) {
+        } else if(Mappings.C_World.is(name)) {
             ClassNode node = ASMUtils.readClass(bytes, 0);
             for(MethodNode m : node.methods) {
-                if(Naming.M_setActivePlayerChunksAndCheckLight.is(m.name, m.desc)) {
+                /*if(Mappings.M_setActivePlayerChunksAndCheckLight.is(m.name, m.desc)) {
                     patchTickableCheck(m);
-                }
+                }*/
+                //TODO setActivePlayerChunksAndCheckLight was removed
             }
             return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        } else if(Naming.C_ChunkCoordIntPair.is(name)) {
+        }/* else if(Mappings.C_ChunkCoordIntPair.is(name)) {
             ClassNode node = ASMUtils.readClass(bytes, 0);
             patchChunk(node);
             return ASMUtils.writeClass(node, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        }
+        }*/
+        //TODO ChunkCoordIntPair was removed
 
         return bytes;
     }
@@ -94,13 +96,14 @@ public class VisualChunkTransformer implements IClassTransformer {
         for(AbstractInsnNode node : method.instructions.toArray()) {
             if(node instanceof MethodInsnNode) {
                 MethodInsnNode m = (MethodInsnNode)node;
-                if((Naming.C_ChunkCoordIntPair.isASM(m.owner)) && (Naming.M_Constructor.is(m.name))) {
-                    BetterFps.log.info("Patching tickable chunks check...");
+                //TODO ChunkCoordIntPair was removed
+                /*if((Mappings.C_ChunkCoordIntPair.isASM(m.owner)) && (Mappings.M_Constructor.is(m.name))) {
+                    BetterFps.LOG.info("Patching tickable chunks check...");
                     list.add(new VarInsnNode(Opcodes.ILOAD, 6)); // i1
                     list.add(new VarInsnNode(Opcodes.ILOAD, 7)); // j1
                     list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "guichaguri/betterfps/BetterFps", "isTickable", "(II)Z", false));
                     m.desc = "(IIZ)V";
-                }
+                }*/
             }
             list.add(node);
         }
@@ -141,11 +144,12 @@ public class VisualChunkTransformer implements IClassTransformer {
             int s = node.desc.length();
             if(s <= 2) continue;
             String c = node.desc.substring(1, s - 1);
-            if(Naming.C_ChunkCoordIntPair.isASM(c)) {
+            //TODO ChunkCoordIntPair was removed
+            /*if(Mappings.C_ChunkCoordIntPair.isASM(c)) {
                 coordName = c;
                 lvs.add(node.index);
-                BetterFps.log.info("PATCH TICK ----------------------- " + node.index + "  - " + method.name);
-            }
+                BetterFps.LOG.info("PATCH TICK ----------------------- " + node.index + "  - " + method.name);
+            }*/
         }
         if(lvs.isEmpty()) return;
 
@@ -161,7 +165,7 @@ public class VisualChunkTransformer implements IClassTransformer {
             list.add(node);
             if((afterLdc) && (node instanceof LdcInsnNode)) {
                 if(afterLdcStr.equals(((LdcInsnNode)node).cst) && lastVar != null) {
-                    BetterFps.log.info(frames.size());
+                    BetterFpsHelper.LOG.info(frames.size());
                     addTickCheck(list, lastVar, coordName, frames.get(frame));
                 }
             } else if((node.getOpcode() == Opcodes.ASTORE) && (node instanceof VarInsnNode)) {
@@ -170,7 +174,7 @@ public class VisualChunkTransformer implements IClassTransformer {
                     if(afterLdc) {
                         lastVar = var;
                     } else {
-                        BetterFps.log.info(frames.size());
+                        BetterFpsHelper.LOG.info(frames.size());
                         addTickCheck(list, var, coordName, frames.get(frame));
                     }
                 }
@@ -195,10 +199,10 @@ public class VisualChunkTransformer implements IClassTransformer {
         LabelNode l2 = new LabelNode();
         list.add(l2);
         if(loop != null) {
-            BetterFps.log.info("----------- LOOP: " + loop.getOpcode());
+            BetterFpsHelper.LOG.info("----------- LOOP: " + loop.getOpcode());
             list.add(new JumpInsnNode(Opcodes.GOTO, loop));
         } else {
-            BetterFps.log.info("----------- RETURN ");
+            BetterFpsHelper.LOG.info("----------- RETURN ");
             list.add(new InsnNode(Opcodes.RETURN)); //TODO continue
         }
         list.add(l1);

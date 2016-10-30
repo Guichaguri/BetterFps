@@ -1,8 +1,8 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.BetterFpsHelper;
+import guichaguri.betterfps.tweaker.Mappings;
 import java.util.Iterator;
-import guichaguri.betterfps.BetterFps;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -19,7 +19,7 @@ public class CapTransformer implements IClassTransformer {
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if(bytes == null) return null;
 
-        if(Naming.C_PrimedTNT.is(name)) {
+        if(Mappings.C_PrimedTNT.is(name)) {
             return patchEntityUpdateCap(bytes, "TNT_TICKS", "MAX_TNT_TICKS");
         }
 
@@ -37,8 +37,8 @@ public class CapTransformer implements IClassTransformer {
 
         while(methods.hasNext()) {
             MethodNode method = methods.next();
-            if(Naming.M_onUpdate.is(method.name, method.desc)) {
-                BetterFps.log.info("Patching Entity Cap... (" + classNode.name + ")");
+            if(Mappings.M_onUpdate.is(method.name, method.desc)) {
+                BetterFpsHelper.LOG.info("Patching Entity Cap... (" + classNode.name + ")");
                 InsnList list = new InsnList();
 
                 boolean b = false;

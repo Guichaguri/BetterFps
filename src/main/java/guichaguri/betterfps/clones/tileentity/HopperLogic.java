@@ -1,7 +1,7 @@
 package guichaguri.betterfps.clones.tileentity;
 
 import guichaguri.betterfps.transformers.cloner.Named;
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import guichaguri.betterfps.transformers.cloner.CopyMode;
 import guichaguri.betterfps.transformers.cloner.CopyMode.Mode;
 import net.minecraft.block.state.IBlockState;
@@ -22,7 +22,7 @@ public class HopperLogic extends TileEntityHopper {
     public boolean canPickupDrops = true;
     public boolean isOnTransferCooldown = false;
 
-    @Named(Naming.M_captureDroppedItems)
+    @Named(Mappings.M_captureDroppedItems)
     public static boolean captureDroppedItems(IHopper hopper) {
         // This is to keep the same functionality in the Minecart with Hopper and other custom modded hoppers
         HopperLogic hopperTE = hopper.getClass() == TileEntityHopper.class ? (HopperLogic)hopper : null;
@@ -90,6 +90,7 @@ public class HopperLogic extends TileEntityHopper {
     }
 
     public void checkBlockOnTop() {
+        // Cache some values
         BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
         IBlockState state = worldObj.getBlockState(topPos);
         canPickupDrops = !state.getBlock().isOpaqueCube(state);

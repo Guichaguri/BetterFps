@@ -1,6 +1,6 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -23,14 +23,14 @@ public class WeakerTransformer implements IClassTransformer {
         return bytes;
     }
 
-    public byte[] patchWeakKeys(byte[] bytes, Naming[] fieldsToWeak) {
+    public byte[] patchWeakKeys(byte[] bytes, Mappings[] fieldsToWeak) {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, ClassReader.SKIP_FRAMES);
         boolean patch = false;
 
         for(FieldNode field : classNode.fields) {
-            weakLoop: for(Naming f : fieldsToWeak) {
+            weakLoop: for(Mappings f : fieldsToWeak) {
                 if(f.is(field.name, field.desc)) {
                     String oldDesc = field.desc;
                     field.desc = "Ljava/lang/ref/WeakReference;";
@@ -52,7 +52,7 @@ public class WeakerTransformer implements IClassTransformer {
                 if(node instanceof FieldInsnNode) {
                     FieldInsnNode fNode = (FieldInsnNode)node;
                     if(!fNode.owner.equals(classNode.name)) continue instLoop;
-                    weakLoop: for(Naming f : fieldsToWeak) {
+                    weakLoop: for(Mappings f : fieldsToWeak) {
                         if(f.is(fNode.name, fNode.desc)) {
                             fNode.desc = "Ljava/lang/ref/WeakReference;";
                             if(fNode.getOpcode() == Opcodes.PUTFIELD) {

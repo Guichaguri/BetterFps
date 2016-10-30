@@ -1,6 +1,6 @@
 package guichaguri.betterfps;
 
-import guichaguri.betterfps.tweaker.Naming;
+import guichaguri.betterfps.tweaker.Mappings;
 import java.util.List;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -25,16 +25,16 @@ public class ASMUtils {
         return writer.toByteArray();
     }
 
-    public static MethodNode findMethod(ClassNode node, Naming naming) {
+    public static MethodNode findMethod(ClassNode node, Mappings mappings) {
         for(MethodNode m : node.methods) {
-            if(naming.is(m.name, m.desc)) return m;
+            if(mappings.is(m.name, m.desc)) return m;
         }
         return null;
     }
 
-    public static FieldNode findField(ClassNode node, Naming naming) {
+    public static FieldNode findField(ClassNode node, Mappings mappings) {
         for(FieldNode m : node.fields) {
-            if(naming.is(m.name, m.desc)) return m;
+            if(mappings.is(m.name, m.desc)) return m;
         }
         return null;
     }

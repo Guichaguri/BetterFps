@@ -36,4 +36,6 @@ public class BetterFpsConfig {
 
     public boolean fastBeacon = true;
 
+    public boolean fastBeaconRender = false;
+
 }

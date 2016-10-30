@@ -1,6 +1,10 @@
 package guichaguri.betterfps.gui;
 
 import guichaguri.betterfps.BetterFpsConfig;
+import guichaguri.betterfps.BetterFpsHelper;
+import guichaguri.betterfps.UpdateChecker;
+import guichaguri.betterfps.gui.GuiCycleButton.GuiBooleanButton;
+import guichaguri.betterfps.tweaker.BetterFpsTweaker;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,15 +12,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import guichaguri.betterfps.BetterFpsHelper;
-import guichaguri.betterfps.gui.GuiCycleButton.GuiBooleanButton;
-import guichaguri.betterfps.tweaker.BetterFpsTweaker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Util;
 import net.minecraft.util.Util.EnumOS;
+import net.minecraft.util.text.TextComponentString;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -25,9 +27,7 @@ import org.lwjgl.input.Mouse;
 public class GuiBetterFpsConfig extends GuiScreen {
 
     private GuiScreen parent = null;
-    public GuiBetterFpsConfig() {
-
-    }
+    public GuiBetterFpsConfig() {}
     public GuiBetterFpsConfig(GuiScreen parent) {
         this.parent = parent;
     }
@@ -38,14 +38,16 @@ public class GuiBetterFpsConfig extends GuiScreen {
         BetterFpsConfig config = BetterFpsConfig.getConfig();
         buttons.add(new AlgorithmButton(2, "Algorithm", BetterFpsHelper.displayHelpers,
                 config.algorithm, new String[] {
-                        "The algorithm of sine & cosine methods",
-                        "§cRequires restarting to take effect",
-                        "", "§eShift-click me to test algorithms §7(This will take a few seconds)",
-                        "", "§aMore information soon"
+                        "The algorithm for calculating sine and cosine",
+                        "§cRequires restarting to take effect", "",
+                        "§eShift-click me to test algorithms §7(This will take a few seconds)", "",
+                        "§aMore information here soon", "",
+                        "Default in Vanilla: Vanilla Algorithm",
+                        "Default in BetterFps: Riven's \"Half\" Algorithm",
         }));
-        buttons.add(new GuiBooleanButton(3, "Update Checker", config.updateChecker, new String[] {
-                        "Whether will check for updates on startup",
-                        "It's highly recommended enabling this option", "",
+        buttons.add(new UpdateCheckerButton(3, "Update Checker", config.updateChecker, new String[] {
+                        "Whether updates will be checked on startup", "",
+                        "§eShift-click me to check for updates §7(This will take a few seconds)", "",
                         "Default: On"
         }));
         buttons.add(new GuiBooleanButton(4, "Preallocate Memory", config.preallocateMemory, new String[] {
@@ -54,7 +56,9 @@ public class GuiBetterFpsConfig extends GuiScreen {
                         "Default in Vanilla: On",
                         "Default in BetterFps: Off",
                         "",
-                        "Note: This allocation will only be cleaned once the memory is almost full"}));
+                        "Note: This allocation will be cleaned only when the memory is almost full",
+                        "Useful for modpacks that require a lot of RAM"
+        }));
         buttons.add(new GuiBooleanButton(5, "Fast Box Render", config.fastBoxRender, new String[] {
                         "Whether will only render the exterior of boxes.",
                         "§cRequires restarting to take effect", "",
@@ -62,21 +66,26 @@ public class GuiBetterFpsConfig extends GuiScreen {
                         "Default in BetterFps: On"
         }));
         buttons.add(new GuiBooleanButton(6, "Fog", config.fog, new String[] {
-                        "Whether will render the fog.",
+                        "Whether fog will be rendered.",
                         "§cRequires restarting to take effect", "",
                         "Default: On"
         }));
         buttons.add(new GuiBooleanButton(7, "Fast Hopper", config.fastHopper, new String[] {
-                        "Whether will improve the hopper.",
+                        "Whether hopper improvements will be enabled.",
                         "§cRequires restarting to take effect", "",
                         "Default in Vanilla: Off",
                         "Default in BetterFps: On"
         }));
         buttons.add(new GuiBooleanButton(8, "Fast Beacon", config.fastBeacon, new String[] {
-                        "Whether will improve the beacon.",
+                        "Whether the beacon improvements will be enabled.",
                         "§cRequires restarting to take effect", "",
                         "Default in Vanilla: Off",
                         "Default in BetterFps: On"
+        }));
+        buttons.add(new GuiBooleanButton(9, "Fast Beacon Rendering", config.fastBeaconRender, new String[] {
+                "Whether the beacon glow will be removed.",
+                "§cRequires restarting to take effect", "",
+                "Default: Off"
         }));
         return buttons;
     }
@@ -183,6 +192,11 @@ public class GuiBetterFpsConfig extends GuiScreen {
             if(fastBeacon != config.fastBeacon) restart = true;
             config.fastBeacon = fastBeacon;
 
+            GuiCycleButton beaconRenderButton = getCycleButton(9);
+            boolean fastBeaconRender = beaconRenderButton.getSelectedValue();
+            if(fastBeaconRender != config.fastBeaconRender) restart = true;
+            config.fastBeaconRender = fastBeaconRender;
+
             BetterFpsHelper.saveConfig();
 
             mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
@@ -236,16 +250,17 @@ public class GuiBetterFpsConfig extends GuiScreen {
                     String line;
                     while((line = in.readLine()) != null) {
                         if(BetterFpsHelper.helpers.containsKey(line)) {
+                            BetterFpsHelper.LOG.info("Found an algorithm! (" + line + ")");
                             for(int i = 0; i < keys.size(); i++) {
                                 if(keys.get(i).equals(line)) {
                                     key = i;
-                                    updateTitle();
                                     break;
                                 }
                             }
                         }
                     }
                 } catch(Exception ex) {}
+                updateTitle();
                 process = null;
             }
         }
@@ -261,17 +276,34 @@ public class GuiBetterFpsConfig extends GuiScreen {
             if((process != null) && (isRunning())) {
                 return true;
             }
+
+            BetterFpsHelper.LOG.info("Testing algorithms...");
             List<String> args = new ArrayList<String>();
             args.add(getJavaDir());
             args.add("-Dtester=" + Minecraft.getMinecraft().mcDataDir.getAbsolutePath());
             args.add("-cp");
             args.add(BetterFpsTweaker.class.getProtectionDomain().getCodeSource().getLocation().getFile());
             args.add("BetterFpsInstaller");
+
             try {
                 process = new ProcessBuilder(args).start();
+                displayString = "Testing...";
             } catch(Exception ex) {
                 ex.printStackTrace();
             }
+            return true;
+        }
+    }
+
+    private static class UpdateCheckerButton extends GuiBooleanButton {
+        public UpdateCheckerButton(int buttonId, String title, boolean defaultValue, String[] helpLines) {
+            super(buttonId, title, defaultValue, helpLines);
+        }
+
+        @Override
+        public boolean shiftClick() {
+            Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new TextComponentString("Checking updates..."));
+            UpdateChecker.checkForced();
             return true;
         }
     }
