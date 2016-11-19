@@ -51,7 +51,7 @@ public class HopperLogic extends TileEntityHopper {
         } else if(hopperTE == null || hopperTE.canPickupDrops) {
 
             for(EntityItem entityitem : getCaptureItems(hopper.getWorld(), hopper.getXPos(), hopper.getYPos() + 1.0D, hopper.getZPos())) {
-                if(putDropInInventoryAllSlots(hopper, entityitem)) {
+                if(putDropInInventoryAllSlots(null, hopper, entityitem)) {
                     return true;
                 }
             }

@@ -24,10 +24,10 @@ group = "guichaguri.betterfps"
 archivesBaseName = "BetterFps"
 
 minecraft {
-    version = "1.10.2"
+    version = "1.11"
     runDir = "run"
     tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
-    mappings = "snapshot_20160518"
+    mappings = "snapshot_20161111"
 
     at 'betterfps_at.cfg'
 }
@@ -81,6 +81,12 @@ String srgOutput = 'src/main/resources/betterfps.srg'
  * You might have to update the input file when the mappings version change.
  */
 task updateMappings(dependsOn: 'genSrgs') {
+    File notchToMcp = tasks['genSrgs'].getNotchToMcp();
+    if(!notchToMcp.exists()) {
+        println 'SRG file does not exist yet.'
+        return;
+    }
+
     def classes = [:];
     def fields = [:];
     def methods = [:];
@@ -102,7 +108,7 @@ task updateMappings(dependsOn: 'genSrgs') {
     }
     println 'Updating mappings'
     file(srgOutput).withWriter { out ->
-        String[] mappings = tasks['genSrgs'].getNotchToMcp().readLines()
+        String[] mappings = notchToMcp.readLines()
         mappings.each {
             String[] mapping = it.split(' ')
             if (mapping[0].equals('CL:')) { // Class

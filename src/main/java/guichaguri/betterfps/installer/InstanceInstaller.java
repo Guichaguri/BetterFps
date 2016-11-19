@@ -16,7 +16,7 @@ public class InstanceInstaller {
     private static final String LIBRARY_NAME = "BetterFps";
     private static final String VERSION_NAME = BetterFpsHelper.VERSION;
 
-    private static final String TWEAKER = "BetterFpsTweaker";
+    private static final String TWEAKER = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
     private static final String[] LIBRARIES_NAMES = new String[]{
             "org.ow2.asm:asm-all:5.0.3", "net.minecraft:launchwrapper:1.11"
     };

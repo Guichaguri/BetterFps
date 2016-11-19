@@ -302,7 +302,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
 
         @Override
         public boolean shiftClick() {
-            Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new TextComponentString("Checking updates..."));
+            Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new TextComponentString("Checking updates..."), true);
             UpdateChecker.checkForced();
             return true;
         }
