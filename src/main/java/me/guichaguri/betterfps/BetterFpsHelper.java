@@ -21,12 +21,7 @@ public class BetterFpsHelper {
     public static final String UPDATE_URL = "https://raw.githubusercontent.com/Guichaguri/BetterFps/1.8/lastest-version.properties";
 
     // Config Name, Class Name
-    public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>();
-
-    // Config Name, Display Name
-    public static final LinkedHashMap<String, String> displayHelpers = new LinkedHashMap<String, String>();
-
-    static {
+    public static final LinkedHashMap<String, String> helpers = new LinkedHashMap<String, String>(){{
         helpers.put("vanilla", "VanillaMath");
         helpers.put("rivens", "RivensMath");
         helpers.put("taylors", "TaylorMath");
@@ -35,7 +30,10 @@ public class BetterFpsHelper {
         helpers.put("rivens-half", "RivensHalfMath");
         helpers.put("java", "JavaMath");
         helpers.put("random", "RandomMath");
+    }};
 
+    // Config Name, Display Name
+    public static final LinkedHashMap<String, String> displayHelpers = new LinkedHashMap<String, String>(){{
         displayHelpers.put("vanilla", "Vanilla Algorithm");
         displayHelpers.put("rivens", "Riven's Algorithm");
         displayHelpers.put("taylors", "Taylor's Algorithm");
@@ -44,7 +42,7 @@ public class BetterFpsHelper {
         displayHelpers.put("rivens-half", "Riven's \"Half\" Algorithm");
         displayHelpers.put("java", "Java Math");
         displayHelpers.put("random", "Random Math");
-    }
+    }};
 
     public static File LOC;
     public static File MCDIR = null;
