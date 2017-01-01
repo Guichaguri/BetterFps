@@ -26,6 +26,17 @@ public class RivensHalfMath {
         for (int i = 0; i < BF_SIN_COUNT2; i++) {
             BF_sinHalf[i] = (float) Math.sin((i + Math.min(1, i % (BF_SIN_COUNT / 4)) * 0.5) / BF_SIN_COUNT * BF_radFull);
         }
+
+        float[] hardcodedAngles = {
+                90  * 0.017453292F, // getLook when looking up (sin) - Fixes Elytra
+                90  * 0.017453292F + BF_SIN_TO_COS // getLook when looking up (cos) - Fixes Elytra
+        };
+        for(float angle : hardcodedAngles) {
+            int index1 = (int)(angle * BF_radToIndex) & BF_SIN_MASK;
+            int index2 = index1 & BF_SIN_MASK2;
+            int mul = ((index1 == index2) ? +1 : -1);
+            BF_sinHalf[index2] = (float)(Math.sin(angle) / mul);
+        }
     }
 
     public static float sin(float rad) {

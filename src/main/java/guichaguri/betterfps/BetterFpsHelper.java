@@ -2,11 +2,10 @@ package guichaguri.betterfps;
 
 import com.google.gson.Gson;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.LinkedHashMap;
-import java.util.Properties;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class BetterFpsHelper {
 
     public static final String MC_VERSION = "1.11";
-    public static final String VERSION = "1.3.3";
+    public static final String VERSION = "1.3.4";
 
     public static final String URL = "http://guichaguri.github.io/BetterFps/";
 
@@ -59,41 +58,53 @@ public class BetterFpsHelper {
     }
 
     public static BetterFpsConfig loadConfig() {
-
+        // Temporary code - Import old config file to the new one
+        File oldConfig;
         if(MCDIR == null) {
-            CONFIG_FILE = new File("config" + File.pathSeparator + "betterfps.json");
+            oldConfig = new File("config" + File.pathSeparator + "betterfps.json");
         } else {
-            CONFIG_FILE = new File(MCDIR, "config" + File.pathSeparator + "betterfps.json");
+            oldConfig = new File(MCDIR, "config" + File.pathSeparator + "betterfps.json");
+        }
+        if(oldConfig.exists()) {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(oldConfig);
+                BetterFpsConfig.instance = new Gson().fromJson(reader, BetterFpsConfig.class);
+                saveConfig();
+
+                return BetterFpsConfig.instance;
+            } catch(Exception ex) {
+                LOG.error("Could not load the old config file. It will be deleted.");
+            } finally {
+                IOUtils.closeQuietly(reader);
+                oldConfig.deleteOnExit();
+            }
+        }
+        // -------
+
+
+        File configPath;
+        if(MCDIR == null) {
+            configPath = new File("config");
+        } else {
+            configPath = new File(MCDIR, "config");
         }
 
+        CONFIG_FILE = new File(configPath, "betterfps.json");
+
+        FileReader reader = null;
         try {
             if(CONFIG_FILE.exists()) {
-                Gson gson = new Gson();
-                BetterFpsConfig.instance = gson.fromJson(new FileReader(CONFIG_FILE), BetterFpsConfig.class);
+                reader = new FileReader(CONFIG_FILE);
+                BetterFpsConfig.instance = new Gson().fromJson(reader, BetterFpsConfig.class);
             } else {
                 BetterFpsConfig.instance = new BetterFpsConfig();
             }
         } catch(Exception ex) {
-            ex.printStackTrace();
+            LOG.error("Could not load the config file", ex);
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
-
-        // Temporary code - Import config from the old format to the new one
-        try {
-            Properties prop = new Properties();
-            File oldConfigFile;
-            if(MCDIR == null) {
-                oldConfigFile = new File("betterfps.txt");
-            } else {
-                oldConfigFile = new File(MCDIR, "betterfps.txt");
-            }
-            if((oldConfigFile.exists()) && (!CONFIG_FILE.exists())) {
-                prop.load(new FileInputStream(oldConfigFile));
-                BetterFpsConfig.instance.algorithm = prop.getProperty("algorithm", "rivens-half");
-            }
-        } catch(Exception ex) {
-            System.err.println("Could not import the old config format");
-        }
-        // ---
 
         saveConfig();
 
@@ -103,10 +114,9 @@ public class BetterFpsHelper {
     public static void saveConfig() {
         try {
             if(!CONFIG_FILE.exists()) CONFIG_FILE.createNewFile();
-            Gson gson = new Gson();
-            FileUtils.writeStringToFile(CONFIG_FILE, gson.toJson(BetterFpsConfig.instance));
+            FileUtils.writeStringToFile(CONFIG_FILE, new Gson().toJson(BetterFpsConfig.instance));
         } catch(Exception ex) {
-            ex.printStackTrace();
+            LOG.error("Could not save the config file", ex);
         }
     }
 
