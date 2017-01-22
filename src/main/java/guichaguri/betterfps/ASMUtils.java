@@ -70,43 +70,31 @@ public class ASMUtils {
         return index;
     }
 
-    public static InsnList appendNodeList(InsnList initial, InsnList extra) {
-        return mergeNodeLists(extra, initial);
+    public static boolean isReturn(int opcode) {
+        return opcode == Opcodes.RETURN || opcode == Opcodes.ARETURN || opcode == Opcodes.DRETURN ||
+                opcode == Opcodes.FRETURN || opcode == Opcodes.IRETURN || opcode == Opcodes.LRETURN;
     }
 
-    public static InsnList prependNodeList(InsnList initial, InsnList extra) {
-        InsnList list = new InsnList();
-
-        boolean added = false;
-        for(AbstractInsnNode node : initial.toArray()) {
-            if(!added && node instanceof LabelNode) {
-                list.add(extra);
-                added = true;
-            }
-            list.add(node);
+    public static void appendNodeList(InsnList initial, InsnList extra) {
+        List<AbstractInsnNode> returns = findReturns(initial);
+        for(AbstractInsnNode r : returns) {
+            initial.insertBefore(r, extra);
         }
-        return list;
-        //return mergeNodeLists(initial, extra);
     }
 
-    public static InsnList mergeNodeLists(InsnList from, InsnList to) {
-        InsnList list = new InsnList();
+    public static void prependNodeList(InsnList initial, InsnList extra) {
+        AbstractInsnNode head = findHead(initial);
+        initial.insert(head, extra);
+    }
 
-        AbstractInsnNode[] nodes = to.toArray();
-        int lastReturn = -1;
-        for(int i = 0; i < nodes.length; i++) {
-            AbstractInsnNode node = nodes[i];
-            if(node.getOpcode() == Opcodes.RETURN) lastReturn = i;
-        }
-        for(int i = 0; i < nodes.length; i++) {
-            AbstractInsnNode node = nodes[i];
-            if(i == lastReturn) {
-                list.add(from);
+    public static void removeLastReturn(InsnList list) {
+        for(int i = list.size() - 1; i >= 0; i--) {
+            AbstractInsnNode node = list.get(i);
+            if(isReturn(node.getOpcode())) {
+                list.remove(node);
+                break;
             }
-            list.add(node);
         }
-
-        return list;
     }
 
     public static void setVariableToMaxPeriod(AbstractInsnNode[] nodes, LocalVariableNode node) {
@@ -254,10 +242,9 @@ public class ASMUtils {
         return findNode(nodes, type, opcode, index, null, null, null);
     }
 
-    public static LocalVariableNode findVariable(MethodNode method, String desc) {
+    public static LocalVariableNode findVariable(MethodNode method, int index) {
         for(LocalVariableNode var : method.localVariables) {
-            // TODO: check if the variable is available at the injection point
-            if(var.desc.equals(desc)) return var;
+            if(var.index == index) return var;
         }
         return null;
     }
@@ -328,29 +315,6 @@ public class ASMUtils {
         return false;
     }
 
-    public static List<InsnNode> getReturnNodes(InsnList instructions) {
-        List<InsnNode> nodes = new ArrayList<InsnNode>();
-
-        for(int i = 0; i < instructions.size(); i++) {
-            AbstractInsnNode node = instructions.get(i);
-            if(!(node instanceof InsnNode)) continue;
-            switch(node.getOpcode()) {
-                case Opcodes.ARETURN:
-                case Opcodes.DRETURN:
-                case Opcodes.FRETURN:
-                case Opcodes.IRETURN:
-                case Opcodes.LRETURN:
-                case Opcodes.RETURN:
-                    nodes.add((InsnNode)node);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return nodes;
-    }
-
     public static boolean hasAccess(MethodNode m, int access) {
         return (m.access & access) != 0;
     }
@@ -359,37 +323,83 @@ public class ASMUtils {
         return (f.access & access) != 0;
     }
 
-    public static Object findVariable(String desc, ClassNode clazz, MethodNode method, AbstractInsnNode pos) {
-        for(LocalVariableNode var : method.localVariables) {
-            System.out.println(var.desc + " - " + desc + " - " + var.desc.equals(desc));
-            if(var.desc.equals(desc) && isNodeInside(method.instructions, pos, var.start, var.end)) {
-                System.out.println("FOUND IT!");
+    public static int indexOf(Type[] types, Type[] needle) {
+        int count = 0;
+        for(int i = 0; i < types.length; i++) {
+            if(types[i].getDescriptor().equals(needle[count].getDescriptor())) {
+                count++;
+                if(count >= needle.length) {
+                    return i - count;
+                }
+            } else {
+                count = 0;
+            }
+        }
+        return -1;
+    }
+
+    private static Object findVariable(MethodNode sourceMethod, ClassNode targetClass, MethodNode targetMethod,
+                                      AbstractInsnNode pos, int i, String desc, boolean isStatic,
+                                      int targetParamsStart, int targetParamsEnd) {
+
+        // Parses the @Param annotation returning the requested variable
+        List<AnnotationNode>[] annotations = sourceMethod.invisibleParameterAnnotations;
+        if(annotations != null && annotations.length > i) {
+            AnnotationNode annotation = getAnnotation(annotations[i], Param.class);
+
+            if(annotation != null) {
+                int index = getAnnotationValue(annotation, "value", int.class, -1);
+                LocalVariableNode var = index != -1 ? findVariable(sourceMethod, index) : null;
+
+                if(var != null && var.desc.equals(desc)) {
+                    return var;
+                }
+            }
+        }
+
+        // Uses the pattern found in the desc to use the right variable order from the target method
+        if(targetParamsStart != -1 && i >= targetParamsStart && i < targetParamsEnd) {
+            return targetMethod.localVariables.get(i - targetParamsStart + (isStatic ? 0 : 1));
+        }
+
+        // Tries to find local variables that match the same desc
+        for(LocalVariableNode var : targetMethod.localVariables) {
+            if(var.desc.equals(desc) && isNodeInside(targetMethod.instructions, pos, var.start, var.end)) {
                 return var;
             }
         }
 
-        boolean isStatic = hasAccess(method, Opcodes.ACC_STATIC);
-        for(FieldNode field : clazz.fields) {
+        // Tries to find fields that match the same desc (and are accessible)
+        for(FieldNode field : targetClass.fields) {
             if(isStatic && !hasAccess(field, Opcodes.ACC_STATIC)) continue;
             if(field.desc.equals(desc)) {
                 return field;
             }
         }
 
-        // Nothing has been found. Lets return just the descriptor
-        return desc;
+        // Nothing has been found :(
+        return null;
     }
 
     /**
      * Finds the local variables or fields corresponding to the desc, based on the method and the injection position
      */
-    public static Object[] findParametersValue(String desc, ClassNode clazz, MethodNode method, AbstractInsnNode pos) {
-        Type[] parameters = Type.getArgumentTypes(desc);
+    public static Object[] findParametersValue(MethodNode sourceMethod, ClassNode targetClass,
+                                               MethodNode targetMethod, AbstractInsnNode pos) {
+
+        Type[] parameters = Type.getArgumentTypes(sourceMethod.desc);
         Object[] values = new Object[parameters.length];
+
+        Type[] targetParameters = Type.getArgumentTypes(targetMethod.desc);
+        int targetParamsStart = indexOf(parameters, targetParameters);
+        int targetParamsEnd = targetParamsStart + targetParameters.length;
+        boolean isStatic = hasAccess(targetMethod, Opcodes.ACC_STATIC);
 
         for(int i = 0; i < parameters.length; i++) {
             String d = parameters[i].getDescriptor();
-            values[i] = findVariable(d, clazz, method, pos);
+
+            values[i] = findVariable(sourceMethod, targetClass, targetMethod, pos,
+                                    i, d, isStatic, targetParamsStart, targetParamsEnd);
         }
         return values;
     }
@@ -418,45 +428,53 @@ public class ASMUtils {
 
     public static InsnList insertMethod(ClassNode sourceClass, MethodNode sourceMethod,
                                         ClassNode targetClass, MethodNode targetMethod,
-                                        AbstractInsnNode pos, InsnList beforeReturn, InsnList afterReturn) {
+                                        AbstractInsnNode pos) {
 
-        List<InsnNode> returnNodes = getReturnNodes(sourceMethod.instructions);
-        Object[] parameters = findParametersValue(sourceMethod.desc, targetClass, targetMethod, pos);
-
+        Object[] parameters = findParametersValue(sourceMethod, targetClass, targetMethod, pos);
         ASMUtils.copyMethod(sourceClass, targetClass, sourceMethod, true);
 
+        boolean isStatic = hasAccess(sourceMethod, Opcodes.ACC_STATIC);
         InsnList list = new InsnList();
+        int stack = parameters.length;
 
-        if(beforeReturn != null) list.add(beforeReturn);
+        if(!isStatic) {
+            // TODO: make sure 0 is always "this" in non-static methods
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            stack++;
+        }
 
         for(Object o : parameters) {
             list.add(getReadNodeForVariable(targetClass, o));
         }
-        int opcode = hasAccess(sourceMethod, Opcodes.ACC_STATIC) ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL;
+
+        if(targetMethod.maxStack < stack) targetMethod.maxStack = stack; // Fix max stack if needed
+
+        int opcode = isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL;
         list.add(new MethodInsnNode(opcode, targetClass.name, sourceMethod.name, sourceMethod.desc, false));
 
-        if(afterReturn != null) list.add(afterReturn);
-
-        if(returnNodes.size() > 1) {
-            // The method will have to be copied instead of injected
-            // It might be possible to inject the method replacing return nodes with jump nodes
-            // TODO: take a look into jump nodes
-
-        } else {
-            // The method can be injected!
-            // I don't always copy it because it might prevent conflict with other transformers
-
-        }
+        // The method can be injected instead of copied and fired
+        // It's totally possible to add the instructions, sort local variables and reuse some of them
+        // It might also be possible to inject the method by replacing return nodes with jump nodes
+        // But is it worth it?
 
         return list;
     }
 
-    public static void insertMethodIntoVariable(LocalVariableNode var) {
-
+    public static AbstractInsnNode findHead(InsnList list) {
+        for(int i = 0; i < list.size(); i++) {
+            AbstractInsnNode node = list.get(i);
+            if(node instanceof LabelNode) return node;
+        }
+        return list.get(0);
     }
 
-    public static AbstractInsnNode findHead(InsnList list) {
-        return list.get(0);
+    public static List<AbstractInsnNode> findReturns(InsnList list) {
+        List<AbstractInsnNode> nodes = new ArrayList<AbstractInsnNode>();
+        for(int i = 0; i < list.size(); i++) {
+            AbstractInsnNode node = list.get(i);
+            if(isReturn(node.getOpcode())) nodes.add(node);
+        }
+        return nodes;
     }
 
     /**
@@ -506,6 +524,40 @@ public class ASMUtils {
     }
 
     /**
+     * Merges {@link LocalVariableNode} from a method to another method, while taking care of duplicate variables
+     */
+    public static void mergeLocalVariables(MethodNode from, MethodNode to) {
+        for(LocalVariableNode var : from.localVariables) {
+            LocalVariableNode var2 = ASMUtils.findVariable(to, var.index);
+
+            if(var2 == null) {
+                // No variable with this index, we can just add it
+                to.localVariables.add(var);
+                continue;
+            }
+            if(var2.desc.equals(var.desc)) {
+                // The variable exists and it's the same desc, we can just reuse it
+                continue;
+            }
+
+            // There is a conflict, we'll need to add and patch it
+            int oldIndex = var.index;
+            var.index = to.maxLocals;
+            to.localVariables.add(var);
+            to.maxLocals++;
+
+            InsnList list = from.instructions;
+            for(int i = 0; i < list.size(); i++) {
+                AbstractInsnNode node = list.get(i);
+                if(node instanceof VarInsnNode) {
+                    VarInsnNode varNode = (VarInsnNode)node;
+                    if(varNode.var == oldIndex) varNode.var = var.index;
+                }
+            }
+        }
+    }
+
+    /**
      * Copies a method to another class, taking care of references and replacement
      */
     public static void copyMethod(ClassNode original, ClassNode target, MethodNode method, boolean replace) {
@@ -518,6 +570,42 @@ public class ASMUtils {
 
         replaceReferences(original.name, target.name, method);
         target.methods.add(method);
+    }
+
+    /**
+     * Appends a method to another class, taking care of references
+     */
+    public static void appendMethod(ClassNode original, ClassNode target, MethodNode method) {
+        MethodNode targetMethod = findMethod(target, method.name, method.desc);
+
+        if(targetMethod == null) {
+            target.methods.add(method);
+        } else {
+            method.name += "_BetterFps";
+
+            InsnList list = targetMethod.instructions;
+            List<AbstractInsnNode> returns = findReturns(list);
+            for(AbstractInsnNode r : returns) {
+                list.insertBefore(r, insertMethod(original, method, target, targetMethod, r));
+            }
+        }
+    }
+
+    /**
+     * Prepends a method to another class, taking care of references
+     */
+    public static void prependMethod(ClassNode original, ClassNode target, MethodNode method) {
+        MethodNode targetMethod = findMethod(target, method.name, method.desc);
+
+        if(targetMethod == null) {
+            target.methods.add(method);
+        } else {
+            method.name += "_BetterFps";
+
+            InsnList list = targetMethod.instructions;
+            AbstractInsnNode head = findHead(targetMethod.instructions);
+            list.insert(head, insertMethod(original, method, target, targetMethod, head));
+        }
     }
 
     /**

@@ -13,6 +13,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Copy {
 
-    boolean replace() default false;
+    Mode value() default Mode.COPY;
+
+    enum Mode {
+        COPY, // Copies if not exists
+        REPLACE,
+        APPEND, // Only for methods
+        PREPEND // Only for methods
+    }
 
 }

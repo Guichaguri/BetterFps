@@ -3,6 +3,7 @@ package guichaguri.betterfps.transformers.patcher;
 import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsHelper;
 import guichaguri.betterfps.transformers.patcher.annotations.Copy;
+import guichaguri.betterfps.transformers.patcher.annotations.Copy.Mode;
 import guichaguri.betterfps.transformers.patcher.annotations.Patcher;
 import guichaguri.betterfps.transformers.patcher.annotations.Reference;
 import java.util.HashMap;
@@ -52,8 +53,14 @@ public class Patch {
             AnnotationNode copy = ASMUtils.getAnnotation(method.invisibleAnnotations, Copy.class);
 
             if(copy != null) {
-                boolean replace = ASMUtils.getAnnotationValue(copy, "replace", boolean.class, false);
-                ASMUtils.copyMethod(sourceClass, targetClass, method, replace);
+                Mode mode = ASMUtils.getAnnotationValue(copy, "value", Mode.class, Mode.COPY);
+                if(mode == Mode.APPEND) {
+                    ASMUtils.appendMethod(sourceClass, targetClass, method);
+                } else if(mode == Mode.PREPEND) {
+                    ASMUtils.prependMethod(sourceClass, targetClass, method);
+                } else {
+                    ASMUtils.copyMethod(sourceClass, targetClass, method, mode == Mode.REPLACE);
+                }
             }
         }
 
@@ -62,8 +69,8 @@ public class Patch {
             AnnotationNode copy = ASMUtils.getAnnotation(field.invisibleAnnotations, Copy.class);
 
             if(copy != null) {
-                boolean replace = ASMUtils.getAnnotationValue(copy, "replace", boolean.class, false);
-                ASMUtils.copyField(sourceClass, targetClass, field, replace);
+                Mode mode = ASMUtils.getAnnotationValue(copy, "value", Mode.class, Mode.COPY);
+                ASMUtils.copyField(sourceClass, targetClass, field, mode == Mode.REPLACE);
             }
         }
 
