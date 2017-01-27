@@ -172,7 +172,8 @@ public class ASMUtils {
     }
 
     private static boolean isNode(AbstractInsnNode node, Class type, int opcode, String owner, String name, String desc) {
-        if(node.getOpcode() != opcode || node.getClass() != type) return false;
+        if(opcode != -1 && node.getOpcode() != opcode) return false;
+        if(node.getClass() != type) return false;
         if(type == MethodInsnNode.class) {
             MethodInsnNode method = (MethodInsnNode)node;
             if(owner != null && !method.owner.equals(owner)) return false;
@@ -199,11 +200,12 @@ public class ASMUtils {
 
     public static <T extends AbstractInsnNode> List<T> findNodes(InsnList nodes, Class<T> type, int opcode,
                                                                  String owner, String name, String desc) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = null;
 
         for(int i = 0; i < nodes.size(); i++) {
             AbstractInsnNode node = nodes.get(i);
             if(isNode(node, type, opcode, owner, name, desc)) {
+                if(list == null) list = new ArrayList<T>();
                 list.add((T)node);
             }
         }
@@ -220,7 +222,7 @@ public class ASMUtils {
         for(int i = 0; i < nodes.size(); i++) {
             AbstractInsnNode node = nodes.get(i);
             if(isNode(node, type, opcode, owner, name, desc)) {
-                if(index-- < 0) return (T)node;
+                if(index-- <= 0) return (T)node;
             }
         }
 
@@ -231,7 +233,7 @@ public class ASMUtils {
         for(int i = 0; i < nodes.size(); i++) {
             AbstractInsnNode node = nodes.get(i);
             if(isNode(node, type, opcode, name)) {
-                if(index-- < 0) return (T)node;
+                if(index-- <= 0) return (T)node;
             }
         }
 
@@ -428,7 +430,7 @@ public class ASMUtils {
 
     public static InsnList insertMethod(ClassNode sourceClass, MethodNode sourceMethod,
                                         ClassNode targetClass, MethodNode targetMethod,
-                                        AbstractInsnNode pos) {
+                                        AbstractInsnNode pos, boolean ignoreReturnValue) {
 
         Object[] parameters = findParametersValue(sourceMethod, targetClass, targetMethod, pos);
         ASMUtils.copyMethod(sourceClass, targetClass, sourceMethod, true);
@@ -451,6 +453,10 @@ public class ASMUtils {
 
         int opcode = isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL;
         list.add(new MethodInsnNode(opcode, targetClass.name, sourceMethod.name, sourceMethod.desc, false));
+
+        if(ignoreReturnValue && Type.getReturnType(sourceMethod.desc) != Type.VOID_TYPE) {
+            list.add(new InsnNode(Opcodes.POP)); // Pop the return value
+        }
 
         // The method can be injected instead of copied and fired
         // It's totally possible to add the instructions, sort local variables and reuse some of them
@@ -524,6 +530,51 @@ public class ASMUtils {
     }
 
     /**
+     * Replaces super calls to a replaced method from the method
+     *
+     * Tries to find "super" calls to the replaced method, if any, renames the method
+     * If the replaced method is null, it changes the method call to the super-super class
+     */
+    public static void replaceSuperCalls(MethodNode method, ClassNode replacedClass, MethodNode replacedMethod) {
+        InsnList list = method.instructions;
+        boolean addedReplacedMethod = false;
+        boolean hasReplacedMethod = replacedMethod != null;
+
+        for(int i = 0; i < list.size(); i++) {
+            AbstractInsnNode node = list.get(i);
+
+            if(node.getOpcode() != Opcodes.INVOKESPECIAL) continue;
+            if(!(node instanceof MethodInsnNode)) continue;
+            MethodInsnNode m = (MethodInsnNode)node;
+
+            if(!m.owner.equals(replacedClass.name)) continue;
+            if(hasReplacedMethod && (!m.name.equals(replacedMethod.name) || !m.desc.equals(replacedMethod.desc))) continue;
+
+            if(!hasReplacedMethod) {
+
+                // Replace the owner class to an upper level to prevent infinite loops
+                if(m.owner.equals(replacedClass.name)) m.owner = replacedClass.superName;
+                continue;
+
+            } else if(!addedReplacedMethod) {
+
+                replacedMethod.name += "_BetterFps";
+
+                // Not really required for Oracle's JVM, but another JVM implementation might require this change
+                m.setOpcode(Opcodes.INVOKEVIRTUAL);
+
+                if(!replacedClass.methods.contains(replacedMethod)) {
+                    replacedClass.methods.add(replacedMethod);
+                }
+                addedReplacedMethod = true;
+
+            }
+
+            m.name = replacedMethod.name;
+        }
+    }
+
+    /**
      * Merges {@link LocalVariableNode} from a method to another method, while taking care of duplicate variables
      */
     public static void mergeLocalVariables(MethodNode from, MethodNode to) {
@@ -568,6 +619,7 @@ public class ASMUtils {
             target.methods.remove(replacedMethod);
         }
 
+        replaceSuperCalls(method, target, replacedMethod);
         replaceReferences(original.name, target.name, method);
         target.methods.add(method);
     }
@@ -586,7 +638,7 @@ public class ASMUtils {
             InsnList list = targetMethod.instructions;
             List<AbstractInsnNode> returns = findReturns(list);
             for(AbstractInsnNode r : returns) {
-                list.insertBefore(r, insertMethod(original, method, target, targetMethod, r));
+                list.insertBefore(r, insertMethod(original, method, target, targetMethod, r, true));
             }
         }
     }
@@ -603,8 +655,8 @@ public class ASMUtils {
             method.name += "_BetterFps";
 
             InsnList list = targetMethod.instructions;
-            AbstractInsnNode head = findHead(targetMethod.instructions);
-            list.insert(head, insertMethod(original, method, target, targetMethod, head));
+            AbstractInsnNode head = findHead(list);
+            list.insert(head, insertMethod(original, method, target, targetMethod, head, true));
         }
     }
 

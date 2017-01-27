@@ -1,13 +1,15 @@
 package guichaguri.betterfps.tweaker;
 
 import guichaguri.betterfps.BetterFpsHelper;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -15,11 +17,36 @@ import java.util.List;
  */
 public class BetterFpsTweaker implements ITweaker {
 
+    public static InputStream getResourceStream(String path) {
+        InputStream stream;
+
+        // Normal environment
+        stream = BetterFpsTweaker.class.getResourceAsStream(path);
+        if(stream != null) return stream;
+
+        // Dev environment
+        stream = BetterFpsTweaker.class.getClassLoader().getResourceAsStream(path);
+        return stream;
+    }
+
+    public static URL getResource(String path) {
+        URL url;
+
+        // Normal environment
+        url = BetterFpsTweaker.class.getResource(path);
+        if(url != null) return url;
+
+        // Dev environment
+        url = BetterFpsTweaker.class.getClassLoader().getResource(path);
+        return url;
+    }
+
     private static final String[] TRANSFORMERS = new String[]{
             "guichaguri.betterfps.transformers.MathTransformer",
-            "guichaguri.betterfps.transformers.EventTransformer",
-            "guichaguri.betterfps.transformers.MiscTransformer",
-            "guichaguri.betterfps.transformers.cloner.ClonerTransformer",
+            //"guichaguri.betterfps.transformers.EventTransformer",
+            //"guichaguri.betterfps.transformers.MiscTransformer",
+            //"guichaguri.betterfps.transformers.cloner.ClonerTransformer",
+            "guichaguri.betterfps.transformers.patcher.PatcherTransformer",
             //"guichaguri.betterfps.transformers.VisualChunkTransformer"
             //"guichaguri.betterfps.transformers.CapTransformer"
     };
@@ -61,6 +88,9 @@ public class BetterFpsTweaker implements ITweaker {
         }
 
         cl.addClassLoaderExclusion("guichaguri.betterfps.clones");
+        cl.addClassLoaderExclusion("guichaguri.betterfps.installer");
+        cl.addClassLoaderExclusion("guichaguri.betterfps.math");
+        cl.addClassLoaderExclusion("guichaguri.betterfps.patches");
     }
 
     @Override
@@ -76,7 +106,7 @@ public class BetterFpsTweaker implements ITweaker {
 
         this.args = null;
 
-        // Just in case someone needs to know if BetterFps is running
+        // Just in case someone needs to know whether BetterFps is running
         Launch.blackboard.put("BetterFpsVersion", BetterFpsHelper.VERSION);
 
         return new String[0];
@@ -85,15 +115,9 @@ public class BetterFpsTweaker implements ITweaker {
     private void loadMappings() {
         BetterFpsHelper.LOG.debug("Loading Mappings...");
         try {
-            // Normal environment
-            Mappings.loadMappings(BetterFpsTweaker.class.getResourceAsStream("betterfps.srg"));
-        } catch(Exception ex) {
-            try {
-                // Dev environment
-                Mappings.loadMappings(BetterFpsTweaker.class.getClassLoader().getResourceAsStream("betterfps.srg"));
-            } catch(Exception ex2) {
-                BetterFpsHelper.LOG.error("Could not load mappings. Things will not work!");
-            }
+            Mappings.loadMappings(getResourceStream("betterfps.srg"));
+        } catch(IOException ex) {
+            BetterFpsHelper.LOG.error("Could not load mappings. Things will not work!");
         }
     }
 }

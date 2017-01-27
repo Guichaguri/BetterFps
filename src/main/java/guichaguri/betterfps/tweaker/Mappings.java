@@ -16,6 +16,8 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public enum Mappings { // TODO BUKKIT
 
+    // TODO: new mapping system. Maybe reading this class by a gradle task and saving the map in a file?
+
     // Prefixes
     // C_ is for classes
     // M_ is for methods
@@ -28,6 +30,7 @@ public enum Mappings { // TODO BUKKIT
     C_World(Type.CLASS, "World"),
     C_Chunk(Type.CLASS, "Chunk"),
     C_EntityPlayer(Type.CLASS, "EntityPlayer"),
+    C_EntityPlayerSP(Type.CLASS, "EntityPlayerSP"),
     C_MathHelper(Type.CLASS, "MathHelper"),
     C_PrimedTNT(Type.CLASS, "EntityTNTPrimed"),
     C_ClientBrandRetriever(Type.CLASS, "ClientBrandRetriever"),
@@ -55,6 +58,7 @@ public enum Mappings { // TODO BUKKIT
     M_initGui(Type.METHOD, "initGui"), // GuiScreen
     M_startServer(Type.METHOD, "startServer"), // MinecraftServer
     M_captureDroppedItems(Type.METHOD, "captureDroppedItems"), // TileEntityHopper
+    M_getHopperInventory(Type.METHOD, "getHopperInventory"), // TileEntityHopper
 
     F_memoryReserve(Type.FIELD, "memoryReserve"), // Minecraft
     F_SIN_TABLE(Type.FIELD, "SIN_TABLE"); // MathHelper
@@ -155,7 +159,6 @@ public enum Mappings { // TODO BUKKIT
     public String toString() {
         return identifier;
     }
-
 
     enum Type {
         CLASS, METHOD, FIELD

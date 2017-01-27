@@ -22,7 +22,18 @@ public class PatcherTransformer implements IClassTransformer {
     private static final Map<Mappings, String> patches = new HashMap<Mappings, String>();
 
     static {
-        patches.put(Mappings.C_TileEntityHopper, "guichaguri/betterfps/patches/FastHopper");
+        patches.put(Mappings.C_TileEntityHopper, "guichaguri/betterfps/patches/block/FastHopper");
+        patches.put(Mappings.C_BlockHopper, "guichaguri/betterfps/patches/block/FastHopperBlock");
+
+        patches.put(Mappings.C_TileEntityBeacon, "guichaguri/betterfps/patches/block/FastBeacon");
+        patches.put(Mappings.C_TileEntityBeaconRenderer, "guichaguri/betterfps/patches/block/FastBeaconRender");
+
+        patches.put(Mappings.C_EntityRenderer, "guichaguri/betterfps/patches/misc/FogPatch");
+        patches.put(Mappings.C_GuiOptions, "guichaguri/betterfps/patches/misc/OptionsButton");
+
+        patches.put(Mappings.C_Minecraft, "guichaguri/betterfps/patches/misc/MinecraftPatch");
+        patches.put(Mappings.C_DedicatedServer, "guichaguri/betterfps/patches/misc/ServerPatch");
+        patches.put(Mappings.C_EntityPlayerSP, "guichaguri/betterfps/patches/misc/ClientPlayerPatch"); //TODO EntityPlayerSP
     }
 
     @Override
@@ -34,6 +45,8 @@ public class PatcherTransformer implements IClassTransformer {
 
         ClassNode classNode = ASMUtils.readClass(bytes, 0);
         Patch patch = new Patch(patchClass, classNode);
+
+        BetterFpsHelper.LOG.info("Patching {}... ({})", transformedName, name);
 
         // Copy fields and methods with the @Copy annotation
         patch.copy();

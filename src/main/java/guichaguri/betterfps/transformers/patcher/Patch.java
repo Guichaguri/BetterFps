@@ -47,7 +47,7 @@ public class Patch {
     /**
      * Copies fields and methods with the {@link Copy} annotation and interfaces to target class
      */
-    public void copy() {
+    protected void copy() {
         // Copy Methods
         for(MethodNode method : sourceClass.methods) {
             AnnotationNode copy = ASMUtils.getAnnotation(method.invisibleAnnotations, Copy.class);
@@ -85,7 +85,7 @@ public class Patch {
     /**
      * Patches methods using a custom {@link IClassPatcher}
      */
-    public void patch() {
+    protected void patch() {
         AnnotationNode patcher = ASMUtils.getAnnotation(sourceClass.invisibleAnnotations, Patcher.class);
 
         if(patcher != null) {
