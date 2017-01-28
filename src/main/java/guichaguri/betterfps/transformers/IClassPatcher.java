@@ -1,4 +1,4 @@
-package guichaguri.betterfps.transformers.patcher;
+package guichaguri.betterfps.transformers;
 
 /**
  * @author Guilherme Chaguri

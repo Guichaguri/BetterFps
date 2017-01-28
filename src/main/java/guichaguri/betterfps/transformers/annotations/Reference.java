@@ -1,4 +1,4 @@
-package guichaguri.betterfps.transformers.patcher.annotations;
+package guichaguri.betterfps.transformers.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

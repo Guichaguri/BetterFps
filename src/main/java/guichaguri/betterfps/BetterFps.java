@@ -1,32 +1,19 @@
 package guichaguri.betterfps;
 
+import java.io.File;
+
 /**
- * Common event handling
+ * A class that should not include any Minecraft interaction as it might be loaded by the installer
  * @author Guilherme Chaguri
  */
 public class BetterFps {
 
-    public static boolean isClient = false;
+    public static final String MC_VERSION = "1.11";
+    public static final String VERSION = "1.3.4";
+    public static final String URL = "http://guichaguri.github.io/BetterFps/";
+    public static final String UPDATE_URL = "http://widget.mcf.li/mc-mods/minecraft/229876-betterfps.json";
 
-    // Used to control how many TNTs can update per tick
-    public static int TNT_TICKS = 0;
-    public static int MAX_TNT_TICKS = 100;
-
-    public static int TICKABLE_RADIUS_POS = 1;
-    public static int TICKABLE_RADIUS_NEG = -1;
-
-    public static void serverStart() {
-        UpdateChecker.check();
-    }
-
-    public static void worldTick() {
-        TNT_TICKS = 0;
-    }
-
-    public static boolean isTickable(int dX, int dY) {
-        // Checks if a chunk should tick
-        return dX == 0 && dY == 0;
-        //return dX < TICKABLE_RADIUS_POS && dX > TICKABLE_RADIUS_NEG && dY < TICKABLE_RADIUS_POS && dY > TICKABLE_RADIUS_NEG;
-    }
+    public static boolean CLIENT = false;
+    public static File GAME_DIR = null;
 
 }

@@ -1,20 +1,20 @@
 package guichaguri.betterfps.transformers;
 
+import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsConfig;
 import guichaguri.betterfps.BetterFpsHelper;
+import guichaguri.betterfps.tweaker.BetterFpsTweaker;
 import guichaguri.betterfps.tweaker.Mappings;
-import java.util.Iterator;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
@@ -22,9 +22,26 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class MathTransformer implements IClassTransformer {
 
+    // Config Name, Class Name
+    private static final LinkedHashMap<String, String> algorithmClasses = new LinkedHashMap<String, String>();
+
+    static {
+        algorithmClasses.put("vanilla", "guichaguri/betterfps/math/VanillaMath");
+        algorithmClasses.put("rivens", "guichaguri/betterfps/math/RivensMath");
+        algorithmClasses.put("taylors", "guichaguri/betterfps/math/TaylorMath");
+        algorithmClasses.put("libgdx", "guichaguri/betterfps/math/LibGDXMath");
+        algorithmClasses.put("rivens-full", "guichaguri/betterfps/math/RivensFullMath");
+        algorithmClasses.put("rivens-half", "guichaguri/betterfps/math/RivensHalfMath");
+        algorithmClasses.put("java", "guichaguri/betterfps/math/JavaMath");
+        algorithmClasses.put("random", "guichaguri/betterfps/math/RandomMath");
+    }
+
+    private final String METHOD_SIN = "sin";
+    private final String METHOD_COS = "cos";
+
     @Override
-    public byte[] transform(String name, String name2, byte[] bytes) {
-        if(bytes == null) return new byte[0];
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
+        if(bytes == null) return null;
 
         if(Mappings.C_MathHelper.is(name)) {
             try {
@@ -39,172 +56,77 @@ public class MathTransformer implements IClassTransformer {
 
     private byte[] patchMath(byte[] bytes) throws Exception {
 
-        BetterFpsConfig config = BetterFpsConfig.getConfig();
-        if(config == null) {
-            BetterFpsHelper.loadConfig();
-            config = BetterFpsConfig.getConfig();
-        }
+        BetterFpsConfig config = BetterFpsHelper.getConfig();
 
-        String algorithmClass = BetterFpsHelper.helpers.get(config.algorithm);
+        String algorithmClass = algorithmClasses.get(config.algorithm);
         if(algorithmClass == null) {
             BetterFpsHelper.LOG.error("The algorithm is invalid. We're going to use Vanilla Algorithm instead.");
             config.algorithm = "vanilla";
+            return bytes;
         }
 
         if(config.algorithm.equals("vanilla")) {
-            BetterFpsHelper.LOG.info("Letting Minecraft use " + BetterFpsHelper.displayHelpers.get(config.algorithm));
+            BetterFpsHelper.LOG.info("No algorithm for patching, Vanilla Algorithm will be used");
             return bytes;
         } else {
-            BetterFpsHelper.LOG.info("Patching Minecraft using " + BetterFpsHelper.displayHelpers.get(config.algorithm));
+            BetterFpsHelper.LOG.info("Patching math utils with \"{}\" algorithm", config.algorithm);
         }
 
-        ClassReader reader;
-        if(BetterFpsHelper.LOC == null) { // Development or vanilla environment?
-            reader = new ClassReader("guichaguri.betterfps.math." + algorithmClass);
-        } else { // Forge environment
-            JarFile jar = new JarFile(BetterFpsHelper.LOC);
-            ZipEntry e = jar.getEntry("guichaguri/betterfps/math/" + algorithmClass + ".class");
-            reader = new ClassReader(jar.getInputStream(e));
-            jar.close();
+        InputStream in = BetterFpsTweaker.getResourceStream(algorithmClass + ".class");
+        if(in == null) return bytes;
+
+        ClassNode mathClass = ASMUtils.readClass(IOUtils.toByteArray(in), 0);
+
+        ClassNode classNode = ASMUtils.readClass(bytes, 0);
+
+        MethodNode init = ASMUtils.findMethod(classNode, "<clinit>", "()V"); // Static Constructor
+        MethodNode sin = ASMUtils.findMethod(classNode, Mappings.M_sin);
+        MethodNode cos = ASMUtils.findMethod(classNode, Mappings.M_cos);
+
+        boolean patchedSin = false;
+        boolean patchedCos = false;
+
+        for(FieldNode f : mathClass.fields) {
+            ASMUtils.copyField(mathClass, classNode, f, true);
         }
 
-        ClassNode mathnode = new ClassNode();
-        reader.accept(mathnode, 0);
-
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(bytes);
-        classReader.accept(classNode, 0);
-
-        String className = classNode.name;
-        String mathClass = mathnode.name;
-
-        patchInit(classNode, mathnode, className, mathClass);
-
-        Iterator<MethodNode> methods = classNode.methods.iterator();
-        boolean patched = false;
-
-        while(methods.hasNext()) {
-            MethodNode method = methods.next();
-
-            if(Mappings.M_sin.is(method.name, method.desc)) {
-                // SIN
-                patchSin(method, mathnode, className, mathClass);
-                patched = true;
-            } else if(Mappings.M_cos.is(method.name, method.desc)) {
-                // COS
-                patchCos(method, mathnode, className, mathClass);
-                patched = true;
-            } /*else if(Mappings.M_StaticBlock.is(method.name, method.desc)) {
-
-                InsnList list = new InsnList();
-                for(int i = 0; i < method.instructions.size(); i++) {
-                    AbstractInsnNode node = list.get(i);
-                    if(node instanceof FieldInsnNode) {
-                        FieldInsnNode field = (FieldInsnNode)node;
-                        if(field.owner.equals(className) && Mappings.F_SIN_TABLE.is(field.name, field.desc)) {
-
-                        }
-                    }
-                }
-
-            }*/ //TODO finish
-
-        }
-
-        if(patched) {
-
-            Iterator<FieldNode> fields = classNode.fields.iterator();
-            while(fields.hasNext()) {
-                FieldNode field = fields.next();
-                if(Mappings.F_SIN_TABLE.is(field.name, field.desc)) { // Remove this unused array to get less ram usage
-                    //fields.remove();
-                    // TODO finish
-                    break;
-                }
-            }
-
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-            classNode.accept(writer);
-            return writer.toByteArray();
-
-        }
-
-        return bytes;
-    }
-
-    private void patchInit(ClassNode classNode, ClassNode math, String name, String oldName) {
-        // COPY ALL FIELDS
-        for(FieldNode field : math.fields) {
-            classNode.fields.add(field);
-        }
-
-        // COPY STATIC BLOCK
-        MethodNode mathClinit = null;
-        for(MethodNode m : math.methods) {
-            if(m.name.equals("<clinit>")) {
-                mathClinit = m;
-                break;
+        for(MethodNode m : mathClass.methods) {
+            if(m.name.equals(METHOD_SIN)) {
+                ASMUtils.copyMethod(mathClass, classNode, m, sin, true);
+                patchedSin = true;
+            } else if(m.name.equals(METHOD_COS)) {
+                ASMUtils.copyMethod(mathClass, classNode, m, cos, true);
+                patchedCos = true;
+            } else if(m.name.equals("<clinit>")) {
+                m.name = "init";
+                ASMUtils.appendMethod(mathClass, classNode, m, init);
+            } else {
+                ASMUtils.copyMethod(mathClass, classNode, m, true);
             }
         }
-        if(mathClinit != null) {
-            MethodNode clinit = null;
-            for(MethodNode m : classNode.methods) {
-                if(m.name.equals("<clinit>")) {
-                    clinit = m;
-                    break;
-                }
-            }
-            if(clinit == null) { // Why MathHelper does not have a static block? Well, we'll create one
-                clinit = new MethodNode(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
-            }
-            InsnList list = new InsnList();
-            for(AbstractInsnNode node : mathClinit.instructions.toArray()) {
-                if(node instanceof FieldInsnNode) {
-                    FieldInsnNode field = (FieldInsnNode)node;
-                    if(field.owner.equals(oldName)) field.owner = name;
-                } else if(node.getOpcode() == Opcodes.RETURN) {
-                    continue;
-                }
-                list.add(node);
-            }
-            list.add(clinit.instructions);
-            clinit.instructions.clear();
-            clinit.instructions.add(list);
 
-            classNode.methods.remove(clinit);
-            classNode.methods.add(clinit);
-        }
-    }
+        FieldNode sinTable = ASMUtils.findField(classNode, Mappings.F_SIN_TABLE);
 
-    private void patchSin(MethodNode method, ClassNode math, String name, String oldName) {
-        method.instructions.clear();
+        if(patchedSin && patchedCos && sinTable != null) {
+            classNode.fields.remove(sinTable);
 
-        for(MethodNode original : math.methods) {
-            if(original.name.equals("sin")) {
-                method.instructions.add(original.instructions);
-                for(AbstractInsnNode node : method.instructions.toArray()) {
-                    if(node instanceof FieldInsnNode) {
-                        FieldInsnNode field = (FieldInsnNode)node;
-                        if(field.owner.equals(oldName)) field.owner = name;
+            InsnList inst = init.instructions;
+            LabelNode currentLabel = null;
+            for(int i = 0; i < inst.size(); i++) {
+                AbstractInsnNode node = inst.get(i);
+                if(node instanceof LabelNode) {
+                    currentLabel = (LabelNode)node;
+                } else if(node instanceof FieldInsnNode && currentLabel != null) {
+                    FieldInsnNode f = (FieldInsnNode)node;
+                    if(classNode.name.equals(f.owner) && sinTable.name.equals(f.name) && sinTable.desc.equals(f.desc)) {
+                        i = inst.indexOf(currentLabel);
+                        ASMUtils.removeLabelSection(inst, currentLabel);
                     }
                 }
             }
         }
+
+        return ASMUtils.writeClass(classNode, 0);
     }
 
-    private void patchCos(MethodNode method, ClassNode math, String name, String oldName) {
-        method.instructions.clear();
-
-        for(MethodNode original : math.methods) {
-            if(original.name.equals("cos")) {
-                method.instructions.add(original.instructions);
-                for(AbstractInsnNode node : method.instructions.toArray()) {
-                    if(node instanceof FieldInsnNode) {
-                        FieldInsnNode field = (FieldInsnNode)node;
-                        if(field.owner.equals(oldName)) field.owner = name;
-                    }
-                }
-            }
-        }
-    }
 }

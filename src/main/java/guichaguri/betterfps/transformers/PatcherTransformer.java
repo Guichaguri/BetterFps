@@ -1,16 +1,14 @@
-package guichaguri.betterfps.transformers.patcher;
+package guichaguri.betterfps.transformers;
 
 import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsHelper;
 import guichaguri.betterfps.tweaker.BetterFpsTweaker;
 import guichaguri.betterfps.tweaker.Mappings;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -19,6 +17,7 @@ import org.objectweb.asm.tree.ClassNode;
  */
 public class PatcherTransformer implements IClassTransformer {
 
+    // Target Class Name, Patch Class Name
     private static final Map<Mappings, String> patches = new HashMap<Mappings, String>();
 
     static {
@@ -33,7 +32,7 @@ public class PatcherTransformer implements IClassTransformer {
 
         patches.put(Mappings.C_Minecraft, "guichaguri/betterfps/patches/misc/MinecraftPatch");
         patches.put(Mappings.C_DedicatedServer, "guichaguri/betterfps/patches/misc/ServerPatch");
-        patches.put(Mappings.C_EntityPlayerSP, "guichaguri/betterfps/patches/misc/ClientPlayerPatch"); //TODO EntityPlayerSP
+        patches.put(Mappings.C_EntityPlayerSP, "guichaguri/betterfps/patches/misc/ClientPlayerPatch");
     }
 
     @Override
@@ -54,17 +53,7 @@ public class PatcherTransformer implements IClassTransformer {
         // Patch the class with a custom patcher
         patch.patch();
 
-        bytes = ASMUtils.writeClass(classNode, 0);
-
-        try {
-            File f = new File("debugPatch", name + ".class");
-            f.getParentFile().mkdirs();
-            FileUtils.writeByteArrayToFile(f, bytes);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return bytes;
+        return ASMUtils.writeClass(classNode, 0);
     }
 
     private ClassNode findPatch(String name) {
@@ -77,7 +66,7 @@ public class PatcherTransformer implements IClassTransformer {
     }
 
     private ClassNode loadPatch(String className) {
-        String path = className.replaceAll("\\.", "/") + ".class";
+        String path = className + ".class";
         InputStream in = null;
         try {
             in = BetterFpsTweaker.getResourceStream(path);

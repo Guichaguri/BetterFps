@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -25,7 +25,7 @@ public class UpdateChecker implements Runnable {
     private static String updateDownload = null;
 
     public static void check() {
-        if(!BetterFpsConfig.getConfig().updateChecker) {
+        if(!BetterFpsHelper.getConfig().updateChecker) {
             done = true;
             return;
         }
@@ -42,13 +42,10 @@ public class UpdateChecker implements Runnable {
         thread.start();
     }
 
-    public static void showChat() {
+    public static void showChat(EntityPlayerSP player) {
         if(!done) return;
         if(updateVersion == null && updateDownload == null) return;
-        if(!BetterFps.isClient) return;
-
-        GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
-        if(chat == null) return;
+        if(!BetterFps.CLIENT) return;
 
         TextComponentString title = new TextComponentString("BetterFps " + updateVersion + " is available");
         title.setStyle(title.getStyle().setColor(TextFormatting.GREEN).setBold(true));
@@ -57,19 +54,19 @@ public class UpdateChecker implements Runnable {
         buttons.setStyle(buttons.getStyle().setColor(TextFormatting.YELLOW));
         buttons.appendSibling(createButton("Download", updateDownload, "Click here to download the new version"));
         buttons.appendText("  ");
-        buttons.appendSibling(createButton("More", BetterFpsHelper.URL, "Click here for more versions"));
+        buttons.appendSibling(createButton("More", BetterFps.URL, "Click here for more versions"));
 
         TextComponentString desc = new TextComponentString(getRandomPhrase());
         desc.setStyle(desc.getStyle().setColor(TextFormatting.GRAY));
 
         if(updateVersion.length() < 8) {
             title.appendSibling(buttons);
-            chat.printChatMessage(title);
-            chat.printChatMessage(desc);
+            player.addChatComponentMessage(title, false);
+            player.addChatComponentMessage(desc, false);
         } else {
-            chat.printChatMessage(title);
-            chat.printChatMessage(buttons);
-            chat.printChatMessage(desc);
+            player.addChatComponentMessage(title, false);
+            player.addChatComponentMessage(buttons, false);
+            player.addChatComponentMessage(desc, false);
         }
 
         updateVersion = null;
@@ -83,7 +80,7 @@ public class UpdateChecker implements Runnable {
         BetterFpsHelper.LOG.info("BetterFps " + updateVersion + " is available");
         BetterFpsHelper.LOG.info(getRandomPhrase());
         BetterFpsHelper.LOG.info("Download: " + updateDownload);
-        BetterFpsHelper.LOG.info("More: " + BetterFpsHelper.URL);
+        BetterFpsHelper.LOG.info("More: " + BetterFps.URL);
 
         updateVersion = null;
         updateDownload = null;
@@ -125,31 +122,31 @@ public class UpdateChecker implements Runnable {
     @Override
     public void run() {
         try {
-            URL url = new URL(BetterFpsHelper.UPDATE_URL);
+            URL url = new URL(BetterFps.UPDATE_URL);
             InputStream in = url.openStream();
             JsonParser parser = new JsonParser();
             JsonObject obj = parser.parse(new InputStreamReader(in)).getAsJsonObject();
             JsonObject versions = obj.getAsJsonObject("versions");
 
-            if(!versions.has(BetterFpsHelper.MC_VERSION)) return;
-            JsonArray array = versions.getAsJsonArray(BetterFpsHelper.MC_VERSION);
+            if(!versions.has(BetterFps.MC_VERSION)) return;
+            JsonArray array = versions.getAsJsonArray(BetterFps.MC_VERSION);
             if(array.size() == 0) return;
 
             JsonObject latest = array.get(0).getAsJsonObject();
             String version = latest.get("name").getAsString();
 
-            if(!version.contains(BetterFpsHelper.VERSION)) {
+            if(!version.contains(BetterFps.VERSION)) {
                 updateVersion = version;
                 updateDownload = latest.get("url").getAsString();
             }
 
             done = true;
 
-            if(!BetterFps.isClient) {
+            if(!BetterFps.CLIENT) {
                 showConsole();
             } else {
-                if(Minecraft.getMinecraft().theWorld != null) {
-                    showChat();
+                if(Minecraft.getMinecraft().thePlayer != null) {
+                    showChat(Minecraft.getMinecraft().thePlayer);
                 }
             }
         } catch(Exception ex) {

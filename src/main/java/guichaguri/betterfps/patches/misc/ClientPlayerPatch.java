@@ -1,8 +1,8 @@
 package guichaguri.betterfps.patches.misc;
 
 import guichaguri.betterfps.UpdateChecker;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy.Mode;
+import guichaguri.betterfps.transformers.annotations.Copy;
+import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;

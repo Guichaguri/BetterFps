@@ -1,9 +1,10 @@
 package guichaguri.betterfps;
 
-import guichaguri.betterfps.transformers.patcher.annotations.Param;
+import guichaguri.betterfps.transformers.annotations.Param;
 import guichaguri.betterfps.tweaker.Mappings;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -284,20 +285,12 @@ public class ASMUtils {
         return var;
     }
 
-    public static LabelNode getFirstLabel(InsnList instructions) {
-        for(int i = 0; i < instructions.size(); i++) {
-            AbstractInsnNode node = instructions.get(i);
-            if(node instanceof LabelNode) return (LabelNode)node;
+    public static void removeLabelSection(InsnList list, LabelNode label) {
+        Iterator<AbstractInsnNode> i = list.iterator(list.indexOf(label) + 1);
+        for(AbstractInsnNode node = i.next(); i.hasNext(); node = i.next()) {
+            if(node instanceof LabelNode) break;
+            i.remove();
         }
-        return null;
-    }
-
-    public static LabelNode getLastLabel(InsnList instructions) {
-        for(int i = instructions.size() - 1; i >= 0; i--) {
-            AbstractInsnNode node = instructions.get(i);
-            if(node instanceof LabelNode) return (LabelNode)node;
-        }
-        return null;
     }
 
     public static boolean isNodeInside(InsnList list, AbstractInsnNode node, LabelNode from, LabelNode to) {
@@ -612,8 +605,13 @@ public class ASMUtils {
      * Copies a method to another class, taking care of references and replacement
      */
     public static void copyMethod(ClassNode original, ClassNode target, MethodNode method, boolean replace) {
-        MethodNode replacedMethod = findMethod(target, method.name, method.desc);
+        copyMethod(original, target, method, findMethod(target, method.name, method.desc), replace);
+    }
 
+    /**
+     * Copies a method to another class, taking care of references and replacement
+     */
+    public static void copyMethod(ClassNode original, ClassNode target, MethodNode method, MethodNode replacedMethod, boolean replace) {
         if(replacedMethod != null) {
             if(!replace) return;
             target.methods.remove(replacedMethod);
@@ -628,8 +626,13 @@ public class ASMUtils {
      * Appends a method to another class, taking care of references
      */
     public static void appendMethod(ClassNode original, ClassNode target, MethodNode method) {
-        MethodNode targetMethod = findMethod(target, method.name, method.desc);
+        appendMethod(original, target, method, findMethod(target, method.name, method.desc));
+    }
 
+    /**
+     * Appends a method to another class, taking care of references
+     */
+    public static void appendMethod(ClassNode original, ClassNode target, MethodNode method, MethodNode targetMethod) {
         if(targetMethod == null) {
             target.methods.add(method);
         } else {
@@ -647,8 +650,13 @@ public class ASMUtils {
      * Prepends a method to another class, taking care of references
      */
     public static void prependMethod(ClassNode original, ClassNode target, MethodNode method) {
-        MethodNode targetMethod = findMethod(target, method.name, method.desc);
+        prependMethod(original, target, method, findMethod(target, method.name, method.desc));
+    }
 
+    /**
+     * Prepends a method to another class, taking care of references
+     */
+    public static void prependMethod(ClassNode original, ClassNode target, MethodNode method, MethodNode targetMethod) {
         if(targetMethod == null) {
             target.methods.add(method);
         } else {
@@ -664,11 +672,16 @@ public class ASMUtils {
      * Copies a field to another class, taking care of references, and replacement
      */
     public static void copyField(ClassNode original, ClassNode target, FieldNode field, boolean replace) {
-        FieldNode replacedField = findField(target, field.name, field.desc);
+        copyField(original, target, field, findField(target, field.name, field.desc), replace);
+    }
 
+    /**
+     * Copies a field to another class, taking care of references, and replacement
+     */
+    public static void copyField(ClassNode original, ClassNode target, FieldNode field, FieldNode replacedField, boolean replace) {
         if(replacedField != null) {
             if(!replace) return;
-            target.methods.remove(replacedField);
+            target.fields.remove(replacedField);
         }
 
         replaceReferences(original.name, target.name, field);

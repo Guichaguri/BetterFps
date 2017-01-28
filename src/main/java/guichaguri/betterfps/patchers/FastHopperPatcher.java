@@ -1,8 +1,8 @@
 package guichaguri.betterfps.patchers;
 
 import guichaguri.betterfps.ASMUtils;
-import guichaguri.betterfps.transformers.patcher.IClassPatcher;
-import guichaguri.betterfps.transformers.patcher.Patch;
+import guichaguri.betterfps.transformers.IClassPatcher;
+import guichaguri.betterfps.transformers.Patch;
 import guichaguri.betterfps.tweaker.Mappings;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;

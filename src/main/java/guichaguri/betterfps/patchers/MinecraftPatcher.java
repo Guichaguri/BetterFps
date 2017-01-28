@@ -1,9 +1,9 @@
 package guichaguri.betterfps.patchers;
 
 import guichaguri.betterfps.ASMUtils;
-import guichaguri.betterfps.BetterFpsConfig;
-import guichaguri.betterfps.transformers.patcher.IClassPatcher;
-import guichaguri.betterfps.transformers.patcher.Patch;
+import guichaguri.betterfps.BetterFpsHelper;
+import guichaguri.betterfps.transformers.IClassPatcher;
+import guichaguri.betterfps.transformers.Patch;
 import guichaguri.betterfps.tweaker.Mappings;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -22,7 +22,7 @@ public class MinecraftPatcher implements IClassPatcher {
     public void patch(Patch patch) {
         ClassNode target = patch.getTargetClass();
 
-        if(BetterFpsConfig.getConfig().preallocateMemory) return;
+        if(BetterFpsHelper.getConfig().preallocateMemory) return;
 
         FieldNode memory = ASMUtils.findField(target, Mappings.F_memoryReserve);
         if(memory == null) return;

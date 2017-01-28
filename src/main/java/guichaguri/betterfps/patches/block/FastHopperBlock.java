@@ -1,8 +1,8 @@
 package guichaguri.betterfps.patches.block;
 
 import guichaguri.betterfps.api.IFastHopper;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy.Mode;
+import guichaguri.betterfps.transformers.annotations.Copy;
+import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

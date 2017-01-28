@@ -1,10 +1,10 @@
 package guichaguri.betterfps.patches.block;
 
 import guichaguri.betterfps.api.IFastHopper;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy.Mode;
-import guichaguri.betterfps.transformers.patcher.annotations.Patcher;
-import guichaguri.betterfps.transformers.patcher.annotations.Reference;
+import guichaguri.betterfps.transformers.annotations.Copy;
+import guichaguri.betterfps.transformers.annotations.Copy.Mode;
+import guichaguri.betterfps.transformers.annotations.Patcher;
+import guichaguri.betterfps.transformers.annotations.Reference;
 import guichaguri.betterfps.patchers.FastHopperPatcher;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.IHopper;

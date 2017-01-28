@@ -1,7 +1,7 @@
 package guichaguri.betterfps.patches.block;
 
-import guichaguri.betterfps.transformers.patcher.annotations.Copy;
-import guichaguri.betterfps.transformers.patcher.annotations.Copy.Mode;
+import guichaguri.betterfps.transformers.annotations.Copy;
+import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import java.util.Arrays;
 import java.util.List;
 import net.minecraft.block.Block;

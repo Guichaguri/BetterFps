@@ -1,5 +1,6 @@
 package guichaguri.betterfps.tweaker;
 
+import guichaguri.betterfps.BetterFps;
 import guichaguri.betterfps.BetterFpsHelper;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class BetterFpsTweaker implements ITweaker {
         InputStream stream;
 
         // Normal environment
+        //TODO: test if getClassLoader would work in normal environment, so we can unify the code
         stream = BetterFpsTweaker.class.getResourceAsStream(path);
         if(stream != null) return stream;
 
@@ -41,19 +43,21 @@ public class BetterFpsTweaker implements ITweaker {
         return url;
     }
 
-    private static final String[] TRANSFORMERS = new String[]{
-            "guichaguri.betterfps.transformers.MathTransformer",
-            //"guichaguri.betterfps.transformers.EventTransformer",
-            //"guichaguri.betterfps.transformers.MiscTransformer",
-            //"guichaguri.betterfps.transformers.cloner.ClonerTransformer",
-            "guichaguri.betterfps.transformers.patcher.PatcherTransformer",
-            //"guichaguri.betterfps.transformers.VisualChunkTransformer"
-            //"guichaguri.betterfps.transformers.CapTransformer"
+    private static final String[] TRANSFORMERS = new String[] {
+            "guichaguri.betterfps.transformers.PatcherTransformer",
+            "guichaguri.betterfps.transformers.MathTransformer"
     };
 
-    private final String[] EXCLUDED = new String[]{
+    private final String[] EXCLUDED = new String[] {
             "guichaguri.betterfps.transformers",
-            "guichaguri.betterfps.tweaker"
+            "guichaguri.betterfps.tweaker",
+            "guichaguri.betterfps.patchers"
+    };
+
+    private final String[] UNLOADABLE = new String[] {
+            "guichaguri.betterfps.installer",
+            "guichaguri.betterfps.math",
+            "guichaguri.betterfps.patches"
     };
 
     private List<String> args;
@@ -61,8 +65,10 @@ public class BetterFpsTweaker implements ITweaker {
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         this.args = new ArrayList<String>(args);
+
         this.args.add("--version");
         this.args.add(profile);
+
         if(assetsDir != null) {
             this.args.add("--assetsDir");
             this.args.add(assetsDir.getAbsolutePath());
@@ -72,7 +78,7 @@ public class BetterFpsTweaker implements ITweaker {
             this.args.add(gameDir.getAbsolutePath());
         }
 
-        BetterFpsHelper.MCDIR = gameDir;
+        BetterFps.GAME_DIR = gameDir;
     }
 
     @Override
@@ -87,10 +93,9 @@ public class BetterFpsTweaker implements ITweaker {
             cl.addTransformerExclusion(excluded);
         }
 
-        cl.addClassLoaderExclusion("guichaguri.betterfps.clones");
-        cl.addClassLoaderExclusion("guichaguri.betterfps.installer");
-        cl.addClassLoaderExclusion("guichaguri.betterfps.math");
-        cl.addClassLoaderExclusion("guichaguri.betterfps.patches");
+        for(String unloadable : UNLOADABLE) {
+            cl.addClassLoaderExclusion(unloadable);
+        }
     }
 
     @Override
@@ -107,7 +112,7 @@ public class BetterFpsTweaker implements ITweaker {
         this.args = null;
 
         // Just in case someone needs to know whether BetterFps is running
-        Launch.blackboard.put("BetterFpsVersion", BetterFpsHelper.VERSION);
+        Launch.blackboard.put("BetterFpsVersion", BetterFps.VERSION);
 
         return new String[0];
     }
