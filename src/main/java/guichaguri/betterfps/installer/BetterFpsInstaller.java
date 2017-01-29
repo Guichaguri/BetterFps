@@ -1,158 +1,324 @@
 package guichaguri.betterfps.installer;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+import com.eclipsesource.json.WriterConfig;
+import guichaguri.betterfps.BetterFps;
 import java.awt.Desktop;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import javax.swing.*;
+import java.util.Properties;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * @author Guilherme Chaguri
  */
-public class BetterFpsInstaller extends JFrame implements ActionListener {
+public class BetterFpsInstaller {
+
+    private static final String TWEAK_CLASS = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
+    private static final String LIBRARY_IDENTIFIER = "betterfps";
+    private static final String LIBRARY_NAME = "BetterFps";
+    private static final String VERSION_NAME = BetterFps.VERSION;
+    private static final String[] LIBRARIES = new String[] {
+            "org.ow2.asm:asm-all:5.0.3",
+            "net.minecraft:launchwrapper:1.11"
+    };
+
+    private static final Properties i18n = new Properties();
+
+    protected static File GAME_DIR = null;
+    protected static String ALGORITHM = null;
 
     public static void main(String[] args) {
-        String tester = System.getProperty("tester", null);
-        if(tester != null) {
-            JFrame load = new JFrame();
-            load.add(new JLabel("Testing each algorithm..."));
-            load.setSize(250, 100);
-            load.setLocationRelativeTo(null);
-            load.setVisible(true);
-            load.requestFocusInWindow();
-            AlgorithmTester.open(null, new File(tester), null, null);
-            load.setVisible(false);
-            return;
-        }
+        String lang = String.format("%s_%s", System.getProperty("user.language"), System.getProperty("user.country"));
+        loadLanguage(lang);
+
+        info("Waiting for Swing to load...");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch(Exception ex) {}
-
-            BetterFpsInstaller installer = new BetterFpsInstaller();
-            installer.setVisible(true);
+                loadUI();
             }
         });
     }
 
-    // Constants
-    private final String installerDesc = "<html>This is the installer for <strong>BetterFps</strong><br>" +
-                                         "If you are using Forge, you just need to drop this file in the mods folder<br>" +
-                                         "It's recommended closing the Minecraft Launcher before installing.</html>";
-    private final String modUrl = "http://minecraft.curseforge.com/mc-mods/229876-betterfps";
+    private static void loadUI() {
+        info("Initializing Look and Feel...");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception ex) {
+            info("OS Look and Feel couldn't be loaded. Using the default instead.");
+        }
 
-    // Action Commands for the buttons
-    private final String INSTALL = "install";
-    private final String PAGE = "page";
-    private final String CALC_ALGORITHM = "calc_algorithm";
-    private final String CHANGE_FILE = "change_file";
+        info("Initializing the UI...");
+        GuiInstaller installer = new GuiInstaller();
+        installer.setVisible(true);
 
-    // Frame components
-    private JTextField installLocation;
-    private JFileChooser fc;
-
-    private JDialog versionDialog = null;
-
-    private JComboBox versionComboBox = null;
-
-    public BetterFpsInstaller() {
-        setTitle("BetterFps Installer");
-        setLayout(new GridBagLayout());
-
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.insets = new Insets(5, 5, 5, 5);
-
-        JLabel title = new JLabel("BetterFps Installer");
-        title.setFont(title.getFont().deriveFont(32F));
-        add(title, c);
-
-        c.gridy = 1;
-        JLabel desc = new JLabel(installerDesc);
-        add(desc, c);
-
-        c.gridy = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        installLocation = new JTextField(12);
-        installLocation.setText(InstanceInstaller.getSuggestedMinecraftFolder().getAbsolutePath());
-        add(installLocation, c);
-
-        c.gridx = 1;
-        c.fill = GridBagConstraints.NONE;
-        JButton choose = new JButton("...");
-        choose.setActionCommand(CHANGE_FILE);
-        choose.addActionListener(this);
-        add(choose, c);
-
-        fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setDialogTitle("Select the Minecraft Installation folder (.minecraft)");
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 3;
-        JButton install = new JButton("Install");
-        install.setActionCommand(INSTALL);
-        install.addActionListener(this);
-        add(install, c);
-
-        c.gridy = 4;
-        JButton testAlgorithms = new JButton("Test Algorithms");
-        testAlgorithms.setToolTipText("Test all algorithm to see which is faster");
-        testAlgorithms.setActionCommand(CALC_ALGORITHM);
-        testAlgorithms.addActionListener(this);
-        add(testAlgorithms, c);
-
-        c.gridy = 5;
-        JButton page = new JButton("Official Page");
-        page.setActionCommand(PAGE);
-        page.addActionListener(this);
-        add(page, c);
-
-        setSize(450, 325);
-        setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        info("Checking for updates...");
+        try {
+            checkUpdates(installer);
+        } catch(Exception ex) {
+            info("Couldn't check for updates");
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        String cmd = event.getActionCommand();
-        if(cmd.equals(INSTALL)) {
-            File file = new File(installLocation.getText());
-            if((!file.exists()) || (!file.isDirectory())) {
-                JOptionPane.showMessageDialog(this, "The install location is invalid.",
-                                                "Oops!", JOptionPane.WARNING_MESSAGE);
-                return;
+    private static void loadLanguage(String lang) {
+        final String langPattern = "assets/betterfps/lang/%s.lang";
+        lang = lang.toLowerCase();
+
+        try {
+            Charset utf8 = Charset.forName("UTF-8");
+
+            info("Loading en_us...");
+            InputStream in = getResource(String.format(langPattern, "en_us"));
+            if(in != null) i18n.load(new InputStreamReader(in, utf8));
+
+            if(!lang.equals("en_us")) {
+                info("Loading %s...", lang);
+                in = getResource(String.format(langPattern, lang));
+                if(in != null) i18n.load(new InputStreamReader(in, utf8));
             }
-            List<String> versions = InstanceInstaller.getVersions(file);
-            VersionSelector.open(this, file, versions);
-        } else if(cmd.equals(PAGE)) {
-            try {
-                Desktop.getDesktop().browse(new URI(modUrl));
-            } catch(Exception ex) {
-                JOptionPane.showMessageDialog(this, modUrl, "URL", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } else if(cmd.equals(CHANGE_FILE)) {
-            int val = fc.showDialog(this, "Select");
-            if(val == JFileChooser.APPROVE_OPTION) {
-                installLocation.setText(fc.getSelectedFile().getAbsolutePath());
-            }
-        } else if(cmd.equals(CALC_ALGORITHM)) {
-            File file = new File(installLocation.getText());
-            AlgorithmTester.open(this, file, CALC_ALGORITHM, this);
+        } catch(IOException ex) {
+            error("Couldn't load the i18n data (%s)", lang);
+            ex.printStackTrace();
         }
+    }
+
+    public static void info(String log, Object ... data) {
+        System.out.println(String.format(log, data));
+    }
+
+    public static void error(String log, Object ... data) {
+        System.err.println(String.format(log, data));
+    }
+
+    public static InputStream getResource(String path) {
+        return BetterFpsInstaller.class.getClassLoader().getResourceAsStream(path);
+    }
+
+    public static String i18n(String id, Object ... data) {
+        String msg = i18n.getProperty(id, id);
+        if(data.length > 0) {
+            return String.format(msg, data);
+        } else {
+            return msg;
+        }
+    }
+
+    public static File getSuggestedMinecraftFolder() {
+        // Adapted from Forge installer
+        String userHomeDir = System.getProperty("user.home", ".");
+        String osType = System.getProperty("os.name").toLowerCase();
+
+        if((osType.contains("win")) && (System.getenv("APPDATA") != null)) {
+            return new File(System.getenv("APPDATA"), ".minecraft");
+        } else if(osType.contains("mac")) {
+            return new File(userHomeDir, "Library/Application Support/minecraft");
+        } else {
+            return new File(userHomeDir, ".minecraft");
+        }
+    }
+
+    public static void checkUpdates(GuiInstaller installer) throws IOException, URISyntaxException {
+        URL url = new URL(BetterFps.UPDATE_URL);
+        InputStream in = url.openStream();
+        JsonObject json = Json.parse(new InputStreamReader(in)).asObject();
+        JsonObject versions = json.get("versions").asObject();
+
+        JsonValue elem = versions.get(BetterFps.MC_VERSION);
+        if(elem == null) return;
+        JsonArray array = elem.asArray();
+        if(array.isEmpty()) return;
+
+        JsonObject latest = array.get(0).asObject();
+        String version = latest.getString("name", BetterFps.VERSION);
+
+        if(!version.contains(BetterFps.VERSION)) {
+            String title = i18n("betterfps.update.available", version);
+            String msg = title + "\n" + i18n("betterfps.update.prompt");
+            int r = JOptionPane.showConfirmDialog(installer, msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+            if(r == JOptionPane.YES_OPTION) {
+                Desktop desktop = Desktop.getDesktop();
+                desktop.browse(new URI(latest.getString("url", BetterFps.URL)));
+                installer.setVisible(false);
+                System.exit(0);
+            }
+        }
+    }
+
+    public static void saveAlgorithm() throws IOException {
+        if(ALGORITHM == null) return;
+        if(GAME_DIR == null) GAME_DIR = getSuggestedMinecraftFolder();
+        info("Changing the algorithm to %s...", ALGORITHM);
+
+        File config = new File(GAME_DIR, "config/betterfps.json");
+        JsonObject json;
+
+        if(config.exists()) {
+            FileReader reader = new FileReader(config);
+            json = Json.parse(reader).asObject();
+            reader.close();
+        } else {
+            json = Json.object();
+            config.getParentFile().mkdirs();
+            config.createNewFile();
+        }
+
+        json.set("algorithm", ALGORITHM);
+
+        FileWriter writer = new FileWriter(config);
+        json.writeTo(writer);
+        writer.close();
+    }
+
+    public static void copyLibrary(File gameDir) throws IOException {
+        String path = String.format("libraries/%s/%s/%s", LIBRARY_IDENTIFIER, LIBRARY_NAME, VERSION_NAME);
+        File libraryDir = new File(gameDir, path);
+        libraryDir.mkdirs();
+
+        File library = new File(libraryDir, String.format("%s-%s.jar", LIBRARY_NAME, VERSION_NAME));
+        library.createNewFile();
+
+        copyMod(library);
+    }
+
+    public static void copyMod(File output) throws IOException {
+        info("Copying the mod file...");
+
+        URL modFile = BetterFpsInstaller.class.getProtectionDomain().getCodeSource().getLocation();
+        InputStream is = modFile.openStream();
+        OutputStream os = new FileOutputStream(output);
+        byte[] buffer = new byte[1024];
+        int length;
+        while((length = is.read(buffer)) > 0) {
+            os.write(buffer, 0, length);
+        }
+        is.close();
+        os.close();
+    }
+
+    public static JsonObject loadVersion(File gameDir, String version) throws IOException {
+        info("Loading version json from %s...", version);
+        File versionFile = new File(gameDir, String.format("versions/%s/%s.json", version, version));
+        FileReader reader = new FileReader(versionFile);
+        JsonObject obj = Json.parse(reader).asObject();
+        reader.close();
+        return obj;
+    }
+
+    public static void saveVersion(File gameDir, String version, JsonObject data) throws IOException {
+        info("Saving version json to %s...", version);
+        File versionFile = new File(gameDir, String.format("versions/%s/%s.json", version, version));
+        versionFile.getParentFile().mkdirs();
+        versionFile.createNewFile();
+        FileWriter writer = new FileWriter(versionFile);
+        data.writeTo(writer, WriterConfig.PRETTY_PRINT);
+        writer.close();
+    }
+
+    public static JsonObject generateVersion(JsonObject original, String versionName) {
+        JsonObject version = new JsonObject();
+        String oldId = original.getString("id", BetterFps.MC_VERSION);
+        String date = getDateISO();
+
+        version.set("id", versionName);
+        version.set("inheritsFrom", oldId);
+        version.set("jar", version.getString("jar", oldId));
+        version.set("mainClass", "net.minecraft.launchwrapper.Launch");
+        version.set("time", date);
+        version.set("releaseTime", date);
+        version.set("type", "release");
+
+        String arguments = original.getString("minecraftArguments", "");
+        version.set("minecraftArguments", String.format("%s --tweakClass %s", arguments, TWEAK_CLASS));
+
+        JsonArray libraries = new JsonArray();
+
+        String ver = String.format("%s:%s:%s", LIBRARY_IDENTIFIER, LIBRARY_NAME, VERSION_NAME);
+        libraries.add(new JsonObject().add("name", ver));
+
+        for(String lib : LIBRARIES) {
+            libraries.add(new JsonObject().add("name", lib));
+        }
+
+        version.set("libraries", libraries);
+
+        return version;
+    }
+
+    public static JsonObject loadProfiles(File gameDir) throws IOException {
+        info("Loading profiles json for game dir: %s", gameDir.getAbsolutePath());
+        File profilesFile = new File(gameDir, "launcher_profiles.json");
+        FileReader reader = new FileReader(profilesFile);
+        JsonObject obj = Json.parse(reader).asObject();
+        reader.close();
+        return obj;
+    }
+
+    public static void saveProfiles(File gameDir, JsonObject launcherProfiles) throws IOException {
+        info("Saving profiles json...");
+        File profilesFile = new File(gameDir, "launcher_profiles.json");
+        FileWriter writer = new FileWriter(profilesFile);
+        launcherProfiles.writeTo(writer, WriterConfig.PRETTY_PRINT);
+        writer.close();
+    }
+
+    public static List<String> getProfileNames(JsonObject launcherProfiles) {
+        List<String> profileNames = new ArrayList<String>();
+        JsonObject profs = launcherProfiles.get("profiles").asObject();
+
+        for(String prof : profs.names()) {
+            JsonObject obj = profs.get(prof).asObject();
+            if(!obj.getString("type", "custom").equalsIgnoreCase("custom")) continue;
+            profileNames.add(obj.getString("name", prof));
+        }
+
+        return profileNames;
+    }
+
+    public static void addProfile(JsonObject launcherProfiles, String selectedProfileName, String version) {
+        JsonObject profs = launcherProfiles.get("profiles").asObject();
+        JsonObject selectedProfile = null;
+
+        for(String prof : profs.names()) {
+            JsonObject obj = profs.get(prof).asObject();
+            String name = obj.getString("name", prof);
+            if(name.equalsIgnoreCase(selectedProfileName)) {
+                selectedProfile = obj;
+                break;
+            }
+        }
+
+        String date = getDateISO();
+
+        if(selectedProfile == null) {
+            selectedProfile = new JsonObject();
+            selectedProfile.add("name", selectedProfileName);
+            selectedProfile.add("type", "custom");
+            selectedProfile.add("created", date);
+            selectedProfile.add("icon", "Leaves_Oak");
+            profs.add(selectedProfileName, selectedProfile);
+        }
+
+        selectedProfile.set("lastUsed", date);
+        selectedProfile.set("lastVersionId", version);
+    }
+
+    private static String getDateISO() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return format.format(new Date());
     }
 
 }
