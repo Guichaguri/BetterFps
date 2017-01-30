@@ -1,6 +1,5 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsHelper;
 import guichaguri.betterfps.tweaker.BetterFpsTweaker;
 import guichaguri.betterfps.tweaker.Mappings;

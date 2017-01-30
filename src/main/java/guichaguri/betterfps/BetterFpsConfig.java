@@ -1,17 +1,17 @@
 package guichaguri.betterfps;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author Guilherme Chaguri
  */
 public class BetterFpsConfig {
 
-    public String algorithm = "rivens-half";
+    public AlgorithmType algorithm = AlgorithmType.RIVENS_HALF;
 
     public boolean updateChecker = true;
 
     public boolean preallocateMemory = false;
-
-    public boolean fastBoxRender = true;
 
     public boolean fog = true;
 
@@ -20,5 +20,16 @@ public class BetterFpsConfig {
     public boolean fastBeacon = true;
 
     public boolean fastBeaconRender = false;
+
+    public enum AlgorithmType {
+        @SerializedName("vanilla") VANILLA,
+        @SerializedName("java") JAVA,
+        @SerializedName("libgdx") LIBGDX,
+        @SerializedName("random") RANDOM,
+        @SerializedName("rivens-full") RIVENS_FULL,
+        @SerializedName("rivens-half") RIVENS_HALF,
+        @SerializedName("rivens") RIVENS,
+        @SerializedName("taylors") TAYLORS;
+    }
 
 }

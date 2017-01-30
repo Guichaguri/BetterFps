@@ -1,7 +1,7 @@
 package guichaguri.betterfps.transformers;
 
-import guichaguri.betterfps.ASMUtils;
 import guichaguri.betterfps.BetterFpsConfig;
+import guichaguri.betterfps.BetterFpsConfig.AlgorithmType;
 import guichaguri.betterfps.BetterFpsHelper;
 import guichaguri.betterfps.tweaker.BetterFpsTweaker;
 import guichaguri.betterfps.tweaker.Mappings;
@@ -61,11 +61,11 @@ public class MathTransformer implements IClassTransformer {
         String algorithmClass = algorithmClasses.get(config.algorithm);
         if(algorithmClass == null) {
             BetterFpsHelper.LOG.error("The algorithm is invalid. We're going to use Vanilla Algorithm instead.");
-            config.algorithm = "vanilla";
+            config.algorithm = AlgorithmType.VANILLA;
             return bytes;
         }
 
-        if(config.algorithm.equals("vanilla")) {
+        if(config.algorithm == AlgorithmType.VANILLA) {
             BetterFpsHelper.LOG.info("No algorithm for patching, Vanilla Algorithm will be used");
             return bytes;
         } else {

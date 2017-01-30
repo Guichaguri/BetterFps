@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
@@ -47,16 +48,17 @@ public class UpdateChecker implements Runnable {
         if(updateVersion == null && updateDownload == null) return;
         if(!BetterFps.CLIENT) return;
 
-        TextComponentString title = new TextComponentString("BetterFps " + updateVersion + " is available");
+        TextComponentTranslation title = new TextComponentTranslation("betterfps.update.available", updateVersion);
         title.setStyle(title.getStyle().setColor(TextFormatting.GREEN).setBold(true));
 
         TextComponentString buttons = new TextComponentString("  ");
         buttons.setStyle(buttons.getStyle().setColor(TextFormatting.YELLOW));
-        buttons.appendSibling(createButton("Download", updateDownload, "Click here to download the new version"));
+        buttons.appendSibling(createButton(updateDownload, "betterfps.update.button.download"));
         buttons.appendText("  ");
-        buttons.appendSibling(createButton("More", BetterFps.URL, "Click here for more versions"));
+        buttons.appendSibling(createButton(BetterFps.URL, "betterfps.update.button.more"));
 
-        TextComponentString desc = new TextComponentString(getRandomPhrase());
+        int phrase = (int)(Math.random() * 12) + 1;
+        TextComponentTranslation desc = new TextComponentTranslation("betterfps.update.phrase." + phrase);
         desc.setStyle(desc.getStyle().setColor(TextFormatting.GRAY));
 
         if(updateVersion.length() < 8) {
@@ -78,7 +80,6 @@ public class UpdateChecker implements Runnable {
         if(updateVersion == null && updateDownload == null) return;
 
         BetterFpsHelper.LOG.info("BetterFps " + updateVersion + " is available");
-        BetterFpsHelper.LOG.info(getRandomPhrase());
         BetterFpsHelper.LOG.info("Download: " + updateDownload);
         BetterFpsHelper.LOG.info("More: " + BetterFps.URL);
 
@@ -86,37 +87,15 @@ public class UpdateChecker implements Runnable {
         updateDownload = null;
     }
 
-    private static TextComponentString createButton(String label, String link, String hover) {
-        TextComponentString sib = new TextComponentString("[" + label + "]");
+    private static TextComponentTranslation createButton(String link, String key) {
+        TextComponentTranslation sib = new TextComponentTranslation(key);
         Style style = sib.getStyle();
         style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
-        TextComponentString h = new TextComponentString(hover);
+        TextComponentTranslation h = new TextComponentTranslation(key + ".info");
         h.setStyle(h.getStyle().setColor(TextFormatting.RED));
         style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, h));
         sib.setStyle(style);
         return sib;
-    }
-
-    private static String getRandomPhrase() {
-        // Thanks to Kevin8082 for some of this phrases
-        String[] phrases = new String[]{
-                "Just another annoying update.",
-                "Babe are you a new update? Because not now.",
-                "Seeing that a new update came out, it fills you with determination.",
-                "When Stanley came into an update reminder, he pressed the \"download\" button.",
-                "Not again D:",
-                "<3",
-                "You will probably update just to get rid of this reminder",
-                "HARDWARE FAILURE! HARDWARE FAILURE! No wait, I derped out.",
-                "Less annoying than Windows Updater... I think",
-                "Rope is cut, update is out, and the entire server is after me now, great...",
-                "It's free. Go get it ;)",
-                "Some bugs are now fixed, but new ones have been introduced",
-                "It will not update automagically, you know...",
-                "Do you want something new? Here, have an update."
-        };
-
-        return phrases[(int)(Math.random() * phrases.length)];
     }
 
     @Override

@@ -1,0 +1,88 @@
+betterfps.update.available=BetterFps %s está disponível
+betterfps.update.prompt=Baixar a nova versão?
+betterfps.update.button.download=[Baixar]
+betterfps.update.button.download.info=Clique aqui para baixar a nova versão
+betterfps.update.button.more=[Mais]
+betterfps.update.button.more.info=Clique aqui para ver mais versões
+
+betterfps.update.phrase.1=Mais uma update irritante.
+betterfps.update.phrase.2=§mAnuncie Aqui
+betterfps.update.phrase.3=Vendo que uma nova atualização foi lançada, te enche de determinação
+betterfps.update.phrase.4=Quando o Stanley chegou a um lembrete de atualização, ele apertou o botão de "baixar".
+betterfps.update.phrase.5=De novo não D:
+betterfps.update.phrase.6=<3
+betterfps.update.phrase.7=Eu sei que você só vai atualizar pra se livrar desse lembrete
+betterfps.update.phrase.8=Ao menos, é grátis...
+betterfps.update.phrase.9=Outro verificador de atualização irritante? Eu sei...
+betterfps.update.phrase.10=Alguns bugs foram arrumados, mas novos foram introduzidos
+betterfps.update.phrase.11=Porque atualizações automáticas podem quebrar seu jogo
+betterfps.update.phrase.12=Quer algo novo? Aqui, uma atualização.
+
+betterfps.installer.title=Instalador do BetterFps
+betterfps.installer.versions=Versão %s para Minecraft %s
+betterfps.installer.note.1=Esse instalador foi feito para Minecraft vanilla usando o launcher oficial.
+betterfps.installer.note.2=Se você está usando Forge ou LiteLoader, extraia o arquivo dentro da pasta mods.
+betterfps.installer.note.3=O launcher talvez tenha que ser fechado ou reiniciado.
+betterfps.installer.button.install=Instalar
+betterfps.installer.button.extract=Extrair
+betterfps.installer.button.algorithm=Testar Algorítmos
+betterfps.installer.button.downloads=Downloads
+betterfps.installer.button.issues=Bugs/Sugestões
+betterfps.installer.label.game-dir=Pasta de instalação do Minecraft
+betterfps.installer.label.version=Versão
+betterfps.installer.label.profile=Perfil
+betterfps.installer.done=Pronto! (%sms)
+betterfps.installer.algorithm.title=Benchmark de Algorítmos
+betterfps.installer.algorithm.button.change=Alterar algorítmo para %s
+betterfps.installer.algorithm.button.again=Fazer benchmark novamente
+betterfps.installer.algorithm.working=Fazendo benchmark dos algorítmos...
+betterfps.installer.update.check=Verificando atualizações...
+
+betterfps.options.title=Opções do BetterFps
+betterfps.options.title.mouseover=Segure botão direito em um botão para ver informações
+betterfps.options.title.rightclick=Isso não é um botão
+
+betterfps.options.on=On
+betterfps.options.off=Off
+betterfps.options.fast=Rápido
+betterfps.options.fancy=Bonito
+
+betterfps.options.default=Padrão: %s
+betterfps.options.default.vanilla=Padrão no Vanilla: %s
+betterfps.options.default.betterfps=Padrão no BetterFps: %s
+betterfps.options.restart=Precisa de uma reinicialização para ter efeito
+
+betterfps.options.restart.dialog.1=You need to restart your game to apply some changes
+betterfps.options.restart.dialog.2=Do you want restart now?
+
+betterfps.options.algorithm.title=Algoritmo
+betterfps.options.algorithm.desc=O algoritmo para calcular seno e cosseno
+betterfps.options.algorithm.action=Segure shift e clique em mim para testar algoritmos (Isso vai demorar alguns segundos)
+
+betterfps.options.algorithm.vanilla=Algoritmo do Vanilla
+betterfps.options.algorithm.rivens=Algoritmo de Riven
+betterfps.options.algorithm.taylors=Algoritmo de Taylor
+betterfps.options.algorithm.libgdx=Algoritmo da LibGDX
+betterfps.options.algorithm.rivens-full=Algoritmo de Riven (versão "Full")
+betterfps.options.algorithm.rivens-half=Algoritmo de Riven (versão "Half")
+betterfps.options.algorithm.java=Matemática do Java
+betterfps.options.algorithm.random=Matemática Aleatória
+
+betterfps.options.updatechecker.title=Verificador de Atualização
+betterfps.options.updatechecker.desc=Se atualizações irão ser verificadas na inicialização
+betterfps.options.updatechecker.action=Segure shift e clique em mim para procurar por atualizações (Isso vai demorar alguns segundos)
+
+betterfps.options.allocmemory.title=Pré-alocar memória
+betterfps.options.allocmemory.desc=Se 10MB de memória vai ser alocada na inicialização
+
+betterfps.options.fog.title=Névoa
+betterfps.options.fog.desc=Se a névoa vai ser renderizada
+
+betterfps.options.hopper.title=Funil Rápido
+betterfps.options.hopper.desc=Se as melhorias do funil vão ser ativadas
+
+betterfps.options.beacon.title=Sinalizador Rápido
+betterfps.options.beacon.desc=Se as melhorias do sinalizador vão ser ativadas
+
+betterfps.options.beaconglow.title=Raio do Sinalizador
+betterfps.options.beaconglow.desc=Se o a camada transparente do raio vai ser renderizada

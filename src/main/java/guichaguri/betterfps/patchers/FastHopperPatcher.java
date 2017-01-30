@@ -1,6 +1,6 @@
 package guichaguri.betterfps.patchers;
 
-import guichaguri.betterfps.ASMUtils;
+import guichaguri.betterfps.transformers.ASMUtils;
 import guichaguri.betterfps.transformers.IClassPatcher;
 import guichaguri.betterfps.transformers.Patch;
 import guichaguri.betterfps.tweaker.Mappings;
