@@ -13,8 +13,8 @@ betterfps.update.phrase.5=De novo não D:
 betterfps.update.phrase.6=<3
 betterfps.update.phrase.7=Eu sei que você só vai atualizar pra se livrar desse lembrete
 betterfps.update.phrase.8=Ao menos, é grátis...
-betterfps.update.phrase.9=Outro verificador de atualização irritante? Eu sei...
-betterfps.update.phrase.10=Alguns bugs foram arrumados, mas novos foram introduzidos
+betterfps.update.phrase.9=Outro verificador de atualização irritante? (╯°□°）╯︵ §m┻━━┻
+betterfps.update.phrase.10=Alguns bugs foram arrumados, mas novos foram introduzidos ¯\_(ツ)_/¯
 betterfps.update.phrase.11=Porque atualizações automáticas podem quebrar seu jogo
 betterfps.update.phrase.12=Quer algo novo? Aqui, uma atualização.
 
@@ -84,5 +84,5 @@ betterfps.options.hopper.desc=Se as melhorias do funil vão ser ativadas
 betterfps.options.beacon.title=Sinalizador Rápido
 betterfps.options.beacon.desc=Se as melhorias do sinalizador vão ser ativadas
 
-betterfps.options.beaconglow.title=Raio do Sinalizador
-betterfps.options.beaconglow.desc=Se o a camada transparente do raio vai ser renderizada
+betterfps.options.beaconbeam.title=Raio do Sinalizador
+betterfps.options.beaconbeam.desc=Se o a camada transparente do raio vai ser renderizada

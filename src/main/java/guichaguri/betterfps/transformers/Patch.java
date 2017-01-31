@@ -49,6 +49,8 @@ public class Patch {
     protected void copy() {
         // Copy Methods
         for(MethodNode method : sourceClass.methods) {
+            if(!Conditions.shouldPatch(method.invisibleAnnotations)) continue;
+
             AnnotationNode copy = ASMUtils.getAnnotation(method.invisibleAnnotations, Copy.class);
 
             if(copy != null) {
@@ -65,6 +67,8 @@ public class Patch {
 
         // Copy Fields
         for(FieldNode field : sourceClass.fields) {
+            if(!Conditions.shouldPatch(field.invisibleAnnotations)) continue;
+
             AnnotationNode copy = ASMUtils.getAnnotation(field.invisibleAnnotations, Copy.class);
 
             if(copy != null) {

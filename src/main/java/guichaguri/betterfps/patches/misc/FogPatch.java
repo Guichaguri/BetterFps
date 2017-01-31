@@ -1,5 +1,7 @@
 package guichaguri.betterfps.patches.misc;
 
+import guichaguri.betterfps.transformers.Conditions;
+import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import net.minecraft.client.Minecraft;
@@ -16,6 +18,7 @@ public abstract class FogPatch extends EntityRenderer {
     }
 
     @Copy(Mode.REPLACE)
+    @Condition(Conditions.FOG_DISABLED)
     @Override
     public void setupFog(int startCoords, float partialTicks) {
         if(startCoords != -1) return;

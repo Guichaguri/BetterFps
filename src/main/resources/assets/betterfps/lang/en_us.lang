@@ -13,8 +13,8 @@ betterfps.update.phrase.5=Not again D:
 betterfps.update.phrase.6=<3
 betterfps.update.phrase.7=I know you will update just to get rid of this reminder
 betterfps.update.phrase.8=At least, it's free...
-betterfps.update.phrase.9=Another annoying update checker? I know...
-betterfps.update.phrase.10=Some bugs are now fixed, but new ones have been introduced
+betterfps.update.phrase.9=Another annoying update checker? (╯°□°）╯︵ §m┻━━┻
+betterfps.update.phrase.10=Some bugs are now fixed, but new ones have been introduced ¯\_(ツ)_/¯
 betterfps.update.phrase.11=Because automatic updates might break your game
 betterfps.update.phrase.12=Do you want something new? Here, have an update.
 
@@ -84,5 +84,5 @@ betterfps.options.hopper.desc=Whether hopper improvements will be enabled
 betterfps.options.beacon.title=Fast Beacon
 betterfps.options.beacon.desc=Whether beacon improvements will be enabled
 
-betterfps.options.beaconglow.title=Beacon Beam
-betterfps.options.beaconglow.desc=Whether the transparent layer of the beacon beam will be rendered
+betterfps.options.beaconbeam.title=Beacon Beam
+betterfps.options.beaconbeam.desc=Whether the transparent layer of the beacon beam will be rendered

@@ -1,6 +1,8 @@
 package guichaguri.betterfps.patches.block;
 
 import guichaguri.betterfps.api.IFastHopper;
+import guichaguri.betterfps.transformers.Conditions;
+import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import guichaguri.betterfps.transformers.annotations.Patcher;
@@ -16,6 +18,7 @@ import net.minecraft.world.World;
  * @author Guilherme Chaguri
  */
 @Patcher(FastHopperPatcher.class)
+@Condition(Conditions.FAST_HOPPER)
 public abstract class FastHopper extends TileEntityHopper implements IFastHopper {
 
     // TODO Check if any other improvements can be done in the hopper

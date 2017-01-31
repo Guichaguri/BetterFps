@@ -19,7 +19,7 @@ public class BetterFpsConfig {
 
     public boolean fastBeacon = true;
 
-    public boolean fastBeaconRender = false;
+    public boolean beaconBeam = true;
 
     public enum AlgorithmType {
         @SerializedName("vanilla") VANILLA,

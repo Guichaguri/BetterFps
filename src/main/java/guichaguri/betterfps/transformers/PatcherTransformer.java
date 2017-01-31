@@ -40,6 +40,7 @@ public class PatcherTransformer implements IClassTransformer {
 
         ClassNode patchClass = findPatch(name);
         if(patchClass == null) return bytes; // There is no patch for this class
+        if(!Conditions.shouldPatch(patchClass.invisibleAnnotations)) return bytes;
 
         ClassNode classNode = ASMUtils.readClass(bytes, 0);
         Patch patch = new Patch(patchClass, classNode);

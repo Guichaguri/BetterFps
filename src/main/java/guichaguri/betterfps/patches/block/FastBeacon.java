@@ -1,5 +1,7 @@
 package guichaguri.betterfps.patches.block;
 
+import guichaguri.betterfps.transformers.Conditions;
+import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 /**
  * @author Guilherme Chaguri
  */
+@Condition(Conditions.FAST_BEACON)
 public abstract class FastBeacon extends TileEntityBeacon {
 
     @Copy

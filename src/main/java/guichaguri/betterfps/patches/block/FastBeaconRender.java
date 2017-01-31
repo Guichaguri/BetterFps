@@ -1,5 +1,7 @@
 package guichaguri.betterfps.patches.block;
 
+import guichaguri.betterfps.transformers.Conditions;
+import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * @author Guilherme Chaguri
  */
+@Condition(Conditions.FAST_BEAM_RENDER)
 public abstract class FastBeaconRender extends TileEntityBeaconRenderer {
 
     @Copy(Mode.REPLACE)
