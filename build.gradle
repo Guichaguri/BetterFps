@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         mavenLocal()
@@ -19,7 +18,7 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
 
-version = "1.3.3"
+version = "1.3.4"
 group = "guichaguri.betterfps"
 archivesBaseName = "BetterFps"
 
@@ -32,12 +31,35 @@ minecraft {
     at 'betterfps_at.cfg'
 }
 
-sourceCompatibility = targetCompatibility = "1.6" // Need this here so eclipse task generates correctly.
+reobf {
+    jar {
+        extraLines 'PK: com/eclipsesource/json guichaguri/betterfps/json'
+    }
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+sourceCompatibility = targetCompatibility = "1.6"
 compileJava {
     sourceCompatibility = targetCompatibility = "1.6"
 }
 
+dependencies {
+    //compile 'org.ow2.asm:asm-debug-all:5.0.3'
+    //compile 'net.minecraft:launchwrapper:1.12'
+    shade 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
+    testCompile 'junit:junit:4.12'
+}
+
 jar {
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
     manifest {
         attributes  'TweakClass': project.minecraft.tweakClass,
                     'TweakOrder': '600',
@@ -49,87 +71,23 @@ jar {
     }
 }
 
-dependencies {
-    //compile 'org.ow2.asm:asm-debug-all:5.0.3'
-    //compile 'net.minecraft:launchwrapper:1.12'
-    testCompile 'junit:junit:4.12'
-}
-
 processResources {
-    // this will ensure that this task is redone when the version change.
     inputs.property "version", project.version
 
-    // replace stuff in the json, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/betterfps.json'
-
-        // replace version
         expand 'version': project.version
     }
-
-    // copy everything else, except the json
     from(sourceSets.main.resources.srcDirs) {
         exclude 'META-INF/betterfps.json'
     }
 }
 
-String srgInput = 'mappings.srg'
-String srgOutput = 'src/main/resources/betterfps.srg'
+//TODO?
+/*
+File mappingsFile = file('src/main/java/guichaguri/betterfps/tweaker/Mappings.java');
+Pattern mappingRegex = Pattern.compile("\\(Type\\.([A-Z]+), ([a-zA-Z0-9_ \".\\(\\)\\;\\/,\\$]+)\\)");
 
-/**
- * Task created by Guichaguri to update the requested mappings of a SRG file
- * You might have to update the input file when the mappings version change.
- */
-task updateMappings(dependsOn: 'genSrgs') {
-    File notchToMcp = tasks['genSrgs'].getNotchToMcp();
-    if(!notchToMcp.exists()) {
-        println 'SRG file does not exist yet.'
-        return;
-    }
+task processMappings() {
 
-    def classes = [:];
-    def fields = [:];
-    def methods = [:];
-    def i = 0;
-
-    println 'Searching mappings to update'
-    String[] reqMapping = file(srgInput).readLines()
-    reqMapping.each {
-        String[] mapping = it.split(' ')
-        if(it.startsWith('#')) {
-            // Comment
-        } else if(mapping[0].equals('CL:')) { // Class
-            if(mapping.length >= 2) classes.put(mapping[2], mapping[1]);
-        } else if(mapping[0].equals('FD:')) { // Field
-            if(mapping.length >= 2) fields.put(mapping[2], mapping[1]);
-        } else if(mapping[0].equals('MD:')) { // Method
-            if(mapping.length >= 3) methods.put(mapping[2] + mapping[3], mapping[1]);
-        }
-    }
-    println 'Updating mappings'
-    file(srgOutput).withWriter { out ->
-        String[] mappings = notchToMcp.readLines()
-        mappings.each {
-            String[] mapping = it.split(' ')
-            if (mapping[0].equals('CL:')) { // Class
-                if(mapping.length >= 3 && classes.containsKey(mapping[2])) {
-                    out.println it + ' ' + classes.get(mapping[2])
-                    i++
-                }
-            } else if(mapping[0].equals('FD:')) { // Field
-                if(mapping.length >= 3 && fields.containsKey(mapping[2])) {
-                    out.println it + ' ' + fields.get(mapping[2])
-                    i++
-                }
-            } else if(mapping[0].equals('MD:')) { // Method
-                if(mapping.length >= 5 && methods.containsKey(mapping[3] + mapping[4])) {
-                    out.println it + ' ' + methods.get(mapping[3] + mapping[4])
-                    i++
-                }
-            }
-        }
-        def entries = classes.size() + fields.size() + methods.size();
-        println 'Done. Updated ' + i + '/' + entries + ' entries'
-        if(i < entries) println 'WARNING: ' + (entries - i) + ' entries were not found! You should check them'
-    }
-}
+}*/

@@ -43,6 +43,7 @@ public class GuiAlgorithmTester extends JDialog implements ActionListener {
         }
 
         System.out.println(bestAlgorithm);
+        System.exit(0);
     }
 
     private static void warmupClasses() {

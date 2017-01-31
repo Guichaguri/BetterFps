@@ -13,6 +13,7 @@ import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.util.ResourceLocation;
 
 /**
+ * A resource pack that serves the purpose to provide lang files
  * @author Guilherme Chaguri
  */
 public class BetterFpsResourcePack implements IResourcePack {

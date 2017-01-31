@@ -1,24 +1,13 @@
 package guichaguri.betterfps.gui;
 
-import guichaguri.betterfps.BetterFpsConfig;
-import guichaguri.betterfps.BetterFpsHelper;
-import guichaguri.betterfps.UpdateChecker;
-import guichaguri.betterfps.gui.GuiCycleButton.GuiBooleanButton;
-import guichaguri.betterfps.tweaker.BetterFpsTweaker;
-import java.io.BufferedReader;
-import java.io.File;
+import guichaguri.betterfps.gui.data.OptionManager;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.Util;
-import net.minecraft.util.Util.EnumOS;
-import net.minecraft.util.text.TextComponentString;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -26,192 +15,165 @@ import org.lwjgl.input.Mouse;
  */
 public class GuiBetterFpsConfig extends GuiScreen {
 
-    private GuiScreen parent = null;
-    public GuiBetterFpsConfig() {}
+    private final GuiScreen parent;
+    private String title, titleMouseOver, titleRightClick;
+
+    private final List<GuiConfigOption> options = new ArrayList<GuiConfigOption>();
+    private float scrollY = 0, lastScrollY = 0;
+    private int pageHeight = 0;
+
+    public GuiBetterFpsConfig() {
+        this.parent = null;
+    }
+
     public GuiBetterFpsConfig(GuiScreen parent) {
         this.parent = parent;
     }
 
-
-    private List<GuiButton> initButtons() {
-        List<GuiButton> buttons = new ArrayList<GuiButton>();
-        BetterFpsConfig config = BetterFpsConfig.getConfig();
-        buttons.add(new AlgorithmButton(2, "Algorithm", BetterFpsHelper.displayHelpers,
-                config.algorithm, new String[] {
-                        "The algorithm for calculating sine and cosine",
-                        "§cRequires restarting to take effect", "",
-                        "§eShift-click me to test algorithms §7(This will take a few seconds)", "",
-                        "§aMore information here soon", "",
-                        "Default in Vanilla: Vanilla Algorithm",
-                        "Default in BetterFps: Riven's \"Half\" Algorithm",
-        }));
-        buttons.add(new UpdateCheckerButton(3, "Update Checker", config.updateChecker, new String[] {
-                        "Whether updates will be checked on startup", "",
-                        "§eShift-click me to check for updates §7(This will take a few seconds)", "",
-                        "Default: On"
-        }));
-        buttons.add(new GuiBooleanButton(4, "Preallocate Memory", config.preallocateMemory, new String[] {
-                        "Whether will preallocate 10MB on startup.",
-                        "§cRequires restarting to take effect", "",
-                        "Default in Vanilla: On",
-                        "Default in BetterFps: Off",
-                        "",
-                        "Note: This allocation will be cleaned only when the memory is almost full",
-                        "Useful for modpacks that require a lot of RAM"
-        }));
-        buttons.add(new GuiBooleanButton(5, "Fast Box Render", config.fastBoxRender, new String[] {
-                        "Whether will only render the exterior of boxes.",
-                        "§cRequires restarting to take effect", "",
-                        "Default in Vanilla: Off",
-                        "Default in BetterFps: On"
-        }));
-        buttons.add(new GuiBooleanButton(6, "Fog", config.fog, new String[] {
-                        "Whether fog will be rendered.",
-                        "§cRequires restarting to take effect", "",
-                        "Default: On"
-        }));
-        buttons.add(new GuiBooleanButton(7, "Fast Hopper", config.fastHopper, new String[] {
-                        "Whether hopper improvements will be enabled.",
-                        "§cRequires restarting to take effect", "",
-                        "Default in Vanilla: Off",
-                        "Default in BetterFps: On"
-        }));
-        buttons.add(new GuiBooleanButton(8, "Fast Beacon", config.fastBeacon, new String[] {
-                        "Whether the beacon improvements will be enabled.",
-                        "§cRequires restarting to take effect", "",
-                        "Default in Vanilla: Off",
-                        "Default in BetterFps: On"
-        }));
-        buttons.add(new GuiBooleanButton(9, "Fast Beacon Rendering", config.fastBeaconRender, new String[] {
-                "Whether the beacon glow will be removed.",
-                "§cRequires restarting to take effect", "",
-                "Default: Off"
-        }));
-        return buttons;
-    }
-
     @Override
     public void initGui() {
-        int x1 = width / 2 - 155;
-        int x2 = width / 2 + 5;
+        this.title = I18n.format("betterfps.options.title");
+        this.titleMouseOver = I18n.format("betterfps.options.title.mouseover");
+        this.titleRightClick = I18n.format("betterfps.options.title.rightclick");
 
-        buttonList.clear();
-        buttonList.add(new GuiButton(-1, x1, height - 27, 150, 20, I18n.format("gui.done")));
-        buttonList.add(new GuiButton(-2, x2, height - 27, 150, 20, I18n.format("gui.cancel")));
+        int middleX = width / 2;
+        int xLeft = middleX - 155;
+        int xRight = middleX + 5;
+        int y = height - 27;
 
-        List<GuiButton> buttons = initButtons();
+        this.buttonList.add(new GuiButton(-1, xLeft, y, 150, 20, I18n.format("gui.done")));
+        this.buttonList.add(new GuiButton(-2, xRight, y, 150, 20, I18n.format("gui.cancel")));
 
-        int y = 25;
-        int lastId = 0;
+        this.options.clear();
+        OptionManager.addButtons(this.options);
 
-        for(GuiButton button : buttons) {
-            boolean first = button.id % 2 != 0;
-            boolean large = button.id - 1 != lastId;
-            button.xPosition = (first || large) ? x1 : x2;
+        y = 5;
+        boolean left = true;
+
+        for(GuiConfigOption button : options) {
+
+            if(button.isWide()) {
+                y += 25;
+                button.xPosition = xLeft;
+                button.setWidth(310);
+            } else {
+                if(left) y += 25;
+                button.xPosition = left ? xLeft : xRight;
+                button.setWidth(150);
+                left = !left;
+            }
+
             button.yPosition = y;
-            button.setWidth(large ? 310 : 150);
-            buttonList.add(button);
-            if((!first) || (large)) y += 25;
-            lastId = button.id;
         }
 
+        pageHeight = y + 60;
+    }
+
+    private void updateScroll(float partialTicks) {
+        scrollY += Mouse.getDWheel() / 6F;
+        if(Mouse.isButtonDown(0)) {
+            scrollY -= (float)Mouse.getDY() / mc.gameSettings.guiScale;
+            lastScrollY = scrollY;
+        }
+
+        int pageHeightDelta = height - pageHeight;
+        if(scrollY > 0) {
+            scrollY = 0;
+            if(lastScrollY > 0) lastScrollY = 0;
+        } else if(scrollY < pageHeightDelta) {
+            int scroll = pageHeightDelta > 0 ? 0 : pageHeightDelta;
+            scrollY = scroll;
+            if(lastScrollY < pageHeightDelta) lastScrollY = scroll;
+        }
+
+        lastScrollY = lastScrollY + (scrollY - lastScrollY) * partialTicks;
+    }
+
+    private int getScrollMouseY(int mouseY) {
+        if(mouseY < 30 || height - mouseY < 30) {
+            return Integer.MIN_VALUE;
+        }
+        return mouseY - (int)lastScrollY;
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        if(mouseY < fontRendererObj.FONT_HEIGHT + 14) {
+        updateScroll(partialTicks);
+
+        int mouseYScroll = getScrollMouseY(mouseY);
+
+        GlStateManager.translate(0, lastScrollY, 0);
+        for(int i = 0; i < options.size(); ++i) {
+            options.get(i).drawButton(mc, mouseX, mouseYScroll);
+        }
+        GlStateManager.translate(0, -lastScrollY, 0);
+
+        drawGradientRect(0, 0, width, 30, 0xC8101010, 0x00000000);
+        drawGradientRect(0, height - 30, width, height, 0x00000000, 0xC8101010);
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
+
+        int x = width / 2;
+        int y = (30 - fontRendererObj.FONT_HEIGHT) / 2;
+        if(mouseY < 30) {
             if(Mouse.isButtonDown(1)) {
-                drawCenteredString(fontRendererObj, "This is not a button", this.width / 2, 7, 0xC0C0C0);
+                drawCenteredString(fontRendererObj, titleRightClick, x, y, 0xFF0000);
             } else {
-                drawCenteredString(fontRendererObj, "Hold right-click on a button for information", this.width / 2, 7, 0xC0C0C0);
+                drawCenteredString(fontRendererObj, titleMouseOver, x, y, 0xC0C0C0);
             }
         } else {
-            drawCenteredString(fontRendererObj, "BetterFps Options", this.width / 2, 7, 0xFFFFFF);
+            drawCenteredString(fontRendererObj, title, x, y, 0xFFFFFF);
         }
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        if(Mouse.isButtonDown(1)) { // Right Click
-            for(GuiButton button : buttonList) {
-                if((button instanceof GuiCycleButton) && (button.isMouseOver())) {
-                    int y = mouseY + 5;
 
-                    String[] help = ((GuiCycleButton)button).getHelpText();
-                    int fontHeight = fontRendererObj.FONT_HEIGHT, i = 0;
-                    drawGradientRect(0, y, mc.displayWidth, y + (fontHeight * help.length) + 10, -1072689136, -804253680);
-                    for(String h : help) {
-                        if(!h.isEmpty()) fontRendererObj.drawString(h, 5, y + (i * fontHeight) + 5, 0xFFFFFF);
-                        i++;
-                    }
-                    break;
+        if(Mouse.isButtonDown(1)) {
+            for(int i = 0; i < this.options.size(); ++i) {
+                GuiConfigOption button = this.options.get(i);
+                if(!button.isMouseOver()) continue;
+
+                String description = button.getDescription();
+                if(description == null) continue;
+
+                List<String> lines = fontRendererObj.listFormattedStringToWidth(description, width - 10);
+
+                int tooltipY = mouseY + 10;
+                int tooltipHeight = (lines.size() * fontRendererObj.FONT_HEIGHT) + 10;
+                int tooltipBottom = tooltipY + tooltipHeight;
+
+                if(tooltipBottom > height) {
+                    tooltipY = height - tooltipHeight;
+                    tooltipBottom = height;
+                }
+
+                drawRect(0, tooltipY, width, tooltipBottom, 0xC8101010);
+
+                tooltipY += 5;
+                int line = 0;
+                for(String l : lines) {
+                    fontRendererObj.drawString(l, 5, tooltipY + (line * fontRendererObj.FONT_HEIGHT), 0xFFFFFF, true);
+                    line++;
                 }
             }
         }
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
-        if(button instanceof GuiCycleButton) {
-            ((GuiCycleButton)button).actionPerformed();
-        } else if(button.id == -1) {
-            // Save
-            boolean restart = false;
-            BetterFpsConfig config = BetterFpsConfig.getConfig();
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
 
-            GuiCycleButton algorithmButton = getCycleButton(2);
-            String algorithm = algorithmButton.getSelectedValue();
-            if(!algorithm.equals(config.algorithm)) restart = true;
+        if(mouseButton == 0) {
+            int mouseYScroll = getScrollMouseY(mouseY);
 
-            config.algorithm = algorithm;
+            for(int i = 0; i < options.size(); ++i) {
+                GuiConfigOption button = options.get(i);
 
-            GuiCycleButton updateButton = getCycleButton(3);
-            config.updateChecker = updateButton.getSelectedValue();
-
-            GuiCycleButton preallocateButton = getCycleButton(4);
-            boolean preallocate = preallocateButton.getSelectedValue();
-            if(preallocate != config.preallocateMemory) restart = true;
-            config.preallocateMemory = preallocate;
-
-            GuiCycleButton boxRenderButton = getCycleButton(5);
-            boolean boxRender = boxRenderButton.getSelectedValue();
-            if(boxRender != config.fastBoxRender) restart = true;
-            config.fastBoxRender = boxRender;
-
-            GuiCycleButton fogButton = getCycleButton(6);
-            boolean fog = fogButton.getSelectedValue();
-            if(fog != config.fog) restart = true;
-            config.fog = fog;
-
-            GuiCycleButton hopperButton = getCycleButton(7);
-            boolean fastHopper = hopperButton.getSelectedValue();
-            if(fastHopper != config.fastHopper) restart = true;
-            config.fastHopper = fastHopper;
-
-            GuiCycleButton beaconButton = getCycleButton(8);
-            boolean fastBeacon = beaconButton.getSelectedValue();
-            if(fastBeacon != config.fastBeacon) restart = true;
-            config.fastBeacon = fastBeacon;
-
-            GuiCycleButton beaconRenderButton = getCycleButton(9);
-            boolean fastBeaconRender = beaconRenderButton.getSelectedValue();
-            if(fastBeaconRender != config.fastBeaconRender) restart = true;
-            config.fastBeaconRender = fastBeaconRender;
-
-            BetterFpsHelper.saveConfig();
-
-            mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
-        } else if(button.id == -2) {
-            mc.displayGuiScreen(parent);
-        }
-    }
-
-    private GuiCycleButton getCycleButton(int id) {
-        for(GuiButton button : buttonList) {
-            if(button.id == id) {
-                return (GuiCycleButton)button;
+                if(button.mousePressed(mc, mouseX, mouseYScroll)) {
+                    button.playPressSound(mc.getSoundHandler());
+                    button.actionPerformed();
+                    actionPerformed(button);
+                }
             }
         }
-        return null;
     }
 
     @Override
@@ -219,92 +181,18 @@ public class GuiBetterFpsConfig extends GuiScreen {
         return true;
     }
 
-    private static class AlgorithmButton extends GuiCycleButton {
-        Process process = null;
-        public <T> AlgorithmButton(int buttonId, String title, HashMap<T, String> values, T defaultValue, String[] helpLines) {
-            super(buttonId, title, values, defaultValue, helpLines);
-        }
-
-        private String getJavaDir() {
-            String separator = System.getProperty("file.separator");
-            String path = System.getProperty("java.home") + separator + "bin" + separator;
-            if((Util.getOSType() == EnumOS.WINDOWS) && (new File(path + "javaw.exe").isFile())) {
-                return path + "javaw.exe";
-            }
-            return path + "java";
-        }
-
-        private boolean isRunning() {
-            try {
-                process.exitValue();
-                return false;
-            } catch(Exception ex) {
-                return true;
-            }
-        }
-
-        private void updateAlgorithm() {
-            if((process != null) && (!isRunning())) {
-                try {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String line;
-                    while((line = in.readLine()) != null) {
-                        if(BetterFpsHelper.helpers.containsKey(line)) {
-                            BetterFpsHelper.LOG.info("Found an algorithm! (" + line + ")");
-                            for(int i = 0; i < keys.size(); i++) {
-                                if(keys.get(i).equals(line)) {
-                                    key = i;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } catch(Exception ex) {}
-                updateTitle();
-                process = null;
-            }
-        }
-
-        @Override
-        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-            updateAlgorithm();
-            super.drawButton(mc, mouseX, mouseY);
-        }
-
-        @Override
-        public boolean shiftClick() {
-            if((process != null) && (isRunning())) {
-                return true;
-            }
-
-            BetterFpsHelper.LOG.info("Testing algorithms...");
-            List<String> args = new ArrayList<String>();
-            args.add(getJavaDir());
-            args.add("-Dtester=" + Minecraft.getMinecraft().mcDataDir.getAbsolutePath());
-            args.add("-cp");
-            args.add(BetterFpsTweaker.class.getProtectionDomain().getCodeSource().getLocation().getFile());
-            args.add("BetterFpsInstaller");
-
-            try {
-                process = new ProcessBuilder(args).start();
-                displayString = "Testing...";
-            } catch(Exception ex) {
-                ex.printStackTrace();
-            }
-            return true;
-        }
-    }
-
-    private static class UpdateCheckerButton extends GuiBooleanButton {
-        public UpdateCheckerButton(int buttonId, String title, boolean defaultValue, String[] helpLines) {
-            super(buttonId, title, defaultValue, helpLines);
-        }
-
-        @Override
-        public boolean shiftClick() {
-            Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new TextComponentString("Checking updates..."), true);
-            UpdateChecker.checkForced();
-            return true;
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch(button.id) {
+            case -1:
+                // Done
+                boolean restart = OptionManager.store(options);
+                mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
+                break;
+            case -2:
+                // Cancel
+                mc.displayGuiScreen(parent);
+                break;
         }
     }
 }

@@ -23,17 +23,17 @@ import org.objectweb.asm.tree.MethodNode;
 public class MathTransformer implements IClassTransformer {
 
     // Config Name, Class Name
-    private static final LinkedHashMap<String, String> algorithmClasses = new LinkedHashMap<String, String>();
+    private static final LinkedHashMap<AlgorithmType, String> algorithmClasses = new LinkedHashMap<AlgorithmType, String>();
 
     static {
-        algorithmClasses.put("vanilla", "guichaguri/betterfps/math/VanillaMath");
-        algorithmClasses.put("rivens", "guichaguri/betterfps/math/RivensMath");
-        algorithmClasses.put("taylors", "guichaguri/betterfps/math/TaylorMath");
-        algorithmClasses.put("libgdx", "guichaguri/betterfps/math/LibGDXMath");
-        algorithmClasses.put("rivens-full", "guichaguri/betterfps/math/RivensFullMath");
-        algorithmClasses.put("rivens-half", "guichaguri/betterfps/math/RivensHalfMath");
-        algorithmClasses.put("java", "guichaguri/betterfps/math/JavaMath");
-        algorithmClasses.put("random", "guichaguri/betterfps/math/RandomMath");
+        algorithmClasses.put(AlgorithmType.VANILLA, "guichaguri/betterfps/math/VanillaMath");
+        algorithmClasses.put(AlgorithmType.RIVENS, "guichaguri/betterfps/math/RivensMath");
+        algorithmClasses.put(AlgorithmType.TAYLORS, "guichaguri/betterfps/math/TaylorMath");
+        algorithmClasses.put(AlgorithmType.LIBGDX, "guichaguri/betterfps/math/LibGDXMath");
+        algorithmClasses.put(AlgorithmType.RIVENS_FULL, "guichaguri/betterfps/math/RivensFullMath");
+        algorithmClasses.put(AlgorithmType.RIVENS_HALF, "guichaguri/betterfps/math/RivensHalfMath");
+        algorithmClasses.put(AlgorithmType.JAVA, "guichaguri/betterfps/math/JavaMath");
+        algorithmClasses.put(AlgorithmType.RANDOM, "guichaguri/betterfps/math/RandomMath");
     }
 
     private final String METHOD_SIN = "sin";
@@ -47,7 +47,7 @@ public class MathTransformer implements IClassTransformer {
             try {
                 return patchMath(bytes);
             } catch(Exception ex) {
-                ex.printStackTrace();
+                BetterFpsHelper.LOG.error("Couldn't patch math algorithms", ex);
             }
         }
 
@@ -107,7 +107,7 @@ public class MathTransformer implements IClassTransformer {
 
         FieldNode sinTable = ASMUtils.findField(classNode, Mappings.F_SIN_TABLE);
 
-        if(patchedSin && patchedCos && sinTable != null) {
+        if(patchedSin && patchedCos && sinTable != null && init != null) {
             classNode.fields.remove(sinTable);
 
             InsnList inst = init.instructions;

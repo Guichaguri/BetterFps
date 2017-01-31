@@ -1,6 +1,6 @@
 package guichaguri.betterfps.patches.misc;
 
-import guichaguri.betterfps.gui.newgui.GuiBetterFpsConfig;
+import guichaguri.betterfps.gui.GuiBetterFpsConfig;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import java.io.IOException;

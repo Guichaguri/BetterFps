@@ -8,6 +8,7 @@ CL: Minecraft net/minecraft/client/Minecraft
 CL: World net/minecraft/world/World
 CL: Chunk net/minecraft/world/chunk/Chunk
 CL: EntityPlayer net/minecraft/entity/player/EntityPlayer
+CL: EntityPlayerSP net/minecraft/client/entity/EntityPlayerSP
 CL: MathHelper net/minecraft/util/math/MathHelper
 CL: EntityTNTPrimed net/minecraft/entity/item/EntityTNTPrimed
 CL: ClientBrandRetriever net/minecraft/client/ClientBrandRetriever

@@ -14,7 +14,7 @@ import org.objectweb.asm.tree.MethodNode;
  *
  * @author Guilherme Chaguri
  */
-public enum Mappings { // TODO BUKKIT
+public enum Mappings {
 
     // TODO: new mapping system. Maybe reading this class by a gradle task and saving the map in a file?
 
