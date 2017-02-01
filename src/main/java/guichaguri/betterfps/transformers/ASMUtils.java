@@ -433,7 +433,6 @@ public class ASMUtils {
         int stack = parameters.length;
 
         if(!isStatic) {
-            // TODO: make sure 0 is always "this" in non-static methods
             list.add(new VarInsnNode(Opcodes.ALOAD, 0));
             stack++;
         }

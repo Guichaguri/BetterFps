@@ -41,10 +41,10 @@ public class GuiBetterFpsConfig extends GuiScreen {
         int xRight = middleX + 5;
         int y = height - 27;
 
-        this.buttonList.add(new GuiButton(-1, xLeft, y, 150, 20, I18n.format("gui.done")));
-        this.buttonList.add(new GuiButton(-2, xRight, y, 150, 20, I18n.format("gui.cancel")));
+        buttonList.add(new GuiButton(-1, xLeft, y, 150, 20, I18n.format("gui.done")));
+        buttonList.add(new GuiButton(-2, xRight, y, 150, 20, I18n.format("gui.cancel")));
 
-        this.options.clear();
+        options.clear();
         OptionManager.addButtons(this.options);
 
         y = 5;
@@ -72,7 +72,8 @@ public class GuiBetterFpsConfig extends GuiScreen {
     private void updateScroll(float partialTicks) {
         scrollY += Mouse.getDWheel() / 6F;
         if(Mouse.isButtonDown(0)) {
-            scrollY -= (float)Mouse.getDY() / mc.gameSettings.guiScale;
+            // Math.max prevents division by 0 which makes the scrollY and lastScrollY to be set to NaN, making the UI invisible
+            scrollY -= (float)Mouse.getDY() / Math.max(mc.gameSettings.guiScale, 1);
             lastScrollY = scrollY;
         }
 
@@ -127,8 +128,8 @@ public class GuiBetterFpsConfig extends GuiScreen {
         }
 
         if(Mouse.isButtonDown(1)) {
-            for(int i = 0; i < this.options.size(); ++i) {
-                GuiConfigOption button = this.options.get(i);
+            for(int i = 0; i < options.size(); ++i) {
+                GuiConfigOption button = options.get(i);
                 if(!button.isMouseOver()) continue;
 
                 String description = button.getDescription();

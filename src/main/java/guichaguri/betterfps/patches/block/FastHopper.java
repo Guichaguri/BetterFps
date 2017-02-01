@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 @Condition(Conditions.FAST_HOPPER)
 public abstract class FastHopper extends TileEntityHopper implements IFastHopper {
 
-    // TODO Check if any other improvements can be done in the hopper
+    // TODO Check if any further improvements can be done in the hopper
     // I used to cache the inventory on top and the inventory connected to,
     // but thats kinda useless with Forge's capabilities
     // We can leave as it is, cache only the inventory on top (only affects vanilla)

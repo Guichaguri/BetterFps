@@ -9,13 +9,7 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.commons.io.IOUtils;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 /**
  * @author Guilherme Chaguri
@@ -92,9 +86,11 @@ public class MathTransformer implements IClassTransformer {
 
         for(MethodNode m : mathClass.methods) {
             if(m.name.equals(METHOD_SIN)) {
+                if(sin != null) m.name = sin.name;
                 ASMUtils.copyMethod(mathClass, classNode, m, sin, true);
                 patchedSin = true;
             } else if(m.name.equals(METHOD_COS)) {
+                if(cos != null) m.name = cos.name;
                 ASMUtils.copyMethod(mathClass, classNode, m, cos, true);
                 patchedCos = true;
             } else if(m.name.equals("<clinit>")) {
@@ -103,6 +99,9 @@ public class MathTransformer implements IClassTransformer {
             } else {
                 ASMUtils.copyMethod(mathClass, classNode, m, true);
             }
+
+            if(sin != null) replaceCallReferences(classNode.name, METHOD_SIN, sin.name, m);
+            if(cos != null) replaceCallReferences(classNode.name, METHOD_COS, cos.name, m);
         }
 
         FieldNode sinTable = ASMUtils.findField(classNode, Mappings.F_SIN_TABLE);
@@ -127,6 +126,22 @@ public class MathTransformer implements IClassTransformer {
         }
 
         return ASMUtils.writeClass(classNode, 0);
+    }
+
+    private void replaceCallReferences(String clazz, String needle, String replacement, MethodNode method) {
+        InsnList list = method.instructions;
+
+        for(int i = 0; i < list.size(); i++) {
+            AbstractInsnNode node = list.get(i);
+
+            if(node instanceof MethodInsnNode) {
+                MethodInsnNode m = (MethodInsnNode)node;
+
+                if(m.owner.equals(clazz) && m.name.equals(needle)) {
+                    m.name = replacement;
+                }
+            }
+        }
     }
 
 }

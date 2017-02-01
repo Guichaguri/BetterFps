@@ -53,7 +53,7 @@ public abstract class OptionsButton extends GuiScreen {
 
         }
 
-        this.buttonList.add(new GuiButton(72109, x_BF, y_BF, width_BF, 20, "BetterFps Options"));
+        buttonList.add(new GuiButton(72109, x_BF, y_BF, width_BF, 20, "BetterFps Options"));
     }
 
     @Copy

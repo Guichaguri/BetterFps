@@ -19,28 +19,11 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 public class BetterFpsTweaker implements ITweaker {
 
     public static InputStream getResourceStream(String path) {
-        InputStream stream;
-
-        // Normal environment
-        //TODO: test if getClassLoader would work in normal environment, so we can unify the code
-        stream = BetterFpsTweaker.class.getResourceAsStream(path);
-        if(stream != null) return stream;
-
-        // Dev environment
-        stream = BetterFpsTweaker.class.getClassLoader().getResourceAsStream(path);
-        return stream;
+        return BetterFpsTweaker.class.getClassLoader().getResourceAsStream(path);
     }
 
     public static URL getResource(String path) {
-        URL url;
-
-        // Normal environment
-        url = BetterFpsTweaker.class.getResource(path);
-        if(url != null) return url;
-
-        // Dev environment
-        url = BetterFpsTweaker.class.getClassLoader().getResource(path);
-        return url;
+        return BetterFpsTweaker.class.getClassLoader().getResource(path);
     }
 
     private static final String[] TRANSFORMERS = new String[] {
@@ -54,7 +37,7 @@ public class BetterFpsTweaker implements ITweaker {
             "guichaguri.betterfps.patchers"
     };
 
-    private final String[] UNLOADABLE = new String[] {
+    private final String[] LOAD_DISABLED = new String[] {
             "guichaguri.betterfps.installer",
             "guichaguri.betterfps.math",
             "guichaguri.betterfps.patches"
@@ -93,8 +76,8 @@ public class BetterFpsTweaker implements ITweaker {
             cl.addTransformerExclusion(excluded);
         }
 
-        for(String unloadable : UNLOADABLE) {
-            cl.addClassLoaderExclusion(unloadable);
+        for(String loadDisabled : LOAD_DISABLED) {
+            cl.addClassLoaderExclusion(loadDisabled);
         }
     }
 

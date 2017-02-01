@@ -23,7 +23,7 @@ public abstract class MinecraftPatch extends Minecraft {
 
     @Copy(Mode.PREPEND)
     @Override
-    public void startGame() throws LWJGLException, IOException {
+    public void init() throws LWJGLException, IOException {
         BetterFps.CLIENT = true;
 
         defaultResourcePacks.add(new BetterFpsResourcePack());

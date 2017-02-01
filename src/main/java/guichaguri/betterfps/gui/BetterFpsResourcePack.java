@@ -17,14 +17,14 @@ import net.minecraft.util.ResourceLocation;
  * @author Guilherme Chaguri
  */
 public class BetterFpsResourcePack implements IResourcePack {
-    private static final Set<String> DOMAINS = ImmutableSet.of("betterfps");
+    private final Set<String> DOMAINS = ImmutableSet.of("betterfps");
 
     public BetterFpsResourcePack() {
 
     }
 
     private String getPath(ResourceLocation location) {
-        return String.format("%s/%s/%s", "assets", location.getResourceDomain(), location.getResourcePath());
+        return String.format("assets/%s/%s", location.getResourceDomain(), location.getResourcePath());
     }
 
     @Override

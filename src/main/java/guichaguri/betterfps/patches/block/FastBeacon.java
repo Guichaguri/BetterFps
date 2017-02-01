@@ -47,7 +47,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
-        if(worldObj.isRemote) {
+        if(world.isRemote) {
             updateGlassLayers(x, y, z);
         } else {
             updateActivation(x, y, z);
@@ -64,7 +64,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
-        if(worldObj.isRemote) {
+        if(world.isRemote) {
             updateGlassLayers(x, y, z);
         } else {
             updateActivation(x, y, z);
@@ -81,15 +81,15 @@ public abstract class FastBeacon extends TileEntityBeacon {
 
     @Copy
     private void updateEffects(int x, int y, int z) {
-        if((isComplete) && (levels > 0) && (!worldObj.isRemote) && (primaryEffect != null)) {
+        if((isComplete) && (levels > 0) && (!world.isRemote) && (primaryEffect != null)) {
             int radius = (levels + 1) * 10;
             byte effectLevel = 0;
             if((levels >= 4) && (primaryEffect == secondaryEffect)) {
                 effectLevel = 1;
             }
             AxisAlignedBB box = new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1);
-            box = box.expand(radius, radius, radius).addCoord(0.0D, worldObj.getHeight(), 0.0D);
-            List<EntityPlayer> players = worldObj.getEntitiesWithinAABB(EntityPlayer.class, box);
+            box = box.expand(radius, radius, radius).addCoord(0.0D, world.getHeight(), 0.0D);
+            List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, box);
 
             boolean hasSecondaryEffect = (levels >= 4) && (primaryEffect != secondaryEffect) && (secondaryEffect != null);
             int effectTicks = (9 + levels * 2) * 20;
@@ -112,10 +112,10 @@ public abstract class FastBeacon extends TileEntityBeacon {
         BeamSegment beam = new BeamSegment(EntitySheep.getDyeRgb(EnumDyeColor.WHITE));
         float[] oldColor = null;
         beamSegments.add(beam);
-        int height = worldObj.getActualHeight();
+        int height = world.getActualHeight();
         for(int blockY = y + 1; blockY < height; blockY++) {
             BlockPos pos = new BlockPos(x, blockY, z);
-            IBlockState state = this.worldObj.getBlockState(pos);
+            IBlockState state = world.getBlockState(pos);
             Block b = state.getBlock();
             float[] color;
             if(b == Blocks.STAINED_GLASS) {
@@ -150,10 +150,10 @@ public abstract class FastBeacon extends TileEntityBeacon {
         // Checks if the beacon should be activate
         // Should be called only server-side. updateGlassLayers do the trick on the client
         isComplete = true;
-        int height = worldObj.getActualHeight();
+        int height = world.getActualHeight();
         for(int blockY = y + 1; blockY < height; blockY++) {
             BlockPos pos = new BlockPos(x, blockY, z);
-            IBlockState state = this.worldObj.getBlockState(pos);
+            IBlockState state = world.getBlockState(pos);
             Block b = state.getBlock();
             if(b != Blocks.BEDROCK && state.getLightOpacity() >= 15) {
                 isComplete = false;
@@ -165,7 +165,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
     @Copy
     private void updateLevels(int x, int y, int z) {
         // Checks if the beacon should be active and how many levels it should have.
-        boolean isClient = worldObj.isRemote;
+        boolean isClient = world.isRemote;
         int levelsOld = levels;
         lvlLoop: for(int lvl = 1; lvl <= 4; lvl++) {
             levels = lvl;
@@ -175,7 +175,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
             for(int blockX = x - lvl; blockX <= x + lvl; blockX++) {
                 for(int blockZ = z - lvl; blockZ <= z + lvl; blockZ++) {
                     BlockPos blockPos = new BlockPos(blockX, blockY, blockZ);
-                    Block block = worldObj.getBlockState(blockPos).getBlock();
+                    Block block = world.getBlockState(blockPos).getBlock();
                     if(block != Blocks.EMERALD_BLOCK && block != Blocks.GOLD_BLOCK && block != Blocks.DIAMOND_BLOCK && block != Blocks.IRON_BLOCK) {
                         levels--;
                         break lvlLoop;
@@ -191,7 +191,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
 
         if((!isClient) && (levels == 4) && (levelsOld < levels)) {
             AxisAlignedBB box = new AxisAlignedBB(x, y, z, x, y - 4, z).expand(10.0, 5.0, 10.0);
-            List<EntityPlayer> players = worldObj.getEntitiesWithinAABB(EntityPlayer.class, box);
+            List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, box);
             for(EntityPlayer player : players) {
                 player.addStat(AchievementList.FULL_BEACON);
             }

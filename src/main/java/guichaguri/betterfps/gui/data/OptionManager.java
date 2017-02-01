@@ -69,7 +69,7 @@ public class OptionManager {
         GuiConfigOption<Boolean> fog = new GuiConfigOption<Boolean>(3, "betterfps.options.fog.title");
         fog.set(boolMap, fancyFast);
         fog.setRestart(true);
-        fog.setDefaults(true, false, config.fog);
+        fog.setDefaults(true, true, config.fog);
         fog.setDescription(I18n.format("betterfps.options.fog.desc"));
         buttons.add(fog);
 
@@ -77,7 +77,7 @@ public class OptionManager {
         GuiConfigOption<Boolean> beam = new GuiConfigOption<Boolean>(4, "betterfps.options.beaconbeam.title");
         beam.set(boolMap, fancyFast);
         beam.setRestart(true);
-        beam.setDefaults(true, false, config.beaconBeam);
+        beam.setDefaults(true, true, config.beaconBeam);
         beam.setDescription(I18n.format("betterfps.options.beaconbeam.desc"));
         buttons.add(beam);
 

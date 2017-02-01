@@ -32,7 +32,7 @@ public abstract class FastBeaconRender extends TileEntityBeaconRenderer {
         VertexBuffer vertexbuffer = tessellator.getBuffer();
         double time = worldTime + partialTicks;
         double d1 = beamHeight < 0 ? time : -time;
-        double d2 = MathHelper.frac(d1 * 0.2D - (double)MathHelper.floor_double(d1 * 0.1D));
+        double d2 = MathHelper.frac(d1 * 0.2D - (double)MathHelper.floor(d1 * 0.1D));
         float r = colors[0];
         float g = colors[1];
         float b = colors[2];

@@ -26,7 +26,7 @@ minecraft {
     version = "1.11"
     runDir = "run"
     tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
-    mappings = "snapshot_20161111"
+    mappings = "snapshot_20161220"
 
     at 'betterfps_at.cfg'
 }
@@ -91,3 +91,64 @@ Pattern mappingRegex = Pattern.compile("\\(Type\\.([A-Z]+), ([a-zA-Z0-9_ \".\\(\
 task processMappings() {
 
 }*/
+
+String srgInput = 'mappings.srg'
+String srgOutput = 'src/main/resources/betterfps.srg'
+
+/**
+ * Task created by Guichaguri to update the requested mappings of a SRG file
+ * You might have to update the input file when the mappings version change.
+ */
+task updateMappings(dependsOn: 'genSrgs') {
+    File notchToMcp = tasks['genSrgs'].getNotchToMcp();
+    if(!notchToMcp.exists()) {
+        println 'SRG file does not exist yet.'
+        return;
+    }
+
+    def classes = [:];
+    def fields = [:];
+    def methods = [:];
+    def i = 0;
+
+    println 'Searching mappings to update'
+    String[] reqMapping = file(srgInput).readLines()
+    reqMapping.each {
+        String[] mapping = it.split(' ')
+        if(it.startsWith('#')) {
+            // Comment
+        } else if(mapping[0].equals('CL:')) { // Class
+            if(mapping.length >= 2) classes.put(mapping[2], mapping[1]);
+        } else if(mapping[0].equals('FD:')) { // Field
+            if(mapping.length >= 2) fields.put(mapping[2], mapping[1]);
+        } else if(mapping[0].equals('MD:')) { // Method
+            if(mapping.length >= 3) methods.put(mapping[2] + mapping[3], mapping[1]);
+        }
+    }
+    println 'Updating mappings'
+    file(srgOutput).withWriter { out ->
+        String[] mappings = notchToMcp.readLines()
+        mappings.each {
+            String[] mapping = it.split(' ')
+            if (mapping[0].equals('CL:')) { // Class
+                if(mapping.length >= 3 && classes.containsKey(mapping[2])) {
+                    out.println it + ' ' + classes.get(mapping[2])
+                    i++
+                }
+            } else if(mapping[0].equals('FD:')) { // Field
+                if(mapping.length >= 3 && fields.containsKey(mapping[2])) {
+                    out.println it + ' ' + fields.get(mapping[2])
+                    i++
+                }
+            } else if(mapping[0].equals('MD:')) { // Method
+                if(mapping.length >= 5 && methods.containsKey(mapping[3] + mapping[4])) {
+                    out.println it + ' ' + methods.get(mapping[3] + mapping[4])
+                    i++
+                }
+            }
+        }
+        def entries = classes.size() + fields.size() + methods.size();
+        println 'Done. Updated ' + i + '/' + entries + ' entries'
+        if(i < entries) println 'WARNING: ' + (entries - i) + ' entries were not found! You should check them'
+    }
+}

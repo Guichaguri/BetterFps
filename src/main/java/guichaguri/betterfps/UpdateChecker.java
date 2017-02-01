@@ -63,12 +63,12 @@ public class UpdateChecker implements Runnable {
 
         if(updateVersion.length() < 8) {
             title.appendSibling(buttons);
-            player.addChatComponentMessage(title, false);
-            player.addChatComponentMessage(desc, false);
+            player.sendStatusMessage(title, false);
+            player.sendStatusMessage(desc, false);
         } else {
-            player.addChatComponentMessage(title, false);
-            player.addChatComponentMessage(buttons, false);
-            player.addChatComponentMessage(desc, false);
+            player.sendStatusMessage(title, false);
+            player.sendStatusMessage(buttons, false);
+            player.sendStatusMessage(desc, false);
         }
 
         updateVersion = null;
@@ -124,8 +124,8 @@ public class UpdateChecker implements Runnable {
             if(!BetterFps.CLIENT) {
                 showConsole();
             } else {
-                if(Minecraft.getMinecraft().thePlayer != null) {
-                    showChat(Minecraft.getMinecraft().thePlayer);
+                if(Minecraft.getMinecraft().player != null) {
+                    showChat(Minecraft.getMinecraft().player);
                 }
             }
         } catch(Exception ex) {

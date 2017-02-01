@@ -14,9 +14,9 @@ public class UpdateCheckAction implements Runnable {
     @Override
     public void run() {
         BetterFpsHelper.LOG.info("Checking for updates...");
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         if(player != null) {
-            player.addChatComponentMessage(new TextComponentTranslation("betterfps.installer.update.check"), true);
+            player.sendStatusMessage(new TextComponentTranslation("betterfps.installer.update.check"), true);
         }
 
         UpdateChecker.checkForced();

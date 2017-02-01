@@ -23,7 +23,7 @@ public abstract class ServerPatch extends MinecraftServer {
 
     @Copy(Mode.APPEND)
     @Override
-    public boolean startServer() throws IOException {
+    public boolean init() throws IOException {
         UpdateChecker.check();
         return true;
     }

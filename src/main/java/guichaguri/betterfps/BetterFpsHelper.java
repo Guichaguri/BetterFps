@@ -25,6 +25,15 @@ public class BetterFpsHelper {
     }
 
     public static void loadConfig() {
+        File configPath;
+        if(BetterFps.GAME_DIR == null) {
+            configPath = new File("config");
+        } else {
+            configPath = new File(BetterFps.GAME_DIR, "config");
+        }
+
+        CONFIG_FILE = new File(configPath, "betterfps.json");
+
         // Temporary code - Import old config file to the new one
         File oldConfig;
         if(BetterFps.GAME_DIR == null) {
@@ -47,16 +56,6 @@ public class BetterFpsHelper {
             }
         }
         // -------
-
-
-        File configPath;
-        if(BetterFps.GAME_DIR == null) {
-            configPath = new File("config");
-        } else {
-            configPath = new File(BetterFps.GAME_DIR, "config");
-        }
-
-        CONFIG_FILE = new File(configPath, "betterfps.json");
 
         FileReader reader = null;
         try {
