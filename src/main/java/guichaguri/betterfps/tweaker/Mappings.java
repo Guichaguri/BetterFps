@@ -46,6 +46,7 @@ public enum Mappings {
     C_BlockHopper(Type.CLASS, "BlockHopper"),
     C_ModelBox(Type.CLASS, "ModelBox"),
     C_EntityRenderer(Type.CLASS, "EntityRenderer"),
+    C_IInventory(Type.CLASS, "IInventory"),
 
     M_startGame(Type.METHOD, "startGame"), // Minecraft
     M_sin(Type.METHOD, "sin"), // MathHelper
@@ -127,7 +128,7 @@ public enum Mappings {
     }
 
     public boolean isDesc(String n) {
-        return deobfDesc == null || obfDesc == null || n.equals(deobfDesc) || n.equals(obfDesc);
+        return (deobfDesc != null && n.equals(deobfDesc)) || (obfDesc != null && n.equals(obfDesc));
     }
 
     public boolean isOwner(String n) {

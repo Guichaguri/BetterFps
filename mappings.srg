@@ -22,10 +22,11 @@ CL: BeamSegment net/minecraft/tileentity/TileEntityBeacon$BeamSegment
 CL: TileEntityBeaconRenderer net/minecraft/client/renderer/tileentity/TileEntityBeaconRenderer
 CL: TileEntityHopper net/minecraft/tileentity/TileEntityHopper
 CL: BlockHopper net/minecraft/block/BlockHopper
+CL: IInventory net/minecraft/inventory/IInventory
 CL: ModelBox net/minecraft/client/model/ModelBox
 CL: EntityRenderer net/minecraft/client/renderer/EntityRenderer
 
-MD: startGame net/minecraft/client/Minecraft/startGame ()V
+MD: startGame net/minecraft/client/Minecraft/init ()V
 MD: freeMemory net/minecraft/client/Minecraft/freeMemory ()V
 MD: sin net/minecraft/util/math/MathHelper/sin (F)F
 MD: cos net/minecraft/util/math/MathHelper/cos (F)F
@@ -34,7 +35,7 @@ MD: updateBlocks net/minecraft/world/World/updateBlocks ()V
 MD: onUpdate net/minecraft/entity/Entity/onUpdate ()V
 MD: getClientModName net/minecraft/client/ClientBrandRetriever/getClientModName ()Ljava/lang/String;
 MD: initGui net/minecraft/client/gui/GuiScreen/initGui ()V
-MD: startServer net/minecraft/server/MinecraftServer/startServer ()Z
+MD: startServer net/minecraft/server/MinecraftServer/init ()Z
 MD: captureDroppedItems net/minecraft/tileentity/TileEntityHopper/captureDroppedItems (Lnet/minecraft/tileentity/IHopper;)Z
 MD: renderBeamSegment net/minecraft/client/renderer/tileentity/TileEntityBeaconRenderer/renderBeamSegment (DDDDDDII[FDD)V
 

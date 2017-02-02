@@ -3,7 +3,7 @@ Performance Improvements
 
 ### Links
 * [Downloads](http://guichaguri.github.io/BetterFps/)
-* [CurseForge](http://minecraft.curseforge.com/mc-mods/229876-betterfps)
+* [CurseForge](https://minecraft.curseforge.com/projects/betterfps)
 * [Minecraft Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2413822-betterfps-performance-improvements-1-7-10-1-8)
 * [Report an issue](https://github.com/Guichaguri/BetterFps/issues/new)
 

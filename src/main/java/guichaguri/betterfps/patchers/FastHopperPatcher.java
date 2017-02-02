@@ -4,8 +4,15 @@ import guichaguri.betterfps.transformers.ASMUtils;
 import guichaguri.betterfps.transformers.IClassPatcher;
 import guichaguri.betterfps.transformers.Patch;
 import guichaguri.betterfps.tweaker.Mappings;
+import java.util.List;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LocalVariableNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 /**
  * @author Guilherme Chaguri
@@ -26,8 +33,24 @@ public class FastHopperPatcher implements IClassPatcher {
 
         InsnList inst = method.instructions;
 
-        JumpInsnNode ifNull = ASMUtils.findNode(inst, JumpInsnNode.class, Opcodes.IFNULL, 0);
+        List<JumpInsnNode> ifNullNodes = ASMUtils.findNodes(inst, JumpInsnNode.class, Opcodes.IFNULL);
+        LocalVariableNode inv = ASMUtils.findVariable(method, Mappings.C_IInventory);
+
+        if(ifNullNodes == null || ifNullNodes.isEmpty() || inv == null) return; // Wut
+
+        JumpInsnNode ifNull = null;
         JumpInsnNode ifEnd = null;
+
+        for(JumpInsnNode node : ifNullNodes) {
+            AbstractInsnNode previous = node.getPrevious();
+            System.out.println(previous);
+            if(previous instanceof VarInsnNode) {
+                if(((VarInsnNode)previous).var == inv.index) {
+                    ifNull = node;
+                    break;
+                }
+            }
+        }
 
         if(ifNull == null) return; // Wut
 

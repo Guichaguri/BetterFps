@@ -252,6 +252,13 @@ public class ASMUtils {
         return null;
     }
 
+    public static LocalVariableNode findVariable(MethodNode method, Mappings mappings) {
+        for(LocalVariableNode var : method.localVariables) {
+            if(mappings.is(Type.getType(var.desc).getClassName())) return var;
+        }
+        return null;
+    }
+
     public static int[] getLocalVariables(MethodNode method, ClassNode targetClass, MethodNode targetMethod) {
         int[] variables = new int[method.parameters.size()];
 
