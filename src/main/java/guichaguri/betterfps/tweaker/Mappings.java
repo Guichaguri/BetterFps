@@ -47,6 +47,7 @@ public enum Mappings {
     C_ModelBox(Type.CLASS, "ModelBox"),
     C_EntityRenderer(Type.CLASS, "EntityRenderer"),
     C_IInventory(Type.CLASS, "IInventory"),
+    C_GuiContainerCreative(Type.CLASS, "GuiContainerCreative"),
 
     M_startGame(Type.METHOD, "startGame"), // Minecraft
     M_sin(Type.METHOD, "sin"), // MathHelper

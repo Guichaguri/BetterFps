@@ -25,6 +25,7 @@ CL: BlockHopper net/minecraft/block/BlockHopper
 CL: IInventory net/minecraft/inventory/IInventory
 CL: ModelBox net/minecraft/client/model/ModelBox
 CL: EntityRenderer net/minecraft/client/renderer/EntityRenderer
+CL: GuiContainerCreative net/minecraft/client/gui/inventory/GuiContainerCreative
 
 MD: startGame net/minecraft/client/Minecraft/init ()V
 MD: freeMemory net/minecraft/client/Minecraft/freeMemory ()V
