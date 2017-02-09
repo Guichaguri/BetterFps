@@ -1,5 +1,6 @@
 package guichaguri.betterfps.gui;
 
+import guichaguri.betterfps.BetterFpsHelper;
 import guichaguri.betterfps.gui.data.OptionManager;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -188,6 +189,9 @@ public class GuiBetterFpsConfig extends GuiScreen {
             case -1:
                 // Done
                 boolean restart = OptionManager.store(options);
+
+                BetterFpsHelper.saveConfig();
+
                 mc.displayGuiScreen(restart ? new GuiRestartDialog(parent) : parent);
                 break;
             case -2:
