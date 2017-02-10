@@ -125,6 +125,8 @@ public class MathTransformer implements IClassTransformer {
             }
         }
 
+        Conditions.patched.add(Mappings.C_MathHelper);
+
         return ASMUtils.writeClass(classNode, 0);
     }
 

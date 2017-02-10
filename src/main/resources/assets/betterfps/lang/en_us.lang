@@ -81,11 +81,14 @@ betterfps.options.allocmemory.desc=Whether it will preallocate 10MB on startup
 betterfps.options.fog.title=Fog
 betterfps.options.fog.desc=Whether fog will be rendered
 
+betterfps.options.beaconbeam.title=Beacon Beam
+betterfps.options.beaconbeam.desc=Whether the transparent layer of the beacon beam will be rendered
+
 betterfps.options.hopper.title=Fast Hopper
 betterfps.options.hopper.desc=Whether hopper improvements will be enabled
 
 betterfps.options.beacon.title=Fast Beacon
 betterfps.options.beacon.desc=Whether beacon improvements will be enabled
 
-betterfps.options.beaconbeam.title=Beacon Beam
-betterfps.options.beaconbeam.desc=Whether the transparent layer of the beacon beam will be rendered
+betterfps.options.creativesearch.title=Fast Creative Search
+betterfps.options.creativesearch.desc=Whether the search improvements will be enabled

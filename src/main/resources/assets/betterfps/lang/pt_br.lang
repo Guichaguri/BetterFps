@@ -81,11 +81,14 @@ betterfps.options.allocmemory.desc=Se 10MB de memória vai ser alocada na inicia
 betterfps.options.fog.title=Névoa
 betterfps.options.fog.desc=Se a névoa vai ser renderizada
 
+betterfps.options.beaconbeam.title=Raio do Sinalizador
+betterfps.options.beaconbeam.desc=Se o a camada transparente do raio vai ser renderizada
+
 betterfps.options.hopper.title=Funil Rápido
 betterfps.options.hopper.desc=Se as melhorias do funil vão ser ativadas
 
 betterfps.options.beacon.title=Sinalizador Rápido
 betterfps.options.beacon.desc=Se as melhorias do sinalizador vão ser ativadas
 
-betterfps.options.beaconbeam.title=Raio do Sinalizador
-betterfps.options.beaconbeam.desc=Se o a camada transparente do raio vai ser renderizada
+betterfps.options.creativesearch.title=Busca do Criativo Rápida
+betterfps.options.creativesearch.desc=Se as melhorias na busca do criativo vão ser ativadas

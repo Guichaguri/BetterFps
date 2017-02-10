@@ -34,6 +34,7 @@ public class PatcherTransformer implements IClassTransformer {
         patches.put(Mappings.C_EntityPlayerSP, "guichaguri/betterfps/patches/misc/ClientPlayerPatch");
 
         patches.put(Mappings.C_GuiContainerCreative, "guichaguri/betterfps/patches/misc/FastCreativeSearch");
+        //patches.put(Mappings.C_RenderPlayer, "guichaguri/betterfps/patches/misc/PlayerModelPatch");
     }
 
     @Override
@@ -61,6 +62,7 @@ public class PatcherTransformer implements IClassTransformer {
     private ClassNode findPatch(String name) {
         for(Mappings m : patches.keySet()) {
             if(m.is(name)) {
+                Conditions.patched.add(m);
                 return loadPatch(patches.get(m));
             }
         }

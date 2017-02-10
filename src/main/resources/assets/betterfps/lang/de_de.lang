@@ -81,11 +81,14 @@ betterfps.options.allocmemory.desc=Ob beim Start 10MB Arbeitsspeicher vorbelegt 
 betterfps.options.fog.title=Nebel
 betterfps.options.fog.desc=Ob der Nebel dargestellt wird
 
+betterfps.options.beaconbeam.title=Strahl des Leuchtfeuers
+betterfps.options.beaconbeam.desc=Ob die transparente Schicht vom Strahl des Leuchtfeuers dargestellt wird
+
 betterfps.options.hopper.title=Schnelle Trichter
 betterfps.options.hopper.desc=Ob Optimierungen für Trichter aktiv sind
 
 betterfps.options.beacon.title=Schnelle Leuchtfeuer
 betterfps.options.beacon.desc=Ob Optimierungen für Leuchtfeuer aktiv sind
 
-betterfps.options.beaconbeam.title=Strahl des Leuchtfeuers
-betterfps.options.beaconbeam.desc=Ob die transparente Schicht vom Strahl des Leuchtfeuers dargestellt wird
+betterfps.options.creativesearch.title=Fast Creative Search
+betterfps.options.creativesearch.desc=Whether the search improvements will be enabled

@@ -15,11 +15,13 @@ public class BetterFpsConfig {
 
     public boolean fog = true;
 
+    public boolean beaconBeam = true;
+
     public boolean fastHopper = true;
 
     public boolean fastBeacon = true;
 
-    public boolean beaconBeam = true;
+    public boolean fastSearch = true;
 
     public enum AlgorithmType {
         @SerializedName("vanilla") VANILLA,

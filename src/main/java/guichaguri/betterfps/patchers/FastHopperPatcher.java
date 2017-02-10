@@ -43,7 +43,7 @@ public class FastHopperPatcher implements IClassPatcher {
 
         for(JumpInsnNode node : ifNullNodes) {
             AbstractInsnNode previous = node.getPrevious();
-            System.out.println(previous);
+
             if(previous instanceof VarInsnNode) {
                 if(((VarInsnNode)previous).var == inv.index) {
                     ifNull = node;

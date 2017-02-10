@@ -1,5 +1,7 @@
 package guichaguri.betterfps.patches.misc;
 
+import guichaguri.betterfps.transformers.Conditions;
+import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import java.util.Iterator;
@@ -17,12 +19,12 @@ import net.minecraft.util.text.TextFormatting;
 /**
  * @author Guilherme Chaguri
  */
+@Condition(Conditions.FAST_SEARCH)
 public abstract class FastCreativeSearch extends GuiContainerCreative {
     @Copy
     private String oldSearchText;
     @Copy
     private NonNullList<ItemStack> itemBuffer;
-
 
     public FastCreativeSearch(EntityPlayer player) {
         super(player);
@@ -31,18 +33,28 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
     @Copy(Mode.PREPEND)
     @Override
     public void initGui() {
+        // When the Gui is initialized, let's create our buffer list
+
         if(itemBuffer == null) itemBuffer = NonNullList.create();
     }
 
     @Copy(Mode.PREPEND)
     @Override
     public void setCurrentCreativeTab(CreativeTabs tab) {
+        // When the tab changes, clear the search history so when the search field is shown again, it will rebuild the results
+
         oldSearchText = null;
     }
 
     @Copy(Mode.REPLACE)
     @Override
     public void updateCreativeSearch() {
+        // The search algorithm is still the same
+        // But the amount of work it has to do has been reduced
+        // Before this improvement, the search would have to rebuild its results everytime the text changed
+        // Now, the search only rebuilds completely when necessary
+        // It will also significantly reduce the amount of rebuilding work when adding/removing characters
+
         String search = this.searchField.getText().toLowerCase(Locale.ROOT);
         boolean rebuildCache = false;
         GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
@@ -76,13 +88,15 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
 
         Iterator<ItemStack> iterator = container.itemList.iterator();
         boolean lookupBuffer = !itemBuffer.isEmpty();
+        EntityPlayer player = mc.player;
+        boolean advancedTooltips = mc.gameSettings.advancedItemTooltips;
 
         while(iterator.hasNext()) {
             ItemStack itemstack = iterator.next();
 
             if(lookupBuffer && itemBuffer.contains(itemstack)) continue;
 
-            for(String s : itemstack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips)) {
+            for(String s : itemstack.getTooltip(player, advancedTooltips)) {
                 if(!TextFormatting.getTextWithoutFormattingCodes(s).toLowerCase(Locale.ROOT).contains(search)) {
                     iterator.remove();
                     break;
@@ -103,7 +117,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
     }
 
     /**
-     * Forge has a method with the exact same name and descriptor which works with custom search tabs.
+     * Forge has a method with the exact same name and descriptor as this one which works with custom search tabs.
      * To prevent conflicts, this is set to copy instead of replacing, so Forge should overwrite this method
      */
     @Copy(Mode.COPY)
