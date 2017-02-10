@@ -60,7 +60,8 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
             NonNullList<ItemStack> items = container.itemList;
             container.itemList = itemBuffer;
             itemBuffer = items;
-            addAllItemsToSearch(container.itemList);
+            updateAdditionalItems(container);
+            updateFilteredItems(container);
         } else {
             // Unknown? - Rebuild cache
             rebuildCache = true;
@@ -69,7 +70,8 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
         if(rebuildCache) {
             // Rebuild results again
             container.itemList.clear();
-            addAllItemsToSearch(container.itemList);
+            updateAdditionalItems(container);
+            updateFilteredItems(container);
         }
 
         Iterator<ItemStack> iterator = container.itemList.iterator();
@@ -96,16 +98,27 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
     }
 
     @Copy
-    private void addAllItemsToSearch(NonNullList<ItemStack> items) {
+    private void updateAdditionalItems(GuiContainerCreative.ContainerCreative container) {
+        CreativeTabs.CREATIVE_TAB_ARRAY[selectedTabIndex].displayAllRelevantItems(container.itemList);
+    }
+
+    /**
+     * Forge has a method with the exact same name and descriptor which works with custom search tabs.
+     * To prevent conflicts, this is set to copy instead of replacing, so Forge should overwrite this method
+     */
+    @Copy(Mode.COPY)
+    private void updateFilteredItems(GuiContainerCreative.ContainerCreative container) {
+        NonNullList<ItemStack> list = container.itemList;
+
         for(Item item : Item.REGISTRY) {
             if(item != null && item.getCreativeTab() != null) {
-                item.getSubItems(item, null, items);
+                item.getSubItems(item, null, list);
             }
         }
 
         for(Enchantment enchantment : Enchantment.REGISTRY) {
             if(enchantment != null && enchantment.type != null) {
-                Items.ENCHANTED_BOOK.getAll(enchantment, items);
+                Items.ENCHANTED_BOOK.getAll(enchantment, list);
             }
         }
     }
