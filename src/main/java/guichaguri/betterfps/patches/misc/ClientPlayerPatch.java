@@ -18,9 +18,10 @@ public abstract class ClientPlayerPatch extends EntityPlayerSP {
         super(mcIn, worldIn, netHandler, statFile);
     }
 
-    @Copy(Mode.PREPEND)
+    @Copy(Mode.REPLACE)
     @Override
     public void preparePlayerToSpawn() {
         UpdateChecker.showChat(this);
+        super.preparePlayerToSpawn();
     }
 }
