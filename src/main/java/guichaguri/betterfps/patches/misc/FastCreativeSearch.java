@@ -72,7 +72,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
             NonNullList<ItemStack> items = container.itemList;
             container.itemList = itemBuffer;
             itemBuffer = items;
-            updateAdditionalItems(container);
+            updateBaseItems(container);
             updateFilteredItems(container);
         } else {
             // Unknown? - Rebuild cache
@@ -82,7 +82,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
         if(rebuildCache) {
             // Rebuild results again
             container.itemList.clear();
-            updateAdditionalItems(container);
+            updateBaseItems(container);
             updateFilteredItems(container);
         }
 
@@ -96,12 +96,14 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
 
             if(lookupBuffer && itemBuffer.contains(itemstack)) continue;
 
+            boolean shouldRemove = true;
             for(String s : itemstack.getTooltip(player, advancedTooltips)) {
-                if(!TextFormatting.getTextWithoutFormattingCodes(s).toLowerCase(Locale.ROOT).contains(search)) {
-                    iterator.remove();
+                if(TextFormatting.getTextWithoutFormattingCodes(s).toLowerCase(Locale.ROOT).contains(search)) {
+                    shouldRemove = false;
                     break;
                 }
             }
+            if(shouldRemove) iterator.remove();
         }
 
         if(lookupBuffer) itemBuffer.clear();
@@ -112,8 +114,22 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
     }
 
     @Copy
-    private void updateAdditionalItems(GuiContainerCreative.ContainerCreative container) {
-        CreativeTabs.CREATIVE_TAB_ARRAY[selectedTabIndex].displayAllRelevantItems(container.itemList);
+    private void updateBaseItems(GuiContainerCreative.ContainerCreative container) {
+        NonNullList<ItemStack> list = container.itemList;
+        CreativeTabs tab = CreativeTabs.CREATIVE_TAB_ARRAY[selectedTabIndex];
+
+        tab.displayAllRelevantItems(list);
+
+        // Let's not add all items when we're not in the search tab
+        // Custom search tabs (with a feature added by Forge) should work as expected
+        // Vanilla should always use the search tab for searching
+        if(tab != CreativeTabs.SEARCH) return;
+
+        for(Item item : Item.REGISTRY) {
+            if(item != null && item.getCreativeTab() != null) {
+                item.getSubItems(item, null, list);
+            }
+        }
     }
 
     /**
@@ -123,12 +139,6 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
     @Copy(Mode.COPY)
     private void updateFilteredItems(GuiContainerCreative.ContainerCreative container) {
         NonNullList<ItemStack> list = container.itemList;
-
-        for(Item item : Item.REGISTRY) {
-            if(item != null && item.getCreativeTab() != null) {
-                item.getSubItems(item, null, list);
-            }
-        }
 
         for(Enchantment enchantment : Enchantment.REGISTRY) {
             if(enchantment != null && enchantment.type != null) {
