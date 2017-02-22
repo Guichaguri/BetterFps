@@ -75,7 +75,7 @@ public class UpdateChecker implements Runnable {
         updateDownload = null;
     }
 
-    public static void showConsole() {
+    private static void showConsole() {
         if(!done) return;
         if(updateVersion == null && updateDownload == null) return;
 

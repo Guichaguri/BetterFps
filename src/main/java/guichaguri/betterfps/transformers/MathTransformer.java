@@ -20,7 +20,6 @@ public class MathTransformer implements IClassTransformer {
     private static final LinkedHashMap<AlgorithmType, String> algorithmClasses = new LinkedHashMap<AlgorithmType, String>();
 
     static {
-        algorithmClasses.put(AlgorithmType.VANILLA, "guichaguri/betterfps/math/VanillaMath");
         algorithmClasses.put(AlgorithmType.RIVENS, "guichaguri/betterfps/math/RivensMath");
         algorithmClasses.put(AlgorithmType.TAYLORS, "guichaguri/betterfps/math/TaylorMath");
         algorithmClasses.put(AlgorithmType.LIBGDX, "guichaguri/betterfps/math/LibGDXMath");

@@ -133,7 +133,7 @@ public class GuiAlgorithmTester extends JDialog implements ActionListener {
 
     private String bestAlgorithm = "rivens-half";
 
-    public GuiAlgorithmTester(GuiInstaller installer) {
+    GuiAlgorithmTester(GuiInstaller installer) {
         setTitle(BetterFpsInstaller.i18n("betterfps.installer.algorithm.title"));
         setResizable(false);
         setModal(true);

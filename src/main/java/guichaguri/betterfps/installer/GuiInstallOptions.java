@@ -30,7 +30,7 @@ public class GuiInstallOptions extends JDialog implements ActionListener, FocusL
 
     private JsonObject launcherProfiles;
 
-    public GuiInstallOptions(GuiInstaller installer) {
+    GuiInstallOptions(GuiInstaller installer) {
         setTitle(BetterFpsInstaller.i18n("betterfps.installer.button.install"));
         setResizable(false);
         setModal(true);
