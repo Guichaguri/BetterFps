@@ -90,5 +90,5 @@ betterfps.options.hopper.desc=Ob Optimierungen für Trichter aktiv sind
 betterfps.options.beacon.title=Schnelle Leuchtfeuer
 betterfps.options.beacon.desc=Ob Optimierungen für Leuchtfeuer aktiv sind
 
-betterfps.options.creativesearch.title=Fast Creative Search
-betterfps.options.creativesearch.desc=Whether the search improvements will be enabled
+betterfps.options.creativesearch.title=Schnelle Suche im Kreativ-Inventar
+betterfps.options.creativesearch.desc=Ob Optimierungen für die Suche aktiv sind
