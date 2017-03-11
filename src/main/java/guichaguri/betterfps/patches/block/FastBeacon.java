@@ -176,6 +176,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
                 for(int blockZ = z - lvl; blockZ <= z + lvl; blockZ++) {
                     BlockPos blockPos = new BlockPos(blockX, blockY, blockZ);
                     Block block = world.getBlockState(blockPos).getBlock();
+                    // TODO make it work with Forge's isBeaconBase
                     if(block != Blocks.EMERALD_BLOCK && block != Blocks.GOLD_BLOCK && block != Blocks.DIAMOND_BLOCK && block != Blocks.IRON_BLOCK) {
                         levels--;
                         break lvlLoop;
