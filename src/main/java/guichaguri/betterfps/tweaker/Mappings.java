@@ -29,6 +29,7 @@ public enum Mappings {
     C_Minecraft(Type.CLASS, "Minecraft"),
     C_World(Type.CLASS, "World"),
     C_Chunk(Type.CLASS, "Chunk"),
+    C_Block(Type.CLASS, "Block"),
     C_EntityPlayer(Type.CLASS, "EntityPlayer"),
     C_EntityPlayerSP(Type.CLASS, "EntityPlayerSP"),
     C_MathHelper(Type.CLASS, "MathHelper"),

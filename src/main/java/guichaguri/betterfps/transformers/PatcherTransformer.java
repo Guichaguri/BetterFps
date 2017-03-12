@@ -20,6 +20,8 @@ public class PatcherTransformer implements IClassTransformer {
     private static final Map<Mappings, String> patches = new HashMap<Mappings, String>();
 
     static {
+        patches.put(Mappings.C_Block, "guichaguri/betterfps/patches/block/BlockPatch");
+
         patches.put(Mappings.C_TileEntityHopper, "guichaguri/betterfps/patches/block/FastHopper");
         patches.put(Mappings.C_BlockHopper, "guichaguri/betterfps/patches/block/FastHopperBlock");
 

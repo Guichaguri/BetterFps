@@ -2,6 +2,7 @@
 build/
 lib/
 logs/
+*.log
 others/
 out/
 run/
@@ -10,3 +11,4 @@ BetterFps.iml
 BetterFps.ipr
 BetterFps.iws
 gradlew*
+src/main/resources/betterfps.srg
