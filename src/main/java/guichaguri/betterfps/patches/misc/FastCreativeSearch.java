@@ -20,7 +20,9 @@ import net.minecraft.util.text.TextFormatting;
  * @author Guilherme Chaguri
  */
 @Condition(Conditions.FAST_SEARCH)
-public abstract class FastCreativeSearch extends GuiContainerCreative {
+public abstract class FastCreativeSearch extends GuiContainerCreative implements Runnable {
+    @Copy
+    private Thread searchThread;
     @Copy
     private String oldSearchText;
     @Copy
@@ -43,21 +45,42 @@ public abstract class FastCreativeSearch extends GuiContainerCreative {
     public void setCurrentCreativeTab(CreativeTabs tab) {
         // When the tab changes, clear the search history so when the search field is shown again, it will rebuild the results
 
+        if(searchThread != null && searchThread.isAlive()) {
+            searchThread.interrupt();
+        }
         oldSearchText = null;
     }
 
     @Copy(Mode.REPLACE)
     @Override
     public void updateCreativeSearch() {
+        //TODO decide how multithreaded will be activated
+        if(searchThread != null && searchThread.isAlive()) {
+            searchThread.interrupt();
+        }
+
+        searchThread = new Thread(this);
+        searchThread.start();
+    }
+
+    @Copy(Mode.COPY)
+    @Override
+    public void run() {
+        updateCreativeSearchSync();
+        searchThread = null;
+    }
+
+    @Copy
+    public void updateCreativeSearchSync() {
         // The search algorithm is still the same
         // But the amount of work it has to do has been reduced
-        // Before this improvement, the search would have to rebuild its results everytime the text changed
+        // Before this improvement, the search would have to rebuild its results every time the text changed
         // Now, the search only rebuilds completely when necessary
         // It will also significantly reduce the amount of rebuilding work when adding/removing characters
 
-        String search = this.searchField.getText().toLowerCase(Locale.ROOT);
+        String search = searchField.getText().toLowerCase(Locale.ROOT);
         boolean rebuildCache = false;
-        GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
+        GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)inventorySlots;
 
         if(oldSearchText == null) {
             // The cache is null, rebuild it
