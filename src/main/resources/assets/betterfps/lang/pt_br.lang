@@ -1,6 +1,7 @@
 # Brazilian Portuguese Contributors
 # Guichaguri - https://twitter.com/Guichaguri
 
+# Updater
 betterfps.update.available=BetterFps %s está disponível
 betterfps.update.prompt=Baixar a nova versão?
 betterfps.update.button.download=[Baixar]
@@ -8,6 +9,7 @@ betterfps.update.button.download.info=Clique aqui para baixar a nova versão
 betterfps.update.button.more=[Mais]
 betterfps.update.button.more.info=Clique aqui para ver mais versões
 
+# Updater Messages
 betterfps.update.phrase.1=Mais uma update irritante.
 betterfps.update.phrase.2=§mAnuncie Aqui
 betterfps.update.phrase.3=Vendo que uma nova atualização foi lançada, te enche de determinação
@@ -21,6 +23,7 @@ betterfps.update.phrase.10=Alguns bugs foram arrumados, mas novos foram introduz
 betterfps.update.phrase.11=Porque atualizações automáticas podem quebrar seu jogo
 betterfps.update.phrase.12=Quer algo novo? Aqui, uma atualização.
 
+# Installer
 betterfps.installer.title=Instalador do BetterFps
 betterfps.installer.versions=Versão %s para Minecraft %s
 betterfps.installer.note.1=Esse instalador foi feito para Minecraft vanilla usando o launcher oficial.
@@ -41,27 +44,33 @@ betterfps.installer.algorithm.button.again=Fazer benchmark novamente
 betterfps.installer.algorithm.working=Fazendo benchmark dos algorítmos...
 betterfps.installer.update.check=Verificando atualizações...
 
+# GUI Title
 betterfps.options.title=Opções do BetterFps
 betterfps.options.title.mouseover=Segure botão direito em um botão para ver informações
 betterfps.options.title.rightclick=Isso não é um botão
 
+# GUI Option Values
 betterfps.options.on=On
 betterfps.options.off=Off
 betterfps.options.fast=Rápido
 betterfps.options.fancy=Bonito
 
+# GUI Option Descriptions
 betterfps.options.default=Padrão: %s
 betterfps.options.default.vanilla=Padrão no Vanilla: %s
 betterfps.options.default.betterfps=Padrão no BetterFps: %s
 betterfps.options.restart=Precisa de uma reinicialização para ter efeito
 
+# GUI Restart
 betterfps.options.restart.dialog.1=You need to restart your game to apply some changes
 betterfps.options.restart.dialog.2=Do you want restart now?
 
+# GUI Algorithm Option
 betterfps.options.algorithm.title=Algoritmo
 betterfps.options.algorithm.desc=O algoritmo para calcular seno e cosseno
 betterfps.options.algorithm.action=Segure shift e clique em mim para testar algoritmos (Isso vai demorar alguns segundos)
 
+# GUI Algorithm Option Values
 betterfps.options.algorithm.vanilla=Algoritmo do Vanilla
 betterfps.options.algorithm.rivens=Algoritmo de Riven
 betterfps.options.algorithm.taylors=Algoritmo de Taylor
@@ -71,24 +80,31 @@ betterfps.options.algorithm.rivens-half=Algoritmo de Riven (versão "Half")
 betterfps.options.algorithm.java=Matemática do Java
 betterfps.options.algorithm.random=Matemática Aleatória
 
+# GUI Update Checker Option
 betterfps.options.updatechecker.title=Verificador de Atualização
 betterfps.options.updatechecker.desc=Se atualizações irão ser verificadas na inicialização
 betterfps.options.updatechecker.action=Segure shift e clique em mim para procurar por atualizações (Isso vai demorar alguns segundos)
 
+# GUI Preallocate Memory Option
 betterfps.options.allocmemory.title=Pré-alocar memória
 betterfps.options.allocmemory.desc=Se 10MB de memória vai ser alocada na inicialização
 
+# GUI Fog Option
 betterfps.options.fog.title=Névoa
 betterfps.options.fog.desc=Se a névoa vai ser renderizada
 
+# GUI Beacon Beam Option
 betterfps.options.beaconbeam.title=Raio do Sinalizador
 betterfps.options.beaconbeam.desc=Se o a camada transparente do raio vai ser renderizada
 
+# GUI Fast Hopper Option
 betterfps.options.hopper.title=Funil Rápido
 betterfps.options.hopper.desc=Se as melhorias do funil vão ser ativadas
 
+# GUI Fast Beacon Option
 betterfps.options.beacon.title=Sinalizador Rápido
 betterfps.options.beacon.desc=Se as melhorias do sinalizador vão ser ativadas
 
+# GUI Fast Creative Search Option
 betterfps.options.creativesearch.title=Busca do Criativo Rápida
 betterfps.options.creativesearch.desc=Se as melhorias na busca do criativo vão ser ativadas

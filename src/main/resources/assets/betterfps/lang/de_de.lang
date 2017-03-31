@@ -1,6 +1,7 @@
 # German Contributors
 # QuImUfu - https://github.com/QuImUfu
 
+# Updater
 betterfps.update.available=BetterFps %s ist verfügbar
 betterfps.update.prompt=Die neue Version herunterladen?
 betterfps.update.button.download=[Download]
@@ -8,6 +9,7 @@ betterfps.update.button.download.info=Hier klicken um die neue Version herunterz
 betterfps.update.button.more=[Mehr]
 betterfps.update.button.more.info=Hier klicken für weitere Versionen
 
+# Updater Messages
 betterfps.update.phrase.1=Bloß ein weiteres nerviges Update.
 betterfps.update.phrase.2=§mHier könnte ihre Werbung stehen
 betterfps.update.phrase.3=Der Anblick eines neu erschienenen Upgrades erfüllt dich mit Entschlossenheit.
@@ -21,6 +23,7 @@ betterfps.update.phrase.10=Einige Fehler wurden korrigiert, aber neue kamen dazu
 betterfps.update.phrase.11=Weil automatische Updates villeicht dein Spiel ruinieren könnten
 betterfps.update.phrase.12=Willst du was Neues? Hier, gönn dir ein Update.
 
+# Installer
 betterfps.installer.title=BetterFps Installer
 betterfps.installer.versions=Version %s für Minecraft %s
 betterfps.installer.note.1=Dieser Installer wurde für Vanilla Minecraft und den offiziellen Launcher erstellt.
@@ -41,27 +44,33 @@ betterfps.installer.algorithm.button.again=Erneut testen
 betterfps.installer.algorithm.working=Teste Algorithmen...
 betterfps.installer.update.check=Suche nach Updates...
 
+# GUI Title
 betterfps.options.title=BetterFps Optionen
 betterfps.options.title.mouseover=Halte die rechte Maustaste über einer Schaltfläche für Information
 betterfps.options.title.rightclick=Das ist keine Schaltfläche
 
+# GUI Option Values
 betterfps.options.on=An
 betterfps.options.off=Aus
 betterfps.options.fast=Schnell
 betterfps.options.fancy=Schön
 
+# GUI Option Descriptions
 betterfps.options.default=Standardwert: %s
 betterfps.options.default.vanilla=Standardwert in Vanilla: %s
 betterfps.options.default.betterfps=Standardwert in BetterFps: %s
 betterfps.options.restart=Änderung benötigt einen Neustart um in Kraft zu treten
 
+# GUI Restart
 betterfps.options.restart.dialog.1=Du musst das Spiel neu starten, damit einige Änderungen in Kraft treten.
 betterfps.options.restart.dialog.2=Möchtest du jetzt neu starten?
 
+# GUI Algorithm Option
 betterfps.options.algorithm.title=Algorithmus
 betterfps.options.algorithm.desc=Der Algorithmus für sinus- und cosinus-Berechnungen
 betterfps.options.algorithm.action=Shift-klicke mich um die Algorithmen zu testen (Dies dauert einige Sekunden)
 
+# GUI Algorithm Option Values
 betterfps.options.algorithm.vanilla=Vanilla Algorithmus
 betterfps.options.algorithm.rivens=Riven's Algorithmus
 betterfps.options.algorithm.taylors=Taylor's Algorithmus
@@ -71,24 +80,31 @@ betterfps.options.algorithm.rivens-half=Riven's "Half" Algorithmus
 betterfps.options.algorithm.java=Java Math
 betterfps.options.algorithm.random=Random Math
 
+# GUI Update Checker Option
 betterfps.options.updatechecker.title=Updatechecker
 betterfps.options.updatechecker.desc=Ob beim Start nach Updates gesucht wird
 betterfps.options.updatechecker.action=Shift-klicke mich um nach Updates zu suchen (Dies dauert einige Sekunden)
 
+# GUI Preallocate Memory Option
 betterfps.options.allocmemory.title=Arbeitsspeicher vorbelegen
 betterfps.options.allocmemory.desc=Ob beim Start 10MB Arbeitsspeicher vorbelegt wird
 
+# GUI Fog Option
 betterfps.options.fog.title=Nebel
 betterfps.options.fog.desc=Ob der Nebel dargestellt wird
 
+# GUI Beacon Beam Option
 betterfps.options.beaconbeam.title=Strahl des Leuchtfeuers
 betterfps.options.beaconbeam.desc=Ob die transparente Schicht vom Strahl des Leuchtfeuers dargestellt wird
 
+# GUI Fast Hopper Option
 betterfps.options.hopper.title=Schnelle Trichter
 betterfps.options.hopper.desc=Ob Optimierungen für Trichter aktiv sind
 
+# GUI Fast Beacon Option
 betterfps.options.beacon.title=Schnelle Leuchtfeuer
 betterfps.options.beacon.desc=Ob Optimierungen für Leuchtfeuer aktiv sind
 
+# GUI Fast Creative Search Option
 betterfps.options.creativesearch.title=Schnelle Suche im Kreativ-Inventar
 betterfps.options.creativesearch.desc=Ob Optimierungen für die Suche aktiv sind
