@@ -23,6 +23,8 @@ public class BetterFpsConfig {
 
     public boolean fastSearch = true;
 
+    public boolean asyncSearch = true;
+
     public enum AlgorithmType {
         @SerializedName("vanilla") VANILLA,
         @SerializedName("java") JAVA,

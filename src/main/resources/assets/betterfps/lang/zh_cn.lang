@@ -58,6 +58,7 @@ betterfps.options.on=开启
 betterfps.options.off=关闭
 betterfps.options.fast=快速
 betterfps.options.fancy=精细
+betterfps.options.async=Async
 
 # GUI Option Descriptions
 betterfps.options.default=默认：%s

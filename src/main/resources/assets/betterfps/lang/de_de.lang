@@ -54,6 +54,7 @@ betterfps.options.on=An
 betterfps.options.off=Aus
 betterfps.options.fast=Schnell
 betterfps.options.fancy=Schön
+betterfps.options.async=Async
 
 # GUI Option Descriptions
 betterfps.options.default=Standardwert: %s

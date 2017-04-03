@@ -1,5 +1,8 @@
 package guichaguri.betterfps.patches.misc;
 
+import guichaguri.betterfps.BetterFpsHelper;
+import guichaguri.betterfps.special.Multithreading;
+import guichaguri.betterfps.special.Multithreading.IMultithreaded;
 import guichaguri.betterfps.transformers.Conditions;
 import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
@@ -20,9 +23,11 @@ import net.minecraft.util.text.TextFormatting;
  * @author Guilherme Chaguri
  */
 @Condition(Conditions.FAST_SEARCH)
-public abstract class FastCreativeSearch extends GuiContainerCreative implements Runnable {
+public abstract class FastCreativeSearch extends GuiContainerCreative implements IMultithreaded {
     @Copy
     private Thread searchThread;
+    @Copy
+    private boolean asyncSearch;
     @Copy
     private String oldSearchText;
     @Copy
@@ -35,9 +40,10 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
     @Copy(Mode.PREPEND)
     @Override
     public void initGui() {
-        // When the Gui is initialized, let's create our buffer list
+        // When the Gui is initialized, let's initialize our variables
 
         if(itemBuffer == null) itemBuffer = NonNullList.create();
+        asyncSearch = BetterFpsHelper.getConfig().asyncSearch;
     }
 
     @Copy(Mode.PREPEND)
@@ -45,29 +51,22 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
     public void setCurrentCreativeTab(CreativeTabs tab) {
         // When the tab changes, clear the search history so when the search field is shown again, it will rebuild the results
 
-        if(searchThread != null && searchThread.isAlive()) {
-            searchThread.interrupt();
-        }
+        Multithreading.stop(searchThread);
+        searchThread = null;
         oldSearchText = null;
     }
 
     @Copy(Mode.REPLACE)
     @Override
     public void updateCreativeSearch() {
-        //TODO decide how multithreaded will be activated
-        if(searchThread != null && searchThread.isAlive()) {
-            searchThread.interrupt();
-        }
-
-        searchThread = new Thread(this);
-        searchThread.start();
+        Multithreading.stop(searchThread);
+        searchThread = Multithreading.start(this, "search", asyncSearch);
     }
 
     @Copy(Mode.COPY)
     @Override
-    public void run() {
+    public void run(String task) {
         updateCreativeSearchSync();
-        searchThread = null;
     }
 
     @Copy

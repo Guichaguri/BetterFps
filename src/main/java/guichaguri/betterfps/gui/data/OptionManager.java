@@ -102,45 +102,53 @@ public class OptionManager {
         buttons.add(beacon);
 
         // Creative Search Improvement
-        GuiConfigOption<Boolean> search;
-        search = new GuiConfigOption<Boolean>(7, "betterfps.options.creativesearch.title");
-        search.set(boolMap, enabledNames);
-        search.setRestart(Conditions.isPatched(Mappings.C_GuiContainerCreative));
-        search.setDefaults(false, true, config.fastSearch);
+        GuiConfigOption<Integer> search;
+        search = new GuiConfigOption<Integer>(7, "betterfps.options.creativesearch.title");
+        search.add(0, "betterfps.options.off");
+        search.add(1, "betterfps.options.on");
+        search.add(2, "betterfps.options.async");
+        search.setDefaults(0, 2, !config.fastSearch ? 0 : (!config.asyncSearch ? 1 : 2));
         search.setDescription(I18n.format("betterfps.options.creativesearch.desc"));
         buttons.add(search);
     }
 
     public static boolean store(List<GuiConfigOption> buttons) {
         BetterFpsConfig config = BetterFpsHelper.getConfig();
+        boolean restart = false;
 
-        config.algorithm = getButtonValue(buttons, 0, AlgorithmType.class);
+        config.algorithm = getButtonValue(buttons, 0, AlgorithmType.VANILLA);
         config.updateChecker = getButtonValue(buttons, 1);
         config.preallocateMemory = getButtonValue(buttons, 2);
         config.fog = getButtonValue(buttons, 3);
         config.beaconBeam = getButtonValue(buttons, 4);
         config.fastHopper = getButtonValue(buttons, 5);
         config.fastBeacon = getButtonValue(buttons, 6);
-        config.fastSearch = getButtonValue(buttons, 7);
+
+        int search = getButtonValue(buttons, 7, 0);
+        if(config.fastSearch != (search != 0)) {
+            // TODO: change this to a better solution
+            restart = Conditions.isPatched(Mappings.C_GuiContainerCreative);
+        }
+        config.fastSearch = search != 0;
+        config.asyncSearch = search == 2;
 
         for(GuiConfigOption button : buttons) {
             if(button.shouldRestart()) return true;
         }
-        return false;
+        return restart;
     }
 
     private static boolean getButtonValue(List<GuiConfigOption> buttons, int id) {
-        Boolean b = getButtonValue(buttons, id, Boolean.class);
-        return b == null ? true : b;
+        return getButtonValue(buttons, id, true);
     }
 
-    private static <T extends Object> T getButtonValue(List<GuiConfigOption> buttons, int id, Class<T> type) {
+    private static <T extends Object> T getButtonValue(List<GuiConfigOption> buttons, int id, T def) {
         for(GuiConfigOption button : buttons) {
             if(button.id == id) {
                 return (T)button.getValue();
             }
         }
-        return null;
+        return def;
     }
 
 }
