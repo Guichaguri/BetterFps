@@ -76,7 +76,10 @@ public class BetterFpsHelper {
 
     public static void saveConfig() {
         try {
-            if(!CONFIG_FILE.exists()) CONFIG_FILE.createNewFile();
+            if(!CONFIG_FILE.exists()) {
+                CONFIG_FILE.getParentFile().mkdirs();
+                CONFIG_FILE.createNewFile();
+            }
             FileUtils.writeStringToFile(CONFIG_FILE, new Gson().toJson(INSTANCE));
         } catch(Exception ex) {
             LOG.error("Could not save the config file", ex);

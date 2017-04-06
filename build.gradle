@@ -25,7 +25,7 @@ archivesBaseName = "BetterFps"
 minecraft {
     version = "1.11.2"
     runDir = "run"
-    tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker";
+    tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker"
     mappings = "snapshot_20161220"
 
     at 'betterfps_at.cfg'
