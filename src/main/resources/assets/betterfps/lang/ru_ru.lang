@@ -1,0 +1,111 @@
+# Russian Contributors
+# Pixelmon.PRO - https://pixelmon.pro
+
+# Обновление
+betterfps.update.available=Доступно обновление BetterFps %s
+betterfps.update.prompt=Загрузить новую версию?
+betterfps.update.button.download=[Загрузить]
+betterfps.update.button.download.info=Нажмите здесь, чтобы загрузить новую версию
+betterfps.update.button.more=[Инфо]
+betterfps.update.button.more.info=Нажмите здесь, чтобы узнать больше информации
+
+# Сообщения Обновления
+betterfps.update.phrase.1=Просто еще одно раздражающее обновление.
+betterfps.update.phrase.2=§mРеклама здесь
+betterfps.update.phrase.3=Увидев, что вышло новое обновление, оно наполняет вас негодованием.
+betterfps.update.phrase.4=Когда Стэнли увидел напоминание об обновлении, он нажал кнопку «загрузить».
+betterfps.update.phrase.5=Не раз D:
+betterfps.update.phrase.6=<3
+betterfps.update.phrase.7=Я знаю, что вы обновите только, чтобы избавиться от этого напоминания
+betterfps.update.phrase.8=По крайней мере, это бесплатно...
+betterfps.update.phrase.9=Еще одна раздражающая проверка обновлений? (╯°□°）╯︵ §m┻━━┻
+betterfps.update.phrase.10=Исправлены некоторые ошибки, но появились новые ¯\_(ツ)_/¯
+betterfps.update.phrase.11=Поскольку автоматическое обновление может нарушить игру
+betterfps.update.phrase.12=Хотите что-то новое? Здесь есть обновление.
+
+# Установка
+betterfps.installer.title=BetterFps Установка
+betterfps.installer.versions=Версия %s для Майнкрафта %s
+betterfps.installer.note.1=Этот установщик был создан для ванильного Майнкрафта с использованием официального лаунчера.
+betterfps.installer.note.2=Если вы используете Forge или LiteLoader, извлеките файл в папке модов.
+betterfps.installer.note.3=Лаунчер возможно потребуется закрыть или перезапустить.
+betterfps.installer.button.install=Установить
+betterfps.installer.button.extract=Извлечь
+betterfps.installer.button.algorithm=Тестировать Алгоритмы
+betterfps.installer.button.downloads=Скачать
+betterfps.installer.button.issues=Баги/Общие вопросы
+betterfps.installer.label.game-dir=Установочная директория Майнкрафта
+betterfps.installer.label.version=Версия
+betterfps.installer.label.profile=Профиль
+betterfps.installer.done=Готово! (%sms)
+betterfps.installer.algorithm.title=Сравнительный Алгоритм
+betterfps.installer.algorithm.button.change=Изменить Алгоритм на %s
+betterfps.installer.algorithm.button.again=Сравнить опять
+betterfps.installer.algorithm.working=Сравниваем Алгоритмы...
+betterfps.installer.update.check=Проверяем обновления...
+
+# Заголовок Графического Интерфейса
+betterfps.options.title=BetterFps Настройки
+betterfps.options.title.mouseover=Щелкните правой кнопкой мыши для получения информации.
+betterfps.options.title.rightclick=Это не кнопка
+
+# Значения Параметров Графического Интерфейса
+betterfps.options.on=Включить
+betterfps.options.off=Отключить
+betterfps.options.fast=Быстро
+betterfps.options.fancy=Необычно
+betterfps.options.async=Асинхронный
+
+# Графический Интерфейс, Описание Опций
+betterfps.options.default=По умолчанию: %s
+betterfps.options.default.vanilla=По умолчанию в ванили: %s
+betterfps.options.default.betterfps=По умолчанию в BetterFps: %s
+betterfps.options.restart=Требуется перезапуск для вступления изменений в силу
+
+# Графический Интерфейс, Рестарт
+betterfps.options.restart.dialog.1=Чтобы применить некоторые изменения, необходимо перезапустить игру
+betterfps.options.restart.dialog.2=Вы хотите перезапустить сейчас?
+
+# Графический Интерфейс, Опции Алгоритмов
+betterfps.options.algorithm.title=Алгоритм
+betterfps.options.algorithm.desc=Алгоритм вычисления синуса и косинуса
+betterfps.options.algorithm.action=Нажмите Shift, чтобы проверить Алгоритмы (это займет несколько секунд)
+
+# Графический Интерфейс, Значения Параметров Алгоритмов
+betterfps.options.algorithm.vanilla=Ванильный Алгоритм
+betterfps.options.algorithm.rivens=Riven's Алгоритм
+betterfps.options.algorithm.taylors=Taylor's Алгоритм
+betterfps.options.algorithm.libgdx=LibGDX's Алгоритм
+betterfps.options.algorithm.rivens-full=Riven's "Полный" Алгоритм
+betterfps.options.algorithm.rivens-half=Riven's "Половина" Алгоритма
+betterfps.options.algorithm.java=Java Математика
+betterfps.options.algorithm.random=Случайная Математика
+
+# Графический Интерфейс, Опции Проверки Обновлений
+betterfps.options.updatechecker.title=Проверка Обновлений
+betterfps.options.updatechecker.desc=Будут ли проверяться обновления при запуске
+betterfps.options.updatechecker.action=Нажмите Shift, чтобы проверить наличие обновлений (это займет несколько секунд)
+
+# Графический Интерфейс, Опция Предварительной Загрузки в Память
+betterfps.options.allocmemory.title=Предзагруженная Память
+betterfps.options.allocmemory.desc=Будет ли он предварительно распределять 10 МБ при запуске
+
+# Графический Интерфейс, Опции Тумана
+betterfps.options.fog.title=Туман
+betterfps.options.fog.desc=Будет ли появляться туман
+
+# Графический Интерфейс, Опции Лучей Маяка
+betterfps.options.beaconbeam.title=Луч Маяка
+betterfps.options.beaconbeam.desc=Будет ли отображаться прозрачный слой луча маяка
+
+# Графический Интерфейс, Опции Быстрых Воронок
+betterfps.options.hopper.title=Быстрая Воронка
+betterfps.options.hopper.desc=Будут ли улучшения в вононках включены
+
+# Графический Интерфейс, Опции Быстрых Маяков
+betterfps.options.beacon.title=Быстрый Маяк
+betterfps.options.beacon.desc=Будут ли улучшены маяки
+
+# Графический Интерфейс, Опции Быстрого Творческого Поиска
+betterfps.options.creativesearch.title=Быстрый Творческий Поиск
+betterfps.options.creativesearch.desc=Будут ли улучшения для поиска
