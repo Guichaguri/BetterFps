@@ -317,7 +317,8 @@ public class BetterFpsInstaller {
     }
 
     private static String getDateISO() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        // ISO 8601
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         return format.format(new Date());
     }
 
