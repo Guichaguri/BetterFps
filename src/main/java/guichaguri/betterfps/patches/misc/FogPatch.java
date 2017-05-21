@@ -6,6 +6,7 @@ import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IResourceManager;
 
 /**
@@ -21,7 +22,10 @@ public abstract class FogPatch extends EntityRenderer {
     @Condition(Conditions.FOG_DISABLED)
     @Override
     public void setupFog(int startCoords, float partialTicks) {
-        if(startCoords != -1) return;
+        if(startCoords != -1) {
+            GlStateManager.disableFog();
+            return;
+        }
         super.setupFog(startCoords, partialTicks);
     }
 
