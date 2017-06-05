@@ -7,7 +7,9 @@ import guichaguri.betterfps.transformers.Conditions;
 import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,18 +22,28 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 
 /**
+ * The search algorithm is still the same
+ * But the amount of work it has to do has been reduced
+ * Before this improvement, the search would have to rebuild its results every time the text changed
+ * Now, the search only rebuilds completely when necessary
+ * It will also significantly reduce the amount of rebuilding work when adding/removing characters
+ *
  * @author Guilherme Chaguri
  */
 @Condition(Conditions.FAST_SEARCH)
 public abstract class FastCreativeSearch extends GuiContainerCreative implements IMultithreaded {
+
     @Copy
     private Thread searchThread;
-    @Copy
-    private boolean asyncSearch;
+
     @Copy
     private String oldSearchText;
+
     @Copy
     private NonNullList<ItemStack> itemBuffer;
+
+    @Copy
+    private boolean asyncSearch;
 
     public FastCreativeSearch(EntityPlayer player) {
         super(player);
@@ -42,8 +54,10 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
     public void initGui() {
         // When the Gui is initialized, let's initialize our variables
 
-        if(itemBuffer == null) itemBuffer = NonNullList.create();
         asyncSearch = BetterFpsHelper.getConfig().asyncSearch;
+        if(!asyncSearch) {
+            if(itemBuffer == null) itemBuffer = NonNullList.create();
+        }
     }
 
     @Copy(Mode.PREPEND)
@@ -51,32 +65,81 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
     public void setCurrentCreativeTab(CreativeTabs tab) {
         // When the tab changes, clear the search history so when the search field is shown again, it will rebuild the results
 
-        Multithreading.stop(searchThread);
-        searchThread = null;
+        if(asyncSearch) {
+            Multithreading.stop(searchThread);
+            searchThread = null;
+        }
         oldSearchText = null;
     }
 
     @Copy(Mode.REPLACE)
     @Override
     public void updateCreativeSearch() {
-        Multithreading.stop(searchThread);
-        searchThread = Multithreading.start(this, "search", asyncSearch);
+        if(asyncSearch) {
+            Multithreading.stop(searchThread);
+            searchThread = Multithreading.start(this, "search");
+        } else {
+            updateCreativeSearchSync();
+        }
     }
 
-    @Copy(Mode.COPY)
+    /**
+     * Asynchronously updates the search
+     */
+    @Copy
     @Override
     public void run(String task) {
-        updateCreativeSearchSync();
+        String search = searchField.getText().toLowerCase(Locale.ROOT);
+        boolean rebuildCache = false;
+        GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)inventorySlots;
+        GuiContainerCreative.ContainerCreative containerBuffer = new ContainerCreative(mc.player);
+        List<ItemStack> itemBuffer = null;
+
+        if(oldSearchText == null) {
+            // The cache is null, rebuild it
+            rebuildCache = true;
+        } else if(search.equals(oldSearchText)) {
+            // Text is the same - Update the screen
+            currentScroll = 0.0F;
+            container.scrollTo(0.0F);
+            return;
+        } else if(search.startsWith(oldSearchText)) {
+            // Text added - Use current results and just refine them
+            containerBuffer.itemList.addAll(container.itemList);
+        } else if(oldSearchText.startsWith(search)) {
+            // Text removed - Leave current results and look for new ones
+            itemBuffer = new ArrayList<ItemStack>(container.itemList);
+            updateBaseItems(containerBuffer);
+            updateFilteredItems(containerBuffer);
+        } else {
+            // Unknown? - Rebuild cache
+            rebuildCache = true;
+        }
+
+        if(rebuildCache) {
+            // Rebuild results again
+            containerBuffer.itemList.clear();
+            updateBaseItems(containerBuffer);
+            updateFilteredItems(containerBuffer);
+        }
+
+        // Update the search
+        updateSearch(containerBuffer.itemList.iterator(), itemBuffer, search);
+
+        // Invert Containers
+        inventorySlots = containerBuffer;
+        // Update the cache text
+        oldSearchText = search;
+        // Update the screen
+        currentScroll = 0.0F;
+        containerBuffer.scrollTo(0.0F);
     }
 
+    /**
+     * Synchronously update the search
+     */
     @Copy
     public void updateCreativeSearchSync() {
-        // The search algorithm is still the same
-        // But the amount of work it has to do has been reduced
-        // Before this improvement, the search would have to rebuild its results every time the text changed
-        // Now, the search only rebuilds completely when necessary
-        // It will also significantly reduce the amount of rebuilding work when adding/removing characters
-
         String search = searchField.getText().toLowerCase(Locale.ROOT);
         boolean rebuildCache = false;
         GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)inventorySlots;
@@ -85,12 +148,12 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
             // The cache is null, rebuild it
             rebuildCache = true;
         } else if(search.equals(oldSearchText)) {
-            // Text is the same - do nothing
+            // Text is the same - Do nothing
             return;
         } else if(search.startsWith(oldSearchText)) {
             // Text added - Use current results and just refine them
         } else if(oldSearchText.startsWith(search)) {
-            // Text removed - Ignore current results and look for new ones
+            // Text removed - Leave current results and look for new ones
             NonNullList<ItemStack> items = container.itemList;
             container.itemList = itemBuffer;
             itemBuffer = items;
@@ -108,8 +171,21 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
             updateFilteredItems(container);
         }
 
-        Iterator<ItemStack> iterator = container.itemList.iterator();
-        boolean lookupBuffer = !itemBuffer.isEmpty();
+        // Update the search
+        updateSearch(container.itemList.iterator(), itemBuffer, search);
+
+        // Clean up the item buffer
+        itemBuffer.clear();
+        // Update the cache text
+        oldSearchText = search;
+        // Update the screen
+        currentScroll = 0.0F;
+        container.scrollTo(0.0F);
+    }
+
+    @Copy
+    private void updateSearch(Iterator<ItemStack> iterator, List<ItemStack> itemBuffer, String search) {
+        boolean lookupBuffer = itemBuffer != null && !itemBuffer.isEmpty();
         EntityPlayer player = mc.player;
         boolean advancedTooltips = mc.gameSettings.advancedItemTooltips;
 
@@ -127,12 +203,6 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
             }
             if(shouldRemove) iterator.remove();
         }
-
-        if(lookupBuffer) itemBuffer.clear();
-        oldSearchText = search;
-
-        this.currentScroll = 0.0F;
-        container.scrollTo(0.0F);
     }
 
     @Copy
