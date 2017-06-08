@@ -30,7 +30,7 @@ public class GuiRestartDialog extends GuiScreen {
 
         for(int i = 0; i < dialogTextAmount; i++) {
             String msg = I18n.format("betterfps.options.restart.dialog." + (i + 1));
-            drawCenteredString(fontRendererObj, msg, centerX, centerY - ((dialogTextAmount - i) * fontRendererObj.FONT_HEIGHT), 0xFFFFFF);
+            drawCenteredString(fontRenderer, msg, centerX, centerY - ((dialogTextAmount - i) * fontRenderer.FONT_HEIGHT), 0xFFFFFF);
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

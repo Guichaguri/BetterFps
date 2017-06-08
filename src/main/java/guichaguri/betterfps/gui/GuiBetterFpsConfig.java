@@ -107,7 +107,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
 
         GlStateManager.translate(0, lastScrollY, 0);
         for(int i = 0; i < options.size(); ++i) {
-            options.get(i).drawButton(mc, mouseX, mouseYScroll);
+            options.get(i).func_191745_a(mc, mouseX, mouseYScroll, partialTicks);
         }
         GlStateManager.translate(0, -lastScrollY, 0);
 
@@ -117,15 +117,15 @@ public class GuiBetterFpsConfig extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         int x = width / 2;
-        int y = (30 - fontRendererObj.FONT_HEIGHT) / 2;
+        int y = (30 - fontRenderer.FONT_HEIGHT) / 2;
         if(mouseY < 30) {
             if(Mouse.isButtonDown(1)) {
-                drawCenteredString(fontRendererObj, titleRightClick, x, y, 0xFF0000);
+                drawCenteredString(fontRenderer, titleRightClick, x, y, 0xFF0000);
             } else {
-                drawCenteredString(fontRendererObj, titleMouseOver, x, y, 0xC0C0C0);
+                drawCenteredString(fontRenderer, titleMouseOver, x, y, 0xC0C0C0);
             }
         } else {
-            drawCenteredString(fontRendererObj, title, x, y, 0xFFFFFF);
+            drawCenteredString(fontRenderer, title, x, y, 0xFFFFFF);
         }
 
         if(Mouse.isButtonDown(1)) {
@@ -136,10 +136,10 @@ public class GuiBetterFpsConfig extends GuiScreen {
                 String description = button.getDescription();
                 if(description == null) continue;
 
-                List<String> lines = fontRendererObj.listFormattedStringToWidth(description, width - 10);
+                List<String> lines = fontRenderer.listFormattedStringToWidth(description, width - 10);
 
                 int tooltipY = mouseY + 10;
-                int tooltipHeight = (lines.size() * fontRendererObj.FONT_HEIGHT) + 10;
+                int tooltipHeight = (lines.size() * fontRenderer.FONT_HEIGHT) + 10;
                 int tooltipBottom = tooltipY + tooltipHeight;
 
                 if(tooltipBottom > height) {
@@ -152,7 +152,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
                 tooltipY += 5;
                 int line = 0;
                 for(String l : lines) {
-                    fontRendererObj.drawString(l, 5, tooltipY + (line * fontRendererObj.FONT_HEIGHT), 0xFFFFFF, true);
+                    fontRenderer.drawString(l, 5, tooltipY + (line * fontRenderer.FONT_HEIGHT), 0xFFFFFF, true);
                     line++;
                 }
             }

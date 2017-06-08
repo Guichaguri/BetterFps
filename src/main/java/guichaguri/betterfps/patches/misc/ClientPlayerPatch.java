@@ -6,6 +6,7 @@ import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.world.World;
 
@@ -14,8 +15,8 @@ import net.minecraft.world.World;
  */
 public abstract class ClientPlayerPatch extends EntityPlayerSP {
 
-    public ClientPlayerPatch(Minecraft mcIn, World worldIn, NetHandlerPlayClient netHandler, StatisticsManager statFile) {
-        super(mcIn, worldIn, netHandler, statFile);
+    public ClientPlayerPatch(Minecraft p_i47378_1_, World p_i47378_2_, NetHandlerPlayClient p_i47378_3_, StatisticsManager p_i47378_4_, RecipeBook p_i47378_5_) {
+        super(p_i47378_1_, p_i47378_2_, p_i47378_3_, p_i47378_4_, p_i47378_5_);
     }
 
     @Copy(Mode.REPLACE)

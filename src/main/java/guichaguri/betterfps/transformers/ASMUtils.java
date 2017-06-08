@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -218,6 +219,26 @@ public class ASMUtils {
         return findNodes(nodes, type, opcode, null, null, null);
     }
 
+    public static <T extends AbstractInsnNode> T findNode(InsnList nodes, Class<T> type, int index, Predicate<T> predicate) {
+        if(index >= 0) {
+            for(int i = 0; i < nodes.size(); i++) {
+                AbstractInsnNode node = nodes.get(i);
+                if(node.getClass() == type && predicate.test((T)node)) {
+                    if(index-- <= 0) return (T)node;
+                }
+            }
+        } else {
+            for(int i = nodes.size() - 1; i >= 0; i--) {
+                AbstractInsnNode node = nodes.get(i);
+                if(node.getClass() == type && predicate.test((T)node)) {
+                    if(index++ >= -1) return (T)node;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static <T extends AbstractInsnNode> T findNode(InsnList nodes, Class<T> type, int opcode, int index,
                                                           String owner, String name, String desc) {
         for(int i = 0; i < nodes.size(); i++) {
@@ -243,6 +264,16 @@ public class ASMUtils {
 
     public static <T extends AbstractInsnNode> T findNode(InsnList nodes, Class<T> type, int opcode, int index) {
         return findNode(nodes, type, opcode, index, null, null, null);
+    }
+
+    public static void replace(InsnList list, AbstractInsnNode from, AbstractInsnNode to) {
+        list.insertBefore(from, to);
+        list.remove(from);
+    }
+
+    public static void replace(InsnList list, AbstractInsnNode from, InsnList to) {
+        list.insertBefore(from, to);
+        list.remove(from);
     }
 
     public static LocalVariableNode findVariable(MethodNode method, int index) {

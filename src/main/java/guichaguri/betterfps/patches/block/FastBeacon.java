@@ -6,16 +6,17 @@ import guichaguri.betterfps.transformers.annotations.Condition;
 import guichaguri.betterfps.transformers.annotations.Copy;
 import guichaguri.betterfps.transformers.annotations.Copy.Mode;
 import java.util.Arrays;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -216,8 +217,8 @@ public abstract class FastBeacon extends TileEntityBeacon {
         if(!isClient && levels == 4 && levelsOld < levels) {
             // Give the full beacon achievement
             AxisAlignedBB box = new AxisAlignedBB(x, y, z, x, y - 4, z).expand(10.0, 5.0, 10.0);
-            for(EntityPlayer player : world.getEntitiesWithinAABB(EntityPlayer.class, box)) {
-                player.addStat(AchievementList.FULL_BEACON);
+            for(EntityPlayerMP player : world.getEntitiesWithinAABB(EntityPlayerMP.class, box)) {
+                CriteriaTriggers.field_192131_k.func_192180_a(player, this);
             }
         }
     }

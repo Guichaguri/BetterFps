@@ -12,10 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
+import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -75,6 +75,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
     @Copy(Mode.REPLACE)
     @Override
     public void updateCreativeSearch() {
+        // TODO REDO
         if(asyncSearch) {
             Multithreading.stop(searchThread);
             searchThread = Multithreading.start(this, "search");
@@ -89,6 +90,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
     @Copy
     @Override
     public void run(String task) {
+        // TODO REDO
         String search = searchField.getText().toLowerCase(Locale.ROOT);
         boolean rebuildCache = false;
         GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)inventorySlots;
@@ -140,6 +142,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
      */
     @Copy
     public void updateCreativeSearchSync() {
+        // TODO REDO
         String search = searchField.getText().toLowerCase(Locale.ROOT);
         boolean rebuildCache = false;
         GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)inventorySlots;
@@ -185,9 +188,10 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
 
     @Copy
     private void updateSearch(Iterator<ItemStack> iterator, List<ItemStack> itemBuffer, String search) {
+        // TODO REDO
         boolean lookupBuffer = itemBuffer != null && !itemBuffer.isEmpty();
         EntityPlayer player = mc.player;
-        boolean advancedTooltips = mc.gameSettings.advancedItemTooltips;
+        TooltipFlags advancedTooltips = mc.gameSettings.advancedItemTooltips ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
 
         while(iterator.hasNext()) {
             ItemStack itemstack = iterator.next();
@@ -219,7 +223,7 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
 
         for(Item item : Item.REGISTRY) {
             if(item != null && item.getCreativeTab() != null) {
-                item.getSubItems(item, null, list);
+                item.getSubItems(tab, list);
             }
         }
     }
@@ -234,7 +238,8 @@ public abstract class FastCreativeSearch extends GuiContainerCreative implements
 
         for(Enchantment enchantment : Enchantment.REGISTRY) {
             if(enchantment != null && enchantment.type != null) {
-                Items.ENCHANTED_BOOK.getAll(enchantment, list);
+                //TODO
+                //Items.ENCHANTED_BOOK.getAll(enchantment, list);
             }
         }
     }
