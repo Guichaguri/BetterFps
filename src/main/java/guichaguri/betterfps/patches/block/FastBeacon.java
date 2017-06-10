@@ -214,8 +214,8 @@ public abstract class FastBeacon extends TileEntityBeacon {
             isComplete = false;
         }
 
-        if(!isClient && levels == 4 && levelsOld < levels) {
-            // Give the full beacon achievement
+        if(!isClient && levelsOld < levels) {
+            // Give the full beacon advancement
             AxisAlignedBB box = new AxisAlignedBB(x, y, z, x, y - 4, z).expand(10.0, 5.0, 10.0);
             for(EntityPlayerMP player : world.getEntitiesWithinAABB(EntityPlayerMP.class, box)) {
                 CriteriaTriggers.field_192131_k.func_192180_a(player, this);

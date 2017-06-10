@@ -18,7 +18,7 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
 
-version = "1.4.5"
+version = "1.4.6"
 group = "guichaguri.betterfps"
 archivesBaseName = "BetterFps"
 

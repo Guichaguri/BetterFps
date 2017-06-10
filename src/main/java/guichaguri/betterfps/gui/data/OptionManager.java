@@ -102,14 +102,14 @@ public class OptionManager {
         buttons.add(beacon);
 
         // Creative Search Improvement
-        GuiConfigOption<Integer> search;
+        /*GuiConfigOption<Integer> search;
         search = new GuiConfigOption<Integer>(7, "betterfps.options.creativesearch.title");
         search.add(0, "betterfps.options.off");
         search.add(1, "betterfps.options.on");
         search.add(2, "betterfps.options.async");
         search.setDefaults(0, 2, !config.fastSearch ? 0 : (!config.asyncSearch ? 1 : 2));
         search.setDescription(I18n.format("betterfps.options.creativesearch.desc"));
-        buttons.add(search);
+        buttons.add(search);*/
     }
 
     public static boolean store(List<GuiConfigOption> buttons) {
@@ -124,13 +124,13 @@ public class OptionManager {
         config.fastHopper = getButtonValue(buttons, 5);
         config.fastBeacon = getButtonValue(buttons, 6);
 
-        int search = getButtonValue(buttons, 7, 0);
+        /*int search = getButtonValue(buttons, 7, 0);
         if(config.fastSearch != (search != 0)) {
             // TODO: change this to a better solution
             restart = Conditions.isPatched(Mappings.C_GuiContainerCreative);
         }
         config.fastSearch = search != 0;
-        config.asyncSearch = search == 2;
+        config.asyncSearch = search == 2;*/
 
         for(GuiConfigOption button : buttons) {
             if(button.shouldRestart()) return true;
