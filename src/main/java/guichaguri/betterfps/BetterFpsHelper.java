@@ -3,7 +3,7 @@ package guichaguri.betterfps;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileReader;
-import org.apache.commons.io.FileUtils;
+import java.io.FileWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,8 +62,6 @@ public class BetterFpsHelper {
             if(CONFIG_FILE.exists()) {
                 reader = new FileReader(CONFIG_FILE);
                 INSTANCE = new Gson().fromJson(reader, BetterFpsConfig.class);
-            } else {
-                INSTANCE = new BetterFpsConfig();
             }
         } catch(Exception ex) {
             LOG.error("Could not load the config file", ex);
@@ -71,18 +69,21 @@ public class BetterFpsHelper {
             IOUtils.closeQuietly(reader);
         }
 
+        if(INSTANCE == null) INSTANCE = new BetterFpsConfig();
+
         saveConfig();
     }
 
     public static void saveConfig() {
+        FileWriter writer = null;
         try {
-            if(!CONFIG_FILE.exists()) {
-                CONFIG_FILE.getParentFile().mkdirs();
-                CONFIG_FILE.createNewFile();
-            }
-            FileUtils.writeStringToFile(CONFIG_FILE, new Gson().toJson(INSTANCE));
+            if(!CONFIG_FILE.exists()) CONFIG_FILE.getParentFile().mkdirs();
+            writer = new FileWriter(CONFIG_FILE);
+            new Gson().toJson(INSTANCE, writer);
         } catch(Exception ex) {
             LOG.error("Could not save the config file", ex);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 
