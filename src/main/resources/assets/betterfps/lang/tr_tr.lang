@@ -1,0 +1,111 @@
+# Turkish Contributors
+# MCCCS - https://github.com/mcccs
+
+# Updater
+betterfps.update.available=BetterFps %s mevcut!
+betterfps.update.prompt=Yeni sürüm indirilsin mi?
+betterfps.update.button.download=[İndir]
+betterfps.update.button.download.info=Yeni sürümü indirmek için buraya tıklayın
+betterfps.update.button.more=[Diğer]
+betterfps.update.button.more.info=Diğer sürümler için buraya tıklayın
+
+# Updater Messages
+betterfps.update.phrase.1=Yine rahatsız edici bir güncelleme.
+betterfps.update.phrase.2=§mBuraya Reklam Verin
+betterfps.update.phrase.3=Yeni güncelleme çıktığını görmek insanı azimle doldurur.
+betterfps.update.phrase.4=Stanley güncelleme hatırlatıcısını gördüğünde “indir” düğmesine bastı.
+betterfps.update.phrase.5=Yine mi? D:
+betterfps.update.phrase.6=<3
+betterfps.update.phrase.7=Sadece bu hatırlatıcıdan kurtulmak için güncelleyeceğinizi biliyorum.
+betterfps.update.phrase.8=En azından ücretsiz...
+betterfps.update.phrase.9=Yine mi o rahatsız edici güncelleme denetleyici? (╯°□°）╯︵ §m┻━━┻
+betterfps.update.phrase.10=Eski hatalar düzeltildi, fakat yeni hatalar da eklendi ¯\_(ツ)_/¯
+betterfps.update.phrase.11=Çünkü otomatik güncellemeler oyununuzu bozabilir.
+betterfps.update.phrase.12=Yeni bir şey mi istiyorsunuz? İşte, bu yeni güncellemeyi alın.
+
+# Installer
+betterfps.installer.title=BetterFps Yükleyicisi
+betterfps.installer.versions=Sürüm %s, Minecraft %s için
+betterfps.installer.note.1=Bu yükleyici vanilla Minecraft için Minecraft Başlatıcı kullanılarak yaratılmıştır.
+betterfps.installer.note.2=Forge ya da LiteLoader kullanıyorsanız, dosyayı “mods” klasörüne taşıyın.
+betterfps.installer.note.3=Minecrafr Başlatıcının kapatılıp yeniden açılması gerekebilir.
+betterfps.installer.button.install=Yükle
+betterfps.installer.button.extract=Klasöre Çıkar
+betterfps.installer.button.algorithm=Algoritmaları Test Et
+betterfps.installer.button.downloads=İndirmeler
+betterfps.installer.button.issues=Hatalar/Öneriler
+betterfps.installer.label.game-dir=Minecraft Yükleme Konumu
+betterfps.installer.label.version=Sürüm
+betterfps.installer.label.profile=Profil
+betterfps.installer.done=Bitti! (%sms)
+betterfps.installer.algorithm.title=Algoritma Karşılaştırma
+betterfps.installer.algorithm.button.change=Algoritmayı %s olarak değiştir
+betterfps.installer.algorithm.button.again=Tekrar Karşılaştır
+betterfps.installer.algorithm.working=Algoritmalar Karşılaştırılıyor...
+betterfps.installer.update.check=Güncellemeler Denetleniyor...
+
+# GUI Title
+betterfps.options.title=BetterFps Seçenekleri
+betterfps.options.title.mouseover=Daha fazla bilgi için düğmelere sağ tuşla basılı tutun
+betterfps.options.title.rightclick=Bu bir düğme değildir
+
+# GUI Option Values
+betterfps.options.on=Açık
+betterfps.options.off=Kapalı
+betterfps.options.fast=Hızlı
+betterfps.options.fancy=Kaliteli
+betterfps.options.async=Desenkronize
+
+# GUI Option Descriptions
+betterfps.options.default=Varsayılan: %s
+betterfps.options.default.vanilla=Vanilla’da varsayılan: %s
+betterfps.options.default.betterfps=BetterFps’de varsayılan: %s
+betterfps.options.restart=Etki göstermesi için yeniden başlatmanız gerekir
+
+# GUI Restart
+betterfps.options.restart.dialog.1=Bazı değişikliklerin uygulanması için oyunu yeniden başlatmanız gerekir.
+betterfps.options.restart.dialog.2=Şimdi yeniden başlatmak istiyor musunuz?
+
+# GUI Algorithm Option
+betterfps.options.algorithm.title=Algoritma
+betterfps.options.algorithm.desc=Sinüs ve kosinüsün hesaplanması için kullanılan algoritma
+betterfps.options.algorithm.action=Algoritmaları test etmek için buraya sağ tıklayın. (Birkaç saniye sürebilir)
+
+# GUI Algorithm Option Values
+betterfps.options.algorithm.vanilla=Vanilla Algoritması
+betterfps.options.algorithm.rivens=Riven Algoritması
+betterfps.options.algorithm.taylors=Taylor Algoritması
+betterfps.options.algorithm.libgdx=LibGDX Algoritması
+betterfps.options.algorithm.rivens-full=Riven “Tam” Algoritması
+betterfps.options.algorithm.rivens-half=Riven “Yarım” Algoritması
+betterfps.options.algorithm.java=Java Matematiği
+betterfps.options.algorithm.random=Rastgele Matematiği
+
+# GUI Update Checker Option
+betterfps.options.updatechecker.title=Güncelleme Denetleyici
+betterfps.options.updatechecker.desc=Güncellemelerin açılışta aranıp aranmayacağını seçin
+betterfps.options.updatechecker.action=Güncellemeleri aramak için Shift’e basılı tutarak bana basın (Birkaç saniye sürebilir)
+
+# GUI Preallocate Memory Option
+betterfps.options.allocmemory.title=Hafıza Önayalarlama
+betterfps.options.allocmemory.desc=Açılışta 10 MB hafızanın önceden ayrılıp ayrılmayacağını seçin
+
+# GUI Fog Option
+betterfps.options.fog.title=Sis
+betterfps.options.fog.desc=Sisin görünüp görünmeyeceğini seçin
+
+# GUI Beacon Beam Option
+betterfps.options.beaconbeam.title=Beacon Işını
+betterfps.options.beaconbeam.desc=Beacon ışınının şeffaf kısmının görünüp görünmeyeceğini seçin
+
+# GUI Fast Hopper Option
+betterfps.options.hopper.title=Hızlı Hopper
+betterfps.options.hopper.desc=Hopper iyileştirmelerinin uygulanıp uygulanmayacağını seçin
+
+# GUI Fast Beacon Option
+betterfps.options.beacon.title=Hızlı Beacon
+betterfps.options.beacon.desc=Beacon iyileştirmelerinin uygulanıp uygulanmayacağını seçin
+
+# GUI Fast Creative Search Option
+betterfps.options.creativesearch.title=Hızlı Yaratıcı Araması
+betterfps.options.creativesearch.desc=Yaratıcı envanterindeki aramanın iyileştirilip iyileştirilmeyeceğini seçin
