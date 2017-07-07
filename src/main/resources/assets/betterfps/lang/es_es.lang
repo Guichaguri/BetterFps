@@ -1,0 +1,111 @@
+# Spanish Contributors
+# Allinxter_910 - https://twitter.com/Allinxter_910
+
+# Updater
+betterfps.update.available=BetterFps %s está disponible
+betterfps.update.prompt=¿Descargar la nueva versión?
+betterfps.update.button.download=[Descargar]
+betterfps.update.button.download.info=Haz clic aquí para descargar la nueva versión
+betterfps.update.button.more=[Más]
+betterfps.update.button.more.info=Haz clic aquí para ver más versiones
+
+# Updater Messages
+betterfps.update.phrase.1=Otra tonta actualización.
+betterfps.update.phrase.2=§mTu anuncio aquí
+betterfps.update.phrase.3=Ver que salió una nueva actualización, te llena de determinación.
+betterfps.update.phrase.4=Cuando Stanley se encontró con una actualización, la decargó.
+betterfps.update.phrase.5=¡¿Otra vez?! D:
+betterfps.update.phrase.6=<3
+betterfps.update.phrase.7=Actualizarás solo para deshacerte de este recordatorio y lo sabes.
+betterfps.update.phrase.8=Por lo menos es gratis...
+betterfps.update.phrase.9=¿Otro comprobador de actualizaciones molesto? (╯°□°）╯︵ §m┻━━┻
+betterfps.update.phrase.10=Algunos errores resueltos, y muchos otros implementados. ¯\_(ツ)_/¯
+betterfps.update.phrase.11=Porque actualizaciones automáticas podría romper el juego.
+betterfps.update.phrase.12=¿Quieres algo nuevo? Toma, una actualización.
+
+# Installer
+betterfps.installer.title=Instalador de BetterFps
+betterfps.installer.versions=Versión %s para Minecraft %s
+betterfps.installer.note.1=Este instalador fue creado para Minecraft Estandar, utilizando el lanzador oficial.
+betterfps.installer.note.2=Si estás usando LiteLoader o Minecraft Forge, extrae los archivos en la carpeta Mods.
+betterfps.installer.note.3=Quizás necesites reiniciar o cerrar el lanzador.
+betterfps.installer.button.install=Instalar
+betterfps.installer.button.extract=Extraer
+betterfps.installer.button.algorithm=Probar Algoritmos
+betterfps.installer.button.downloads=Descargas
+betterfps.installer.button.issues=Errores/Sugerencias
+betterfps.installer.label.game-dir=Directorio de instalación de Minecraft
+betterfps.installer.label.version=Versión
+betterfps.installer.label.profile=Perfile
+betterfps.installer.done=¡Listo! (en %sms)
+betterfps.installer.algorithm.title=Comprobar Algoritmo
+betterfps.installer.algorithm.button.change=Cambiar Algoritmo a %s
+betterfps.installer.algorithm.button.again=Comprobar otra vez
+betterfps.installer.algorithm.working=Comprobando Algoritmos...
+betterfps.installer.update.check=Buscando Actualizaciones...
+
+# GUI Title
+betterfps.options.title=Opciones de BetterFps
+betterfps.options.title.mouseover=Mantén clic derecho en un botón para más información
+betterfps.options.title.rightclick=Esto no es un botón
+
+# GUI Option Values
+betterfps.options.on=Si
+betterfps.options.off=No
+betterfps.options.fast=Rápido
+betterfps.options.fancy=Detallado
+betterfps.options.async=Asinc.
+
+# GUI Option Descriptions
+betterfps.options.default=Predeterminado: %s
+betterfps.options.default.vanilla=Predeterminado en Enstandar: %s
+betterfps.options.default.betterfps=Predeterminado en BetterFps: %s
+betterfps.options.restart=Requiere reiniciar para hacer efecto
+
+# GUI Restart
+betterfps.options.restart.dialog.1=Necesitas reiniciar el juego para guardar los cambios.
+betterfps.options.restart.dialog.2=¿Quieres reiniciar ahora?
+
+# GUI Algorithm Option
+betterfps.options.algorithm.title=Algoritmo
+betterfps.options.algorithm.desc=El algoritmo para determinar el Seno y el Coseno
+betterfps.options.algorithm.action=Mantén Shift y has clic para probar el Algoritmo (Tomará un par de segundos)
+
+# GUI Algorithm Option Values
+betterfps.options.algorithm.vanilla=Algoritmo Estandar
+betterfps.options.algorithm.rivens=Algoritmo de Riven
+betterfps.options.algorithm.taylors=Algoritmo de Taylor
+betterfps.options.algorithm.libgdx=Algoritmo de LibGDX
+betterfps.options.algorithm.rivens-full=Algoritmo de Riven al completo
+betterfps.options.algorithm.rivens-half=Algoritmo de Riven a medias
+betterfps.options.algorithm.java=Matemática de Java
+betterfps.options.algorithm.random=Matemática al azar
+
+# GUI Update Checker Option
+betterfps.options.updatechecker.title=Comprobador de Actualizaciones
+betterfps.options.updatechecker.desc=Decide si se buscan actualizaciones al iniciar o no
+betterfps.options.updatechecker.action=Mantén Shift y haz clic para buscar actualizaciones (Tomará un par de segundos)
+
+# GUI Preallocate Memory Option
+betterfps.options.allocmemory.title=Memoria Preasignada
+betterfps.options.allocmemory.desc=Decide si se asignan 10MB al iniciar
+
+# GUI Fog Option
+betterfps.options.fog.title=Niebla
+betterfps.options.fog.desc=Decide si se renderizará la niebla
+
+# GUI Beacon Beam Option
+betterfps.options.beaconbeam.title=Haz del Faro
+betterfps.options.beaconbeam.desc=Decide si se renderizará la capa transparente del Haz del faro
+
+# GUI Fast Hopper Option
+betterfps.options.hopper.title=Tolvas Rápidas
+betterfps.options.hopper.desc=Decide si se activan las mejoras a las Tolvas
+
+# GUI Fast Beacon Option
+betterfps.options.beacon.title=Faros Rápidos
+betterfps.options.beacon.desc=Decide si se activa la mejora a los Faros
+
+# GUI Fast Creative Search Option
+betterfps.options.creativesearch.title=Búsqueda Rápida del Inv. Creativo
+betterfps.options.creativesearch.desc=Decide si se activan las mejoras a la búsqueda del modo Creativo.
