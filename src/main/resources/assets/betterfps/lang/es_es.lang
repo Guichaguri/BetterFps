@@ -39,9 +39,9 @@ betterfps.installer.label.version=Versión
 betterfps.installer.label.profile=Perfile
 betterfps.installer.done=¡Listo! (en %sms)
 betterfps.installer.algorithm.title=Comprobar Algoritmo
-betterfps.installer.algorithm.button.change=Cambiar Slgoritmo a %s
+betterfps.installer.algorithm.button.change=Cambiar Algoritmo a %s
 betterfps.installer.algorithm.button.again=Comprobar otra vez
-betterfps.installer.algorithm.working=Comprobando Slgoritmos...
+betterfps.installer.algorithm.working=Comprobando Algoritmos...
 betterfps.installer.update.check=Buscando Actualizaciones...
 
 # GUI Title
@@ -83,7 +83,7 @@ betterfps.options.algorithm.random=Matemática al azar
 
 # GUI Update Checker Option
 betterfps.options.updatechecker.title=Comprobador de Actualizaciones
-betterfps.options.updatechecker.desc=Esto decide si se buscan actualizaciones al iniciar o no
+betterfps.options.updatechecker.desc=Decide si se buscan actualizaciones al iniciar o no
 betterfps.options.updatechecker.action=Mantén Shift y haz clic para buscar actualizaciones (Tomará un par de segundos)
 
 # GUI Preallocate Memory Option
