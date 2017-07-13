@@ -15,12 +15,12 @@ public class TaylorOptimizedMath {
       if( x > BF_SIN_TO_COS )
         x = Math.PI - x;
       
-      if( x <= 0.174 ){ // 10 degs- 0 based, 100% precise http://www.emathhelp.net/calculators/calculus-1/taylor-and-maclaurin-series-calculator/?f=sin+%28x%29&p=5+pi+%2F36&n=3
+      if( x <= 0.174 ){ // 10 degs- 0 based, 100% precise
 		double x2 = x * x;
 		double x3 = x2 * x;
 
 		return (float) (x - x3 * 0.16666666666666666666666666666667 + x2 * x3 * 0.00833333333333333333333333333333);
-      } else if ( x <= 0.352 ) { //350 = stable 20 degs - 15 based, 100% precise https://www.compilejava.net
+      } else if ( x <= 0.352 ) { //350 = stable 20 degs - 15 based, 100% precise
         x -= 0.26179938779914943653855361527329;
         double x2 = x * x;
         double x3 = x2 * x;
@@ -33,7 +33,7 @@ public class TaylorOptimizedMath {
         double x2 = x * x;
         double x3 = x2 * x;
       	return (float) (0.3583679495453002734841377894134668 + x * 0.9335804264972017489900430631395707 - x2 * 0.1791839747726501367420688947067334 - x3 * 0.1555967377495336248316738438565951 + x3 * x * 0.01493199789772084472850574122556112);
-      } else if ( x <= 0.52 ) { //min: 0.35555 // 30 degs - 24 based, last digit +- 2 http://keisan.casio.com/calculator
+      } else if ( x <= 0.52 ) { //min: 0.35555 // 30 degs - 24 based, last digit +- 2
         x -= 0.4188790204786390984616857844372671;
         double x2 = x * x;
         double x3 = x2 * x;
