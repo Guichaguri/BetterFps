@@ -1,0 +1,126 @@
+# Traditional Chinese Contributors
+# jh1226 - jonathanho1226@gmail.com
+
+# Updater
+betterfps.update.available=BetterFps %s 現已可用
+betterfps.update.prompt=下載新版本？
+betterfps.update.button.download=[下載]
+betterfps.update.button.download.info=點此下載新版本
+betterfps.update.button.more=[更多]
+betterfps.update.button.more.info=點此獲取更多版本
+
+
+# Updater Messages
+betterfps.update.phrase.1=只是另一個煩人的更新。
+betterfps.update.phrase.2=§m在此打廣告
+betterfps.update.phrase.3=新更新的推出使你充滿了決心。
+betterfps.update.phrase.4=當Stanley看見更新提醒，他按下了「下載」按鈕。
+betterfps.update.phrase.5=不會這樣了D:
+betterfps.update.phrase.6=<3
+betterfps.update.phrase.7=我知道你會為了擺脫這個提醒而更新的
+betterfps.update.phrase.8=至少，這是免費……
+betterfps.update.phrase.9=又一個煩人的更新檢測器？(╯°□°）╯︵ §m┻━━┻
+betterfps.update.phrase.10=一些漏洞被修復了，但是一些新的被引進了 ˉ\_(ツ)_/ˉ
+betterfps.update.phrase.11=因為自動更新可能會把你的遊戲弄得亂七八糟
+betterfps.update.phrase.12=你想要些新東西嗎？看，有一個更新。
+
+
+# Installer
+betterfps.installer.title=BetterFps安装程序
+betterfps.installer.versions=版本%s 適用於 Minecraft %s
+betterfps.installer.note.1=此安装程序是為使用官方啟動器的純Minecraft而建。
+betterfps.installer.note.2=如果你正在使用Forge或LiteLoader，將本檔提取至mods資料夾裡。
+betterfps.installer.note.3=啟動器或許需要被關閉或重啟。
+betterfps.installer.button.install=安裝
+betterfps.installer.button.extract=提取
+betterfps.installer.button.algorithm=測試演算法
+betterfps.installer.button.downloads=下載
+betterfps.installer.button.issues=漏洞/建議
+betterfps.installer.label.game-dir=Minecraft安裝目錄
+betterfps.installer.label.version=版本
+betterfps.installer.label.profile=版本列表
+betterfps.installer.done=完成！（%sms）
+betterfps.installer.algorithm.title=檢測演算法
+betterfps.installer.algorithm.button.change=改用%s演算法
+betterfps.installer.algorithm.button.again=重新檢測
+betterfps.installer.algorithm.working=正在檢測演算法……
+betterfps.installer.update.check=正在檢測更新……
+
+
+# GUI Title
+betterfps.options.title=BetterFps設定
+betterfps.options.title.mouseover=在按鈕上右擊以獲取資訊
+betterfps.options.title.rightclick=這不是一個按鈕
+
+
+# GUI Option Values
+betterfps.options.on=開啟
+betterfps.options.off=關閉
+betterfps.options.fast=快速
+betterfps.options.fancy=精細
+betterfps.options.async=Async
+
+
+# GUI Option Descriptions
+betterfps.options.default=默認：%s
+betterfps.options.default.vanilla=在默認下的原版：%s
+betterfps.options.default.betterfps=在默認下的BetterFps：%s
+betterfps.options.restart=需要重新啟動Minecraft才能生效
+
+
+# GUI Restart
+betterfps.options.restart.dialog.1=為應用一些修改，您需要重啟您的遊戲
+betterfps.options.restart.dialog.2=您想現在就重啟嗎？
+
+
+# GUI Algorithm Option
+betterfps.options.algorithm.title=演算法
+betterfps.options.algorithm.desc=計算正弦和余弦的演算法
+betterfps.options.algorithm.action=Shift-點擊我以測試演算法（這需要幾秒鐘的時間）
+
+
+# GUI Algorithm Option Values
+betterfps.options.algorithm.vanilla=原版演算法
+betterfps.options.algorithm.rivens=Riven的演算法
+betterfps.options.algorithm.taylors=Taylor的演算法
+betterfps.options.algorithm.libgdx=LibGDX的演算法
+betterfps.options.algorithm.rivens-full=Riven的“完整”演算法
+betterfps.options.algorithm.rivens-half=Riven的“一半”演算法
+betterfps.options.algorithm.java=Java演算法
+betterfps.options.algorithm.random=隨機演算法
+
+
+# GUI Update Checker Option
+betterfps.options.updatechecker.title=更新檢測器
+betterfps.options.updatechecker.desc=會否在啟動時檢查更新
+betterfps.options.updatechecker.action=Shift-點擊我以檢測更新（這需要幾秒鐘的時間）
+
+
+# GUI Preallocate Memory Option
+betterfps.options.allocmemory.title=預先分配記憶體
+betterfps.options.allocmemory.desc=在啟動時應否預留10MB記憶體
+
+
+# GUI Fog Option
+betterfps.options.fog.title=霧
+betterfps.options.fog.desc=是否繪製霧
+
+
+# GUI Beacon Beam Option
+betterfps.options.beaconbeam.title=信標光束
+betterfps.options.beaconbeam.desc=是否繪製信標光束的透明層
+
+
+# GUI Fast Hopper Option
+betterfps.options.hopper.title=快速漏斗
+betterfps.options.hopper.desc=是否改進漏斗
+
+
+# GUI Fast Beacon Option
+betterfps.options.beacon.title=快速信標
+betterfps.options.beacon.desc=是否改進信標
+
+
+# GUI Fast Creative Search Option
+betterfps.options.creativesearch.title=快速搜索
+betterfps.options.creativesearch.desc=是否改進搜索機制
