@@ -235,11 +235,11 @@ public class BetterFpsInstaller {
 
         version.set("id", versionName);
         version.set("inheritsFrom", oldId);
-        version.set("jar", version.getString("jar", oldId));
+        version.set("jar", original.getString("jar", oldId));
         version.set("mainClass", "net.minecraft.launchwrapper.Launch");
         version.set("time", date);
         version.set("releaseTime", date);
-        version.set("type", "release");
+        version.set("type", original.getString("type", "release"));
 
         String arguments = original.getString("minecraftArguments", "");
         version.set("minecraftArguments", String.format("%s --tweakClass %s", arguments, TWEAK_CLASS));

@@ -52,10 +52,10 @@ public abstract class OptionsButton extends GuiScreen {
                 } else {
                     // Replace the language button to the icon version, using the rest of the space for our button
                     buttonList.remove(language);
-                    language = new GuiButtonLanguage(language.id, language.xPosition, language.yPosition);
+                    language = new GuiButtonLanguage(language.id, language.x, language.y);
                     buttonList.add(language);
-                    x_BF = language.xPosition + language.getButtonWidth();
-                    y_BF = language.yPosition;
+                    x_BF = language.x + language.getButtonWidth();
+                    y_BF = language.y;
                     width_BF -= language.getButtonWidth();
                 }
 
@@ -72,8 +72,8 @@ public abstract class OptionsButton extends GuiScreen {
         int y2 = y + 20;
 
         for(GuiButton b : buttonList) {
-            int bX = b.xPosition;
-            int bY = b.yPosition;
+            int bX = b.x;
+            int bY = b.y;
             if(x2 > bX && y2 > bY && x < bX + b.getButtonWidth() && y < bY + 20) return true;
         }
         return false;

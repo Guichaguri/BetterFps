@@ -18,15 +18,15 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
 
-version = "1.4.6"
+version = "1.4.7"
 group = "guichaguri.betterfps"
 archivesBaseName = "BetterFps"
 
 minecraft {
-    version = "1.12"
+    version = "1.12.1"
     runDir = "run"
     tweakClass = "guichaguri.betterfps.tweaker.BetterFpsTweaker"
-    mappings = "snapshot_20170608"
+    mappings = "snapshot_20170624"
 
     at 'betterfps_at.cfg'
 }

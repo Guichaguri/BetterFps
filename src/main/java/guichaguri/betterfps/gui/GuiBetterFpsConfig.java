@@ -55,16 +55,16 @@ public class GuiBetterFpsConfig extends GuiScreen {
 
             if(button.isWide()) {
                 y += 25;
-                button.xPosition = xLeft;
+                button.x = xLeft;
                 button.setWidth(310);
             } else {
                 if(left) y += 25;
-                button.xPosition = left ? xLeft : xRight;
+                button.x = left ? xLeft : xRight;
                 button.setWidth(150);
                 left = !left;
             }
 
-            button.yPosition = y;
+            button.y = y;
         }
 
         pageHeight = y + 60;
@@ -107,7 +107,7 @@ public class GuiBetterFpsConfig extends GuiScreen {
 
         GlStateManager.translate(0, lastScrollY, 0);
         for(int i = 0; i < options.size(); ++i) {
-            options.get(i).func_191745_a(mc, mouseX, mouseYScroll, partialTicks);
+            options.get(i).drawButton(mc, mouseX, mouseYScroll, partialTicks);
         }
         GlStateManager.translate(0, -lastScrollY, 0);
 
