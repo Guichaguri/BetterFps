@@ -38,7 +38,7 @@ betterfps.installer.label.game-dir=Diretório de instalação do Minecraft
 betterfps.installer.label.version=Versão
 betterfps.installer.label.profile=Perfil
 betterfps.installer.done=Concluído (%sms)
-betterfps.installer.algorithm.title=Avaliar algoritmos
+betterfps.installer.algorithm.title=Benchmark de algoritmos
 betterfps.installer.algorithm.button.change=Alterar algoritmo para %s
 betterfps.installer.algorithm.button.again=Avaliar novamente
 betterfps.installer.algorithm.working=Avaliando algoritmos...
@@ -72,7 +72,7 @@ betterfps.options.algorithm.desc=O algoritmo para calcular o seno e cosseno
 betterfps.options.algorithm.action=Pressione Shift e clique aqui para testar os algoritmos (Pode durar alguns segundos)
 
 # GUI Algorithm Option Values
-betterfps.options.algorithm.vanilla=Algoritmo comum
+betterfps.options.algorithm.vanilla=Algoritmo vanilla
 betterfps.options.algorithm.rivens=Algoritmo de Riven
 betterfps.options.algorithm.taylors=Algoritmo de Taylor
 betterfps.options.algorithm.libgdx=Algoritmo de LibGDX
@@ -107,5 +107,5 @@ betterfps.options.beacon.title=Fast Beacon
 betterfps.options.beacon.desc=Habilitar ou desabilitar melhorias do sinalizador
 
 # GUI Fast Creative Search Option
-betterfps.options.creativesearch.title=Procura rápida no Criativo
+betterfps.options.creativesearch.title=Busca rápida no Criativo
 betterfps.options.creativesearch.desc=Aperfeiçoar o mecanismo de busca de itens no modo Criativo
