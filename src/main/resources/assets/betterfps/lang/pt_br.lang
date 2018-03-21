@@ -1,8 +1,9 @@
 # Brazilian Portuguese contributors
+# Guichaguri - https://twitter.com/Guichaguri
 # Diego R. V. - https://crowdin.com/profile/DaDodger
 
 # Updater
-betterfps.update.available=BetterFps %s está disponível?
+betterfps.update.available=BetterFps %s está disponível
 betterfps.update.prompt=Baixar a versão mais recente?
 betterfps.update.button.download=[Baixar]
 betterfps.update.button.download.info=Clique aqui para iniciar o download
@@ -13,13 +14,13 @@ betterfps.update.button.more.info=Clique aqui para ver mais versões
 betterfps.update.phrase.1=Mais uma atualização irritante
 betterfps.update.phrase.2=§mAnuncie aqui
 betterfps.update.phrase.3=Ver uma nova atualização chegando é animador.
-betterfps.update.phrase.4=Quando Stanley recebeu o lembrete da atualização, correu para baixá-la.
-betterfps.update.phrase.5=Não, de novo não ):
+betterfps.update.phrase.4=Quando o Stanley recebeu o lembrete de atualização, ele apertou o botão de "baixar".
+betterfps.update.phrase.5=De novo não D:
 betterfps.update.phrase.6=<3
 betterfps.update.phrase.7=Sei que você vai atualizar só pra se livrar do lembrete
 betterfps.update.phrase.8=É de graça, pelo menos, né?
 betterfps.update.phrase.9=Outra atualização, de novo?
-betterfps.update.phrase.10=Alguns erros foram corrigidos, e outros foram descobertos ¯\_(ツ)_/¯
+betterfps.update.phrase.10=Alguns erros foram corrigidos, e outros foram introduzidos ¯\_(ツ)_/¯
 betterfps.update.phrase.11=Porque atualizações automáticas podem danificar o jogo
 betterfps.update.phrase.12=Quer algo novo? Toma, mais uma atualização.
 
@@ -60,10 +61,10 @@ betterfps.options.async=Asínc.
 betterfps.options.default=Padrão: %s
 betterfps.options.default.vanilla=Padrão do vanilla: %s
 betterfps.options.default.betterfps=Padrão do BetterFps: %s
-betterfps.options.restart=Reinicie para salvar as alterações
+betterfps.options.restart=Requer reinicialização para ter efeito
 
 # GUI Restart
-betterfps.options.restart.dialog.1=Reinicie o jogo para salvar as alterações
+betterfps.options.restart.dialog.1=Requer reinicialização para ter efeito
 betterfps.options.restart.dialog.2=Quer reiniciar agora?
 
 # GUI Algorithm Option
