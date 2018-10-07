@@ -86,7 +86,7 @@ public abstract class FastBeacon extends TileEntityBeacon {
             }
 
             AxisAlignedBB box = new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1);
-            box = box.expand(radius, radius, radius).expand(0.0D, world.getHeight(), 0.0D);
+            box = box.grow(radius, radius, radius).expand(0.0D, world.getHeight(), 0.0D);
 
             for(EntityPlayer player : world.getEntitiesWithinAABB(EntityPlayer.class, box)) {
                 player.addPotionEffect(new PotionEffect(primaryEffect, effectTicks, effectLevel, true, true));
